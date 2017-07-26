@@ -40,8 +40,10 @@ class Job():
 
             self.folder = "{}.{}".format(now_string, self.name)
             try:
-                os.mkdir(os.path.join(self.root, self.folder))
+                os.makedirs(os.path.join(self.root, self.folder))
                 print("Created folder {}".format(self.folder))
+            except OSError:
+                print("Directory {} already exists".format(self.folder))
             except:
                 print("Cannot create folder: {}".format(self.folder))
                 raise 
@@ -54,7 +56,7 @@ class Job():
         mtime = os.path.getmtime(os.path.join(self.root, self.folder))
         self.mtime = datetime.datetime.fromtimestamp(mtime)
 
-        # running time
+        # running status
         self.is_running = True if ((datetime.datetime.now() - self.mtime).seconds < 30 ) else False
 
 

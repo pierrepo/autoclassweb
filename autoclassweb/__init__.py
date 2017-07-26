@@ -32,6 +32,7 @@ def index():
             print(job.folder, job.name)
             filename = secure_filename(input_form.input_file.data.filename)
             input_form.input_file.data.save(os.path.join(job.root, job.folder, filename))
+            session['job_name'] = job.name
             return redirect(url_for('startjob'))
         else:
             print("Form not validated")
@@ -42,4 +43,10 @@ def index():
 
 @app.route('/startjob', methods=['GET'])
 def startjob():
-    return "OK"
+    if 'job_name' in session:
+        name = session['job_name']
+        job = model.Job(app.config['UPLOAD_FOLDER'], name=name)
+        return "Creation d'un nouveau job {} dans {}".format(job.name, job.folder)
+    else:
+        return "No job found!"
+    

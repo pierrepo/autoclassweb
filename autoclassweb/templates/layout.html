@@ -1,0 +1,38 @@
+<!DOCTYPE HTML>
+
+<html lang="fr">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Autoclass@web</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <!-- Un commentaire -->
+</head>
+
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li>menu : élément 1</li>
+                <li>menu : élément 2</li>
+            </ul>
+        </nav>
+    </header>
+      {% for message in get_flashed_messages() %}
+        <div class="flash">{{ message }}</div>
+    {% endfor %}
+    
+    <section>
+    {% block body %}{% endblock %}
+    </section>
+
+    <footer>
+        <p>Nom, Prénom, date</p>
+        <p>licence</p>
+    </footer>
+
+
+</body>
+
+</html>

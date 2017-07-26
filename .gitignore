@@ -6,3 +6,5 @@ tmp
 
 # autoclass binary and program archives
 bin/autoclass*
+
+__pycache__/

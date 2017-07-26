@@ -58,7 +58,8 @@ class Job():
 
         # running status
         self.is_running = True if ((datetime.datetime.now() - self.mtime).seconds < 30 ) else False
-
+        # running time
+        self.rtime = (self.mtime - self.ctime).seconds / 60
 
     def __repr__(self):
         """

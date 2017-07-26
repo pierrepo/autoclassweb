@@ -1,0 +1,44 @@
+{% extends "layout.html" %}
+{% block body %}
+
+<article>
+    <header>
+        <p>Status of autoclass@web server</p>
+    </header>
+
+    <hr />
+    <table>
+        <tr>
+            <th>Job name </th>
+            <th>Running ?</th>
+            <th>Created</th>
+            <th>Last modified</th>
+            <th>Running time (min)</th>
+        </tr>
+        <!-- start with running jobs -->
+        {% for job in jobs %}
+        {% if job.is_running %}
+        <tr class="running">
+            <td>{{ job.name }}</td>
+            <td>{{ "Yes" if job.is_running else "No" }}</td>
+            <td>{{ job.ctime.strftime("%Y-%m-%d %H:%M:%S") }}</td>
+            <td>{{ job.mtime.strftime("%Y-%m-%d %H:%M:%S") }}</td>
+            <td>{{ "{:.2f}".format(job.rtime) }}</td>
+        </tr>
+        {% endif %}
+        {% endfor %}
+        <!-- start with completed jobs -->
+        {% for job in jobs %}
+        {% if not job.is_running %}
+        <tr class="completed">
+            <td>{{ job.name }}</td>
+            <td>{{ "Yes" if job.is_running else "No" }}</td>
+            <td>{{ job.ctime.strftime("%Y-%m-%d %H:%M:%S") }}</td>
+            <td>{{ job.mtime.strftime("%Y-%m-%d %H:%M:%S") }}</td>
+            <td>{{ "{:.2f}".format(job.rtime) }}</td>
+        </tr>
+        {% endif %}
+        {% endfor %}
+    </table>
+
+{% endblock %}

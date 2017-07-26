@@ -21,24 +21,33 @@ def ping_pong():
 
 @app.route('/', methods=('GET', 'POST'))
 def index():
+    # create form 
     input_form = forms.InputDataUpload()
 
-    if request.method == 'POST':
-        flash(input_form.errors)
-        if input_form.validate_on_submit():
-            print("input form validated!")
-            name = input_form.job_name.data
-            job = model.Job(app.config['UPLOAD_FOLDER'], name=name)
-            print(job.folder, job.name)
-            filename = secure_filename(input_form.input_file.data.filename)
-            input_form.input_file.data.save(os.path.join(job.root, job.folder, filename))
-            session['job_name'] = job.name
-            return redirect(url_for('startjob'))
-        else:
-            print("Form not validated")
-            flash(input_form.errors)
 
-    return render_template('index.html', form=input_form)
+    # list current jobs (running and completed)
+    job_manager = model.JobManager(app.config['UPLOAD_FOLDER'], 4)
+    job_manager.autodiscover()
+    jobs={"running": [], "completed": [], "max": 4}
+    for job in job_manager.jobs:
+        if job.is_running:
+            jobs["running"].append(job.name)
+        else:
+            jobs["completed"].append(job.name)
+
+    # handle form data after POST
+    # flash(input_form.errors)
+    if input_form.validate_on_submit():
+        print("input form validated!")
+        name = input_form.job_name.data
+        job = model.Job(app.config['UPLOAD_FOLDER'], name=name)
+        print(job.folder, job.name)
+        filename = secure_filename(input_form.input_file.data.filename)
+        input_form.input_file.data.save(os.path.join(job.root, job.folder, filename))
+        session['job_name'] = job.name
+        return redirect(url_for('startjob'))
+
+    return render_template('index.html', form=input_form, jobs=jobs)
 
 
 @app.route('/startjob', methods=['GET'])
@@ -49,4 +58,11 @@ def startjob():
         return "Creation d'un nouveau job {} dans {}".format(job.name, job.folder)
     else:
         return "No job found!"
-    
+
+
+@app.route('/status', methods=['GET'])
+def status():
+    job_manager = model.JobManager(app.config['UPLOAD_FOLDER'], 4)
+    job_manager.autodiscover()
+
+    return render_template('status.html', jobs=job_manager.jobs)

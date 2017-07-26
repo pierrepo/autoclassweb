@@ -3,7 +3,7 @@
 
 <article>
     <header>
-        <p>Welcome at autoclass@web</p>
+        <h1>Welcome at autoclass@web</h1>
     </header>
     <p>Enter here your input data and parameters:</p>
     <form action="" method="POST" enctype="multipart/form-data">
@@ -22,7 +22,17 @@
         <p>{{form.submit}}</p>
     </form>
     
-    
-
+    <hr />
+    <h1>Server status</h1>
+    <p>{{ jobs["running"] | length }} jobs running / {{ jobs["max"] }} max 
+        {% for job in jobs["running"] %}
+        [ {{ job }} ] 
+        {% endfor %}
+    </p>
+    <p>{{ jobs["completed"] | length }} jobs completed
+        {% for job in jobs["completed"] %}
+        [ {{ job }} ] 
+        {% endfor %}
+    </p>
+    <a href="status">Show jobs / retrieve results</a>
 {% endblock %}
-

@@ -1,0 +1,15 @@
+{% extends "layout.html" %}
+{% block body %}
+
+<article>
+    <header>
+        <h1>Reading input file(s)</h1>
+    </header>
+    <pre>
+{% for line in msg %} 
+{{ line }} 
+{% endfor %}
+    </pre>
+
+
+{% endblock %}

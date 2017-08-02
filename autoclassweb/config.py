@@ -4,6 +4,9 @@ class BaseConfig:
     TESTING = False
     UPLOAD_FOLDER="tmp"
     SECRET_KEY="1234"
+    AUTOCLASS_PATH="bin/autoclass"
+    MAX_JOB="4"
+
 
 class TestingConfig(BaseConfig):
     """Testing configuration"""

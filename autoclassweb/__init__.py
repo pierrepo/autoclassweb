@@ -39,12 +39,20 @@ def index():
     # flash(input_form.errors)
     if input_form.validate_on_submit():
         print("input form validated!")
+        # get job name and create directory
         name = input_form.job_name.data
         job = model.Job(app.config['UPLOAD_FOLDER'], name=name)
         print(job.folder, job.name)
-        filename = secure_filename(input_form.input_file.data.filename)
-        input_form.input_file.data.save(os.path.join(job.root, job.folder, filename))
+        # get scalar input data
+        filename = secure_filename(input_form.scalar_input_file.data.filename)
+        input_form.scalar_input_file.data.save(os.path.join(job.root, job.folder, filename))
+        scalar = {}
+        scalar['file'] = filename
+        scalar['header'] = input_form.scalar_has_header.data
+        scalar['error'] = input_form.scalar_error.data
+        # prepare data to be stored in session
         session['job_name'] = job.name
+        session['scalar'] = scalar
         return redirect(url_for('startjob'))
 
     return render_template('index.html', form=input_form, jobs=jobs)
@@ -55,7 +63,11 @@ def startjob():
     if 'job_name' in session:
         name = session['job_name']
         job = model.Job(app.config['UPLOAD_FOLDER'], name=name)
-        return "Creation d'un nouveau job {} dans {}".format(job.name, job.folder)
+        scalar = session['scalar']
+        full_path = os.path.join(app.config['UPLOAD_FOLDER'], job.folder)
+        scalar_input = io.AutoclassInput('scalar', full_path, scalar['file'], scalar['header'], scalar['error'])
+        return render_template('startjob.html', msg=scalar_input.log.msg.split('\n'))
+        #return "Create a new job {} in {} with param {}".format(job.name, job.folder, scalar)
     else:
         return "No job found!"
 

@@ -1,6 +1,6 @@
 from flask_script import Manager
 
-from autoclassweb import app, forms, model
+from autoclassweb import app, forms, model, io
 
 
 manager = Manager(app)

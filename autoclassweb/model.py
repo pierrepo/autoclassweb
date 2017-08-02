@@ -105,6 +105,7 @@ class JobManager():
         Discover autoclass jobs automatically
         """
         # list sub folders
+        print(os.walk(self.path))
         job_folder_lst = next(os.walk(self.path))[1]
         
         # create jobs

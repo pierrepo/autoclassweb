@@ -12,32 +12,28 @@
             <th>Job name </th>
             <th>Running ?</th>
             <th>Created</th>
-            <th>Last modified</th>
             <th>Running time (min)</th>
+            <th>Results</th>
         </tr>
         <!-- start with running jobs -->
-        {% for job in jobs %}
-        {% if job.is_running %}
+        {% for job in job_m.running %}
         <tr class="running">
             <td>{{ job.name }}</td>
             <td>{{ "Yes" if job.is_running else "No" }}</td>
             <td>{{ job.ctime.strftime("%Y-%m-%d %H:%M:%S") }}</td>
-            <td>{{ job.mtime.strftime("%Y-%m-%d %H:%M:%S") }}</td>
-            <td>{{ "{:.2f}".format(job.rtime) }}</td>
+            <td>{{ "{:.2f}".format(job.running_time) }}</td>
+            <td></td>
         </tr>
-        {% endif %}
         {% endfor %}
-        <!-- start with completed jobs -->
-        {% for job in jobs %}
-        {% if not job.is_running %}
+        <!-- and then with completed jobs -->
+        {% for job in job_m.completed %}
         <tr class="completed">
             <td>{{ job.name }}</td>
             <td>{{ "Yes" if job.is_running else "No" }}</td>
             <td>{{ job.ctime.strftime("%Y-%m-%d %H:%M:%S") }}</td>
-            <td>{{ job.mtime.strftime("%Y-%m-%d %H:%M:%S") }}</td>
-            <td>{{ "{:.2f}".format(job.rtime) }}</td>
+            <td>{{ "{:.2f}".format(job.running_time) }}</td>
+            <td>{{ "Download" if job.token else "" }}</td>
         </tr>
-        {% endif %}
         {% endfor %}
     </table>
 

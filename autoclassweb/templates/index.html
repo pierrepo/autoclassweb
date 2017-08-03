@@ -24,14 +24,14 @@
     
     <hr />
     <h1>Server status</h1>
-    <p>{{ jobs["running"] | length }} jobs running / {{ jobs["max"] }} max 
-        {% for job in jobs["running"] %}
-        [ {{ job }} ] 
+    <p>{{ job_m.running | length }} jobs running / {{ job_m.max }} max 
+        {% for job in job_m.running %}
+        [ {{ job.name }} ] 
         {% endfor %}
     </p>
-    <p>{{ jobs["completed"] | length }} jobs completed
-        {% for job in jobs["completed"] %}
-        [ {{ job }} ] 
+    <p>{{ job_m.completed | length }} jobs completed
+        {% for job in job_m.completed %}
+        [ {{ job.name }} ] 
         {% endfor %}
     </p>
     <a href="status">Show jobs / retrieve results</a>

@@ -5,6 +5,6 @@ venv
 tmp
 
 # autoclass binary and program archives
-bin/autoclass*
+bin/*
 
-__pycache__/
+*/__pycache__/

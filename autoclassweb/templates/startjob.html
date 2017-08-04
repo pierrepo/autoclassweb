@@ -10,6 +10,22 @@
 {{ line }} 
 {% endfor %}
     </pre>
+    {% if run_status %}
+    <div class="success">
+    <p>
+    Congratulation. Your autoclass job is now running. Let's hope it'll cluter your data nicely!
+		</p>
+		<p>Your job name is: <span class="highlight">{{ job_name }}</span>.</p>
+		<p>Your token is: <span class="highlight">{{ access_token }}</span>.</p>
+		<p>You will need name and token to get your results back upon completion of your autoclass job.</p>
+		<p>Check regularly your job status.</p>
+    </div>
+    {% else %}
+    <div class='fail'>
+    Something went wrong in autoclass job initialisation.
+    </div>
+    {% endif %}
+
 
 <a href="status">Show jobs / retrieve results</a>
 {% endblock %}

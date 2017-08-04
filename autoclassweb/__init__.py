@@ -66,9 +66,14 @@ def startjob():
         scalar = session['scalar']
         scalar_clust= autoclass.Autoclass('scalar', job_path, scalar['file'], scalar['header'], scalar['error'])
         scalar_clust.prepare_input_files()
-        scalar_clust.run()
-        scalar_clust.set_access_token()
-        return render_template('startjob.html', msg=scalar_clust.log.msg.split('\n'))
+        run_status = scalar_clust.run()
+        access_token = scalar_clust.set_access_token()
+        print(run_status, access_token)
+        return render_template('startjob.html',
+                               job_name=job_name, 
+                               msg=scalar_clust.log.msg.split('\n'),
+                               run_status=run_status,
+                               access_token=access_token)
         #return "Create a new job {} in {} with param {}".format(job.name, job.folder, scalar)
     else:
         return "No job found!"

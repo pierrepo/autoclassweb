@@ -11,6 +11,7 @@ class Log():
         self.error = False
         self.msg = ""
 
+
     def add(self, message, status="OK"):
         """
         Add message
@@ -22,6 +23,7 @@ class Log():
         for line in message.split('\n'):
             if line.strip() != "":
                 self.msg += "{}{}\n".format(header, line)
+
 
     def adderror(self, message):
         """
@@ -95,10 +97,10 @@ class Autoclass():
         self.log.add("Checking data format")
         if self.datatype in ['scalar', 'linear']:
             for col in self.df.columns:
-                print("{} is {}".format(col, self.df[col].dtype))
                 try:
                     self.df[col].astype('float64')
                 except:
+                    print("{} is {}".format(col, self.df[col].dtype))
                     msg = "Cannot cast column '{}' to float".format(col)
                     print(msg)
                     self.log.adderror(msg)
@@ -231,6 +233,7 @@ class Autoclass():
         self.log.add("Running clustering...")
         proc = subprocess.Popen(['bash', 'run_autoclass.sh', self.inputfolder])
         print(" ".join(proc.args))
+        return True
 
 
     @handle_error
@@ -245,5 +248,6 @@ class Autoclass():
         token = 'P' + ''.join(random.choice(choice_list) for _ in range(7))
         with open('access', 'w') as accessfile:
             accessfile.write(token)
+        return token
 
 

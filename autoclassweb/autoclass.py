@@ -256,10 +256,14 @@ class Autoclass():
     def create_rparams_file(self):
         """
         create .r-params file
+
+        try those parameters:
+        report_mode = "data"
+        comment_data_headers_p = true
         """
         print("{} / writing .r-params file".format(self.inputfolder))
         with open("clust.r-params", "w") as rparams:
-            rparams.write('xref_class_report_att_list = 0, 1, 2')
+            rparams.write('xref_class_report_att_list = 0, 1, 2 \n')
 
 
     @handle_error
@@ -270,6 +274,7 @@ class Autoclass():
         print("{} / writing run file".format(self.inputfolder))
         with open('run_autoclass.sh', 'w') as runfile:
             runfile.write("../autoclass -search clust.db2 clust.hd2 clust.model clust.s-params \n")
+            runfile.write("../autoclass -reports clust.results-bin clust.search clust.r-params \n")
 
 
     @handle_error
@@ -332,3 +337,31 @@ class Autoclass():
                 with open(name, 'r') as param_file:
                     content += "".join( param_file.readlines() )
         return content
+
+
+        @handle_error
+        def format_results(self):
+            """
+            Format results for end user
+            """
+            case_name = 'clust.case-data-1'
+            case_id = []
+            case_class = []
+            case_prob = []
+            with open(case_name, 'r') as case_file:
+                for line in case_file:
+                    if not line:
+                        continue
+                    if line.startswith('#') or line.startswith('DATA'):
+                        continue
+                    items = line.split()
+                    case_id.append( items[0] )
+                    case_class.append( items[1] )
+                    case_prob.append( items[2] )
+            self.df = pd.read_table(self.inputfile, sep='\t', header=0, index_col=0)
+            self.nrows, self.ncols = self.df.shape
+            if (self.nrows != len(case_class)) or (self.nrows != len(case_prob)):
+                raise('Number of rows != number of cases!')
+            self.df['cluster_class'] = case_class
+            self.df['cluster_prob'] = case_prob
+            self.df.sort(['cluster_class'], ascending=[True], inplace=True)

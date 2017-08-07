@@ -68,12 +68,14 @@ def startjob():
         scalar_clust.prepare_input_files()
         run_status = scalar_clust.run()
         access_token = scalar_clust.set_access_token()
+        content_files = scalar_clust.print_files()
         print(run_status, access_token)
         return render_template('startjob.html',
                                job_name=job_name, 
                                msg=scalar_clust.log.msg.split('\n'),
                                run_status=run_status,
-                               access_token=access_token)
+                               access_token=access_token,
+                               content_files=content_files)
         #return "Create a new job {} in {} with param {}".format(job.name, job.folder, scalar)
     else:
         return "No job found!"

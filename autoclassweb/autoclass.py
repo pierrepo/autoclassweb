@@ -231,6 +231,7 @@ class Autoclass():
             if multinomial_values:
                 model.write("single_multinomial {}\n".format(multinomial_values))
 
+
     @handle_error
     def create_sparams_file(self):
         """
@@ -269,7 +270,6 @@ class Autoclass():
         print("{} / writing run file".format(self.inputfolder))
         with open('run_autoclass.sh', 'w') as runfile:
             runfile.write("../autoclass -search clust.db2 clust.hd2 clust.model clust.s-params \n")
-
 
 
     @handle_error
@@ -317,3 +317,18 @@ class Autoclass():
         return token
 
 
+    @handle_error
+    def print_files(self):
+        """
+        Print generated files
+        """
+        content = ""
+        for name in ('clust.hd2', 'clust.model', 'clust.s-params', 'clust.r-params', 'run_autoclass.sh'):
+            if os.path.exists(name):
+                content += "\n"
+                content += "--------------------------------------------------------------------------\n"
+                content += "{}\n".format(name)
+                content += "--------------------------------------------------------------------------\n"
+                with open(name, 'r') as param_file:
+                    content += "".join( param_file.readlines() )
+        return content

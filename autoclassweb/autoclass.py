@@ -1,6 +1,7 @@
 import os   
 import random
 import subprocess
+import numpy as np
 import pandas as pd 
 
 class Log():
@@ -33,6 +34,25 @@ class Log():
 
 
 
+class Feature():
+    """
+    Class to handle feature in dataset
+    """
+    def __init__(self, name="", type="", missing=False):
+        """
+        Object instanciation
+        """
+        self.name = name
+        self.type=type
+        self.missing = missing
+
+
+    def __repr__(self):
+        """
+        __repr___
+        """
+        return "feature {} / type {} / missing values {}".format(
+                self.name, self.type, self.missing)
 
 
 class Autoclass():
@@ -42,7 +62,7 @@ class Autoclass():
 
     def __init__(self, datatype='linear', inputfolder='', inputfile='', has_header=True, error=0.0):
         """
-        Object initialisation
+        Object instanciation
         """
         self.log = Log()
 
@@ -51,6 +71,7 @@ class Autoclass():
         self.inputfile = inputfile
         self.error = error
         self.has_header = has_header
+        self.columns = []
 
 
     def handle_error(f):
@@ -84,11 +105,16 @@ class Autoclass():
             header = None
         self.df = pd.read_table(self.inputfile, sep='\t', header=header, index_col=0)
         self.nrows, self.ncols = self.df.shape
-        self.log.add("OK: found {} rows and {} columns".format(
-                        self.nrows, self.ncols)
-                    )
+        for name in self.df.columns.tolist():
+            col = Feature(name=name, type=self.datatype)
+            self.columns.append(col)
+        msg =  "    Found {} rows and {} columns\n".format(self.nrows, self.ncols+1)
+        msg += "    Columns are: "
+        for col in self.columns:
+            msg += "'{}' ".format(col.name)
+        self.log.add(msg)
 
-    
+
     @handle_error
     def check_data_type(self):
         """
@@ -108,18 +134,30 @@ class Autoclass():
 
 
     @handle_error
-    def clean_index_header_names(self):
+    def check_missing_values(self):
         """
-        cleanup index and header names
+        check missing values
         """
-        self.log.add("Cleaning row and column names")
-        name = self.df.index.name
-        if " " in name:
-            self.df.index.name = name.replace(" ","_")
-            msg = "Column '{}' renamed to {}".format(name, self.df.index.name)
-            self.log.add(msg)
-            print(msg)
+        self.log.add('Checking for missing values')
+        are_missing_lst = self.df.isnull().any().tolist()
+        missing_str = ''
+        for index, missing in enumerate(are_missing_lst):
+            if missing:
+                self.columns[index].missing = True
+                missing_str += "'{}' ".format(self.columns[index].name)
+        # default message
+        msg = '    No missing values found.'
+        if missing_str:
+            msg = '    Missing values found in columns: {}'.format(missing_str)
+        self.log.add(msg)
 
+
+    @handle_error
+    def clean_column_names(self):
+        """
+        Cleanup column names
+        """
+        self.log.add("Cleaning column names")
         for col_id, col_name in enumerate(self.df.columns):
             if " " in col_name:
                 self.df.rename(columns={col_name: col_name.replace(" ", "_")}, inplace=True)
@@ -162,14 +200,36 @@ class Autoclass():
     @handle_error
     def create_model_file(self):
         """
-        create .model file
+        Create .model file
         """
         print("{} / writing .model file".format(self.inputfolder))
+        real_values_normals = ""
+        real_values_missing = ""
+        multinomial_values = ""
+        for index, column in enumerate(self.columns):
+            print(column)
+            if column.type in ['scalar', 'linear']:
+                if not column.missing:
+                    real_values_normals += '{} '.format(index+1)
+                else:
+                    real_values_missing += '{} '.format(index+1)
+            if column.type == 'discrete':
+                multinomial_values += '{} '.format(index+1)
+        # count number of different models
+        model_count = 1
+        for model in [real_values_normals, real_values_missing, multinomial_values]:
+            if model:
+                model_count += 1
+        # write model file
         with open("clust.model", "w") as model:
-            model.write("model_index 0 2\n")
+            model.write("model_index 0 {}\n".format(model_count))
             model.write("ignore 0\n")
-            model.write("single_normal_cn {}\n".format(" ".join( [str(i) for i in range(1, self.ncols+1)] )))
-
+            if real_values_normals:
+                model.write("single_normal_cn {}\n".format(real_values_normals))
+            if real_values_missing:
+                model.write("single_normal_cm {}\n".format(real_values_missing))
+            if multinomial_values:
+                model.write("single_multinomial {}\n".format(multinomial_values))
 
     @handle_error
     def create_sparams_file(self):
@@ -181,8 +241,13 @@ class Autoclass():
             sparams.write('screen_output_p = false \n')
             sparams.write('break_on_warnings_p = false \n')
             sparams.write('force_new_search_p = true \n')
-            sparams.write('max_n_tries = 100 \n')
+            # default value: max_n_tries = 200
+            # doc in search-c.text, lines 403-404
+            sparams.write('max_n_tries = 1000 \n')
+            # default value: max_cyles = 200
+            # in search-c.text, lines 316-317
             sparams.write('max_cycles = 1000 \n')
+            # doc in search-c.text, line 332
             sparams.write('start_j_list = 2, 3, 5, 7, 10, 15, 25, 35, 45, 55, 65, 75, 85, 95, 105 \n')
 
 
@@ -216,7 +281,8 @@ class Autoclass():
         self.change_working_dir()
         self.read_datafile()
         self.check_data_type()
-        self.clean_index_header_names()
+        self.check_missing_values()
+        self.clean_column_names()
         self.create_db2_file()
         self.create_hd2_file()
         self.create_model_file()

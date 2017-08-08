@@ -15,7 +15,7 @@ class Job():
         self.folder = None
         self.name = None
         self.ctime = None
-        self.is_running = False
+        self.status = ''
         self.running_time = 0
         self.alive = alive
         self.token = ''
@@ -31,7 +31,7 @@ class Job():
         else:
             raise("{} is not a valid Job path".format(self.path))
         # get running status
-        self.test_is_running()
+        self.get_status()
         # get access token if any
         self.find_access()
 
@@ -65,24 +65,35 @@ class Job():
             raise 
 
 
-    def test_is_running(self):
+    def get_status(self):
         """
-        Test if job is running and for how long
+        Test job status and how long it has run (or is running)
+
+        We considere that the time to make search clusters is much smaller
+        than the time to build reports.
         """
         path = Path(self.path)
+        # first try to find log file for autoclass search (.log)
         try:
             log_file = [str(x) for x in path.iterdir() if ".log" in str(x)][0]
             # modified time
             mtimestamp = os.path.getmtime(log_file)
             mtime = datetime.datetime.fromtimestamp(mtimestamp)
-
             # running status
-            self.is_running = True if ((datetime.datetime.now() - mtime).seconds < self.alive ) else False
+            if ((datetime.datetime.now() - mtime).seconds < self.alive ):
+                self.status = 'running'
             # running time
             self.running_time = (mtime - self.ctime).seconds / 60
         except:
             self.running_time = 0
-            self.is_running = False
+            self.status = 'failed'
+        # then try to find log file for autoclass report (.rlog)
+        try:
+            log_file = [str(x) for x in path.iterdir() if ".rlog" in str(x)][0]
+            # update running status
+            self.status = 'completed'
+        except:
+            pass
 
 
     def find_access(self):
@@ -156,7 +167,7 @@ class JobManager():
             if Job.verify_folder_name(job_folder):
                 job = Job(alive=self.alive)
                 job.create_from_path(job_folder)
-                if job.is_running:
+                if job.status == 'running':
                     self.running.append(job)
                 else:
                     self.completed.append(job)

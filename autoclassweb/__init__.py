@@ -47,7 +47,6 @@ def index():
         input_form.scalar_input_file.data.save(os.path.join(job.path, filename))
         scalar = {}
         scalar['file'] = filename
-        scalar['header'] = input_form.scalar_has_header.data
         scalar['error'] = input_form.scalar_error.data
         # prepare data to be stored in session
         session['job_name'] = job.name
@@ -64,7 +63,7 @@ def startjob():
         job_name = session['job_name']
         job_path = session['job_path']
         scalar = session['scalar']
-        scalar_clust= autoclass.Autoclass('scalar', job_path, scalar['file'], scalar['header'], scalar['error'])
+        scalar_clust= autoclass.Autoclass('scalar', job_path, scalar['file'], scalar['error'])
         scalar_clust.prepare_input_files()
         run_status = scalar_clust.run()
         access_token = scalar_clust.set_access_token()

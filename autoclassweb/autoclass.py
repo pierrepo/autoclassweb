@@ -60,7 +60,7 @@ class Autoclass():
     Class to handle autoclass input files and parameters
     """
 
-    def __init__(self, datatype='linear', inputfolder='', inputfile='', has_header=True, error=0.0):
+    def __init__(self, datatype='linear', inputfolder='', inputfile='', error=0.0):
         """
         Object instanciation
         """
@@ -70,7 +70,6 @@ class Autoclass():
         self.datatype = datatype
         self.inputfile = inputfile
         self.error = error
-        self.has_header = has_header
         self.columns = []
 
 
@@ -99,11 +98,7 @@ class Autoclass():
         Read datafile as pandas dataframe
         """
         self.log.add("Reading {}".format(self.inputfile))
-        if self.has_header:
-            header = 0
-        else:
-            header = None
-        self.df = pd.read_table(self.inputfile, sep='\t', header=header, index_col=0)
+        self.df = pd.read_table(self.inputfile, sep='\t', header=0, index_col=0)
         self.nrows, self.ncols = self.df.shape
         for name in self.df.columns.tolist():
             col = Feature(name=name, type=self.datatype)

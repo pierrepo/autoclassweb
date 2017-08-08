@@ -13,11 +13,10 @@
     {% if run_status %}
     <div class="success">
     <p>
-    Congratulation. Your autoclass job is now running. Let's hope it'll cluter your data nicely!
+    Congratulation. Your autoclass job {{ job_name }} is now running. Let's hope it'll cluster your data nicely!
 		</p>
-		<p>Your job name is: <span class="highlight">{{ job_name }}</span>.</p>
 		<p>Your token is: <span class="highlight">{{ access_token }}</span>.</p>
-		<p>You will need name and token to get your results back upon completion of your autoclass job.</p>
+		<p>You will need  your token to get your results back upon completion of your autoclass job.</p>
 		<p>Check regularly your job status.</p>
     </div>
     {% else %}

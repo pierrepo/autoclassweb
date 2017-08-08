@@ -14,8 +14,11 @@
             <legend>Real Scalar</legend>
             <div>singly bounded real values, typically bounded below at zero (e.g: length)</div>
             <p>{{form.scalar_input_file.label}} {{form.scalar_input_file}}</p>
-            <div class="helper">The data file must comply with tabulation-separated values format</div>
-            <p>{{form.scalar_has_header.label}} {{form.scalar_has_header}}</p>
+            <div class="helper">
+            The data file must comply with the <a href="https://en.wikipedia.org/wiki/Tab-separated_values">tabulation-separated values</a> format.<br />
+            First line must be a header with column names.<br />
+            First column must be gene/protein/object names.
+            </div>
             <p>{{form.scalar_error.label}} {{form.scalar_error}}</p>
             <div class="helper">Relative error on data (optional, default = 0.01 i.e. 1%)</div>
         </fieldset>

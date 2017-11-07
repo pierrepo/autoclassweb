@@ -4,6 +4,9 @@ venv
 # temp data
 tmp
 
+# data sample for tests
+test-data/
+
 # autoclass binary and program archives
 bin/*
 

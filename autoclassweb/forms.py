@@ -5,10 +5,6 @@ from wtforms.validators import Required, DataRequired, Length
 
 
 class InputDataUpload(FlaskForm):
-    # generic fields
-    job_name = StringField("Enter your job name:",
-                            validators=[Required(), Length(min=4, max=30)],
-                            )
     submit = SubmitField('Run autoclass@web', 
                          render_kw={"class": "btn btn-info btn-lg", "id": "submit-button"}
                          )

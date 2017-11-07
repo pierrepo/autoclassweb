@@ -37,10 +37,9 @@ def index():
     # flash(input_form.errors)
     if input_form.validate_on_submit():
         print("input form validated!")
-        # get job name and create directory
-        name = input_form.job_name.data
+        # create job directory
         job = model.Job()
-        job.create_from_name(app.config['UPLOAD_FOLDER'], name)
+        job.create_new(app.config['UPLOAD_FOLDER'])
         print(job.path, job.name)
         # get scalar input data
         filename = secure_filename(input_form.scalar_input_file.data.filename)

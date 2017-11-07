@@ -3,6 +3,9 @@ import datetime
 import re
 from pathlib import Path
 
+import utilities
+
+
 class Job():
     """
     Autoclass job management
@@ -49,6 +52,34 @@ class Job():
                 name_clean += "-"
         self.name = name_clean
 
+        self.ctime = datetime.datetime.now()
+        date = datetime.datetime.strftime(self.ctime, "%Y%m%d")
+        time = datetime.datetime.strftime(self.ctime, "%H%M%S")
+
+        self.folder =  "{}.{}.{}".format(date, time, self.name)
+        self.path = os.path.join(root, self.folder)
+        try:
+            os.makedirs(self.path)
+            print("Created folder {}".format(self.folder))
+        except OSError:
+            print("Directory {} already exists".format(self.folder))
+        except:
+            print("Cannot create folder: {}".format(self.folder))
+            raise 
+
+
+
+
+
+    def create_new(self, root):
+        """
+        Create new job in root directory
+        """
+        # create random name from unambiguous characters
+        JOB_NAME_LENGTH = 8
+        self.name = utilities.create_random_string(JOB_NAME_LENGTH-1)
+        self.name = "P" + self.name
+        
         self.ctime = datetime.datetime.now()
         date = datetime.datetime.strftime(self.ctime, "%Y%m%d")
         time = datetime.datetime.strftime(self.ctime, "%H%M%S")
@@ -112,6 +143,9 @@ class Job():
         """
         return "{}/{}  created: {} modified: {} is_running: {}".format(
                 self.root, self.folder, self.ctime, self.mtime, self.is_running)
+
+
+
 
 
     @staticmethod

@@ -8,8 +8,6 @@
     <p>Enter here your input data and parameters:</p>
     <form action="" method="POST" enctype="multipart/form-data">
         {{ form.csrf_token }}
-        <p>{{form.job_name.label}} {{form.job_name(size=30)}}</p>
-        <div>between 5 and 30 characters</div>
         <fieldset>
             <legend>Real Scalar</legend>
             <div>singly bounded real values, typically bounded below at zero (e.g: length)</div>

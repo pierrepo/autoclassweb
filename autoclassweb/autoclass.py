@@ -4,6 +4,8 @@ import subprocess
 import numpy as np
 import pandas as pd 
 
+import utilities
+
 class Log():
     """
     Class to handle message and error message
@@ -307,12 +309,13 @@ class Autoclass():
         """
         Output access token for user
 
-        Token is 8 characters long and always start with the 'P' letter
+        Token is 8 characters long and always start with the 'T' letter
         """
         print("{} / writing access file".format(self.inputfolder))
-        choice_list = 'ABCDEGHJKMNRSTVWXYZ23456789'
-        token = 'P' + ''.join(random.choice(choice_list) for _ in range(7))
-        with open('access', 'w') as accessfile:
+        TOKEN_LENGTH = 8
+        token = utilities.create_random_string(TOKEN_LENGTH-1)
+        token = 'T' + token
+        with open('token', 'w') as accessfile:
             accessfile.write(token)
         return token
 

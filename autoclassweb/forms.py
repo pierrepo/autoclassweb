@@ -18,3 +18,15 @@ class InputDataUpload(FlaskForm):
                        )
 
 
+class GetJobResults(FlaskForm):
+    submit = SubmitField('Get results',
+                         render_kw={"class": "btn btn-info btn-lg", "id": "submit-button"}
+                         )
+    # get job name
+    job_name = StringField("Job name:",
+                             validators=[Required(), Length(min=4, max=30)]
+                            )
+    # get job password
+    job_password = StringField("Job password:",
+                               validators=[Required(), Length(min=4, max=30)]
+                              )

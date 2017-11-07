@@ -305,17 +305,16 @@ class Autoclass():
 
 
     @handle_error
-    def set_access_token(self):
+    def set_password(self, password_length):
         """
         Output access token for user
 
         Token is 8 characters long and always start with the 'T' letter
         """
         print("{} / writing access file".format(self.inputfolder))
-        TOKEN_LENGTH = 8
-        token = utilities.create_random_string(TOKEN_LENGTH-1)
-        token = 'T' + token
-        with open('token', 'w') as accessfile:
+        token = utilities.create_random_string(password_length-1)
+        token = 'P' + token
+        with open('access', 'w') as accessfile:
             accessfile.write(token)
         return token
 

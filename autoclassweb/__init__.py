@@ -39,7 +39,7 @@ def index():
         print("input form validated!")
         # create job directory
         job = model.Job()
-        job.create_new(app.config['UPLOAD_FOLDER'])
+        job.create_new(app.config['UPLOAD_FOLDER'], app.config['JOB_NAME_LENGTH'])
         print(job.path, job.name)
         # get scalar input data
         filename = secure_filename(input_form.scalar_input_file.data.filename)
@@ -65,7 +65,7 @@ def startjob():
         scalar_clust= autoclass.Autoclass('scalar', job_path, scalar['file'], scalar['error'])
         scalar_clust.prepare_input_files()
         run_status = scalar_clust.run()
-        access_token = scalar_clust.set_access_token()
+        access_token = scalar_clust.set_password(app.config['JOB_PASSWD_LENGTH'])
         content_files = scalar_clust.print_files()
         print(run_status, access_token)
         return render_template('startjob.html',
@@ -79,7 +79,7 @@ def startjob():
         return "No job found!"
 
 
-@app.route('/status', methods=['GET'])
+@app.route('/status', methods=['GET', 'POST'])
 def status():
     print("We are in: {}".format(os.getcwd()))
     print("Flask is in : {}".format(os.environ['FLASK_HOME']))
@@ -89,4 +89,31 @@ def status():
     job_manager = model.JobManager(app.config['UPLOAD_FOLDER'], 4, alive=4)
     job_manager.autodiscover()
 
-    return render_template('status.html', job_m=job_manager)
+    # create form 
+    job_form = forms.GetJobResults()
+
+    if job_form.validate_on_submit():
+        print("job form validated!")
+        name = job_form.job_name.data
+        password = job_form.job_password.data
+        print(name, password)
+        print(job_manager.completed)
+        """
+        # create job directory
+        job = model.Job()
+        job.create_new(app.config['UPLOAD_FOLDER'], app.config['JOB_NAME_LENGTH'])
+        print(job.path, job.name)
+        # get scalar input data
+        filename = secure_filename(input_form.scalar_input_file.data.filename)
+        input_form.scalar_input_file.data.save(os.path.join(job.path, filename))
+        scalar = {}
+        scalar['file'] = filename
+        scalar['error'] = input_form.scalar_error.data
+        # prepare data to be stored in session
+        session['job_name'] = job.name
+        session['job_path'] = job.path
+        session['scalar'] = scalar
+        return redirect(url_for('startjob'))
+        """
+
+    return render_template('status.html', form=job_form, job_m=job_manager)

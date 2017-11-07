@@ -36,6 +36,19 @@
         </tr>
         {% endfor %}
     </table>
+    
+    <p>Enter here job name and password to download results:</p>
+    <form action="" method="POST" enctype="multipart/form-data">
+        {{ form.csrf_token }}
+        <p>{{form.job_name.label}} {{form.job_name}}</p>
+        <div class="helper">
+        Job name must have xx characters.
+        </div>
+        <p>{{form.job_password.label}} {{form.job_password}}</p>
+        <div class="helper">Password must have xx characters.</div>
+        <p>{{form.submit}}</p>
+    </form>
+
 </article>
 
 {% endblock %}

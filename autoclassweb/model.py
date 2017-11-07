@@ -71,14 +71,13 @@ class Job():
 
 
 
-    def create_new(self, root):
+    def create_new(self, root, name_length):
         """
         Create new job in root directory
         """
         # create random name from unambiguous characters
-        JOB_NAME_LENGTH = 8
-        self.name = utilities.create_random_string(JOB_NAME_LENGTH-1)
-        self.name = "P" + self.name
+        self.name = utilities.create_random_string(name_length-1)
+        self.name = "N" + self.name
         
         self.ctime = datetime.datetime.now()
         date = datetime.datetime.strftime(self.ctime, "%Y%m%d")
@@ -141,8 +140,8 @@ class Job():
         """
         __repr___
         """
-        return "{}/{}  created: {} modified: {} is_running: {}".format(
-                self.root, self.folder, self.ctime, self.mtime, self.is_running)
+        return "{} in {} created: {}  status: {}".format(
+                self.name, self.folder, self.ctime,  self.status)
 
 
 

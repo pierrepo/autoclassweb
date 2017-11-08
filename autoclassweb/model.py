@@ -21,7 +21,7 @@ class Job():
         self.status = ''
         self.running_time = 0
         self.alive = alive
-        self.token = ''
+        self.password = ''
 
     def create_from_path(self, path):
         """
@@ -35,7 +35,7 @@ class Job():
             raise("{} is not a valid Job path".format(self.path))
         # get running status
         self.get_status()
-        # get access token if any
+        # get password if any
         self.find_access()
 
 
@@ -128,12 +128,12 @@ class Job():
 
     def find_access(self):
         """
-        Find access token
+        Find access password
         """
         access_name = os.path.join(self.path, 'access')
         if os.path.exists(access_name):
             with open(access_name, 'r') as access_file:
-                self.token = access_file.readline()
+                self.password = access_file.readline()
 
 
     def __repr__(self):

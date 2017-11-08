@@ -21,19 +21,10 @@ class InputDataUpload(FlaskForm):
 
 
 class GetJobResults(FlaskForm):
-    print("size", app_conf.JOB_NAME_LENGTH)
     submit = SubmitField('Get results',
                          render_kw={"class": "btn btn-info btn-lg", "id": "submit-button"}
                          )
-    # get job name
-    name = StringField("Name:",
-                           validators=[Required(), 
-                                       Length(min=app_conf.JOB_NAME_LENGTH, 
-                                              max=app_conf.JOB_NAME_LENGTH,
-                                              message="Name must have exactly %(min)d characters."), 
-                                       Regexp('^\w+$', 
-                                              message="Name must contain only letters and numbers")]
-                            )
+
     # get job password
     password = StringField("Password:",
                                validators=[Required(), 

@@ -89,31 +89,40 @@ def status():
     job_manager = model.JobManager(app.config['UPLOAD_FOLDER'], 4, alive=4)
     job_manager.autodiscover()
 
+    return render_template('status.html', job_m=job_manager)
+
+
+@app.route('/download/<job_name>', methods=['GET', 'POST'])
+def download(job_name):
+    print("Looking for job {}".format(job_name))
+    
     # create form 
     job_form = forms.GetJobResults()
+    msg = {}
+
+    job_manager = model.JobManager(app.config['UPLOAD_FOLDER'], 4, alive=4)
+    job_manager.autodiscover()
+
+    job_selected = None
+    for job in job_manager.completed:
+        if job_name == job.name:
+            job_selected = job
+
+
+    if job_selected is None:
+        msg['error'] = "Job {} not found or not completed yet. Cannot get results.".format(job_name)
+        return render_template('download.html', name=job_name, form=job_form, message=msg)
 
     if job_form.validate_on_submit():
         print("job form validated!")
-        name = job_form.name.data
-        password = job_form.password.data
-        print(name, password)
-        print(job_manager.completed)
-        """
-        # create job directory
-        job = model.Job()
-        job.create_new(app.config['UPLOAD_FOLDER'], app.config['JOB_NAME_LENGTH'])
-        print(job.path, job.name)
-        # get scalar input data
-        filename = secure_filename(input_form.scalar_input_file.data.filename)
-        input_form.scalar_input_file.data.save(os.path.join(job.path, filename))
-        scalar = {}
-        scalar['file'] = filename
-        scalar['error'] = input_form.scalar_error.data
-        # prepare data to be stored in session
-        session['job_name'] = job.name
-        session['job_path'] = job.path
-        session['scalar'] = scalar
-        return redirect(url_for('startjob'))
-        """
+        # get password and enforce capital letter
+        password = job_form.password.data.upper()
+        if password != job_selected.password:
+            msg['error'] = "Wrong password! Try again."
+            return render_template('download.html', name=job_name, form=job_form, message=msg)
+        else:
+            msg['download'] = "sdsdsdsdsd"
+        return render_template('download.html', name=job_name, form=job_form, message=msg)
 
-    return render_template('status.html', form=job_form, job_m=job_manager)
+    return render_template('download.html', name=job_name, form=job_form, message=msg)
+

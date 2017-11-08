@@ -1,0 +1,27 @@
+{% extends "layout.html" %}
+{% block body %}
+
+<article>
+    <header>
+        <p>Download results for job {{ name }}</p>
+    </header>
+    
+    <p>Enter password to download results:</p>
+    {% from "_formhelpers.html" import render_field %}
+    <form action="" method="POST" enctype="multipart/form-data">
+        {{ form.csrf_token }}
+        <p>{{ render_field(form.password) }}</p>
+        <p>{{form.submit}}</p>
+    </form>
+
+    {% if 'download' in message %}
+    <div>Follow this <a href="{{ message['download'] }}">link</a> to download your results.</div>
+    {% endif %}
+
+    {% if 'error' in message %}
+    <div>{{ message['error'] }}</div>
+    {% endif %}
+
+</article>
+
+{% endblock %}

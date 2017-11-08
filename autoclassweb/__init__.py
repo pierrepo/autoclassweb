@@ -94,8 +94,8 @@ def status():
 
     if job_form.validate_on_submit():
         print("job form validated!")
-        name = job_form.job_name.data
-        password = job_form.job_password.data
+        name = job_form.name.data
+        password = job_form.password.data
         print(name, password)
         print(job_manager.completed)
         """

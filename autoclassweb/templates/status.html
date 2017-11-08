@@ -13,7 +13,6 @@
             <th>Created</th>
             <th>Status</th>
             <th>Running time (min)</th>
-            <th>Results</th>
         </tr>
         <!-- start with running jobs -->
         {% for job in job_m.running %}
@@ -22,7 +21,6 @@
             <td>{{ job.ctime.strftime("%Y-%m-%d %H:%M:%S") }}</td>
             <td>{{ job.status }}</td>
             <td>{{ "{:.2f}".format(job.running_time) }}</td>
-            <td></td>
         </tr>
         {% endfor %}
         <!-- and then with completed jobs -->
@@ -32,20 +30,16 @@
             <td>{{ job.ctime.strftime("%Y-%m-%d %H:%M:%S") }}</td>
             <td>{{ job.status }}</td>
             <td>{{ "{:.2f}".format(job.running_time) }}</td>
-            <td>{{ "Download" if job.token else "" }}</td>
         </tr>
         {% endfor %}
     </table>
     
     <p>Enter here job name and password to download results:</p>
+    {% from "_formhelpers.html" import render_field %}
     <form action="" method="POST" enctype="multipart/form-data">
         {{ form.csrf_token }}
-        <p>{{form.job_name.label}} {{form.job_name}}</p>
-        <div class="helper">
-        Job name must have xx characters.
-        </div>
-        <p>{{form.job_password.label}} {{form.job_password}}</p>
-        <div class="helper">Password must have xx characters.</div>
+        <p>{{ render_field(form.name) }}</p>
+        <p>{{ render_field(form.password) }}</p>
         <p>{{form.submit}}</p>
     </form>
 

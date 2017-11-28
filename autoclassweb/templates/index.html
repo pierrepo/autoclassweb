@@ -32,7 +32,7 @@
     </p>
     <p>{{ job_m.completed | length }} jobs completed
         {% for job in job_m.completed %}
-        [ {{ job.name }} ] 
+        [ <a href="download/{{ job.name }}">{{ job.name }}</a> ] 
         {% endfor %}
     </p>
     <a href="status">Show jobs / retrieve results</a>

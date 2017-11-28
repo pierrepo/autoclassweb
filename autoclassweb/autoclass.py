@@ -239,13 +239,31 @@ class Autoclass():
             sparams.write('screen_output_p = false \n')
             sparams.write('break_on_warnings_p = false \n')
             sparams.write('force_new_search_p = true \n')
-            # default value: max_n_tries = 200
+
+            # max_duration
+            # When > 0, specifies the maximum number of seconds to run.
+            # When = 0, allows run to continue until otherwise halted.
+            # doc in search-c.text, lines 493-495
+            # default value: max_duration = 0
+            # max_duration set to 3600 sec. (1 hour)
+            sparams.write('max_duration = 3600 \n')
+            
+            # max_n_tries
+            # max number of trials
             # doc in search-c.text, lines 403-404
+            # default value: max_n_tries = 200
             sparams.write('max_n_tries = 1000 \n')
+            
+            # max_cycles
+            # max number of cycles per trial
+            # doc in search-c.text, lines 316-317
             # default value: max_cyles = 200
-            # in search-c.text, lines 316-317
             sparams.write('max_cycles = 1000 \n')
+            
+            # start_j_list
+            # initial guess of the number of clusters
             # doc in search-c.text, line 332
+            # default values: 2, 3, 5, 7, 10, 15, 25
             sparams.write('start_j_list = 2, 3, 5, 7, 10, 15, 25, 35, 45, 55, 65, 75, 85, 95, 105 \n')
 
 

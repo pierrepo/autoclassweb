@@ -1,5 +1,7 @@
 from flask_script import Manager
-from autoclassweb import app, forms, model, autoclass
+from autoclassweb import app, forms, model
+import autoclasswrapper as wrapper 
+
 import os
 
 os.environ["FLASK_HOME"] = os.getcwd()

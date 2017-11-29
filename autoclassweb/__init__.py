@@ -3,6 +3,9 @@ import os
 from flask import Flask, jsonify, render_template, url_for, redirect, request, flash, session
 from werkzeug import secure_filename
 
+import sys
+sys.path.insert(0,'..')
+import autoclasswrapper as wrapper
 
 # instantiate the app
 app = Flask(__name__)
@@ -62,7 +65,7 @@ def startjob():
         job_name = session['job_name']
         job_path = session['job_path']
         scalar = session['scalar']
-        scalar_clust= autoclass.Autoclass('scalar', job_path, scalar['file'], scalar['error'])
+        scalar_clust= wrapper.Autoclass('scalar', job_path, scalar['file'], scalar['error'])
         scalar_clust.prepare_input_files()
         run_status = scalar_clust.run()
         access_token = scalar_clust.set_password(app.config['JOB_PASSWD_LENGTH'])

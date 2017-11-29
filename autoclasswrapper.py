@@ -73,6 +73,7 @@ class Autoclass():
         self.inputfile = inputfile
         self.error = error
         self.columns = []
+        self.missing_coding = "?"
 
 
     def handle_error(f):
@@ -135,18 +136,20 @@ class Autoclass():
         """
         check missing values
         """
-        self.log.add('Checking for missing values')
+        self.log.add('Checking missing values')
         are_missing_lst = self.df.isnull().any().tolist()
         missing_str = ''
         for index, missing in enumerate(are_missing_lst):
             if missing:
                 self.columns[index].missing = True
                 missing_str += "'{}' ".format(self.columns[index].name)
-        # default message
-        msg = '    No missing values found.'
         if missing_str:
-            msg = '    Missing values found in columns: {}'.format(missing_str)
-        self.log.add(msg)
+            self.log.add('    Missing values found in columns: {}'
+                         .format(missing_str))
+            self.log.add('    Missing values will be coded with: {}'
+                         .format(self.missing_coding)) 
+        else:
+            self.log.add('    No missing values found.')
 
 
     @handle_error
@@ -154,7 +157,7 @@ class Autoclass():
         """
         Cleanup column names
         """
-        self.log.add("Cleaning column names")
+        self.log.add("Checking column names")
         for col_id, col_name in enumerate(self.df.columns):
             if " " in col_name:
                 self.df.rename(columns={col_name: col_name.replace(" ", "_")}, inplace=True)
@@ -169,7 +172,7 @@ class Autoclass():
         create .db2 file
         """
         print("{} / writing .db2 file".format(self.inputfolder))
-        self.df.to_csv("clust.db2", header=False, sep="\t", na_rep="?")
+        self.df.to_csv("clust.db2", header=False, sep="\t", na_rep=self.missing_coding)
     
 
     @handle_error

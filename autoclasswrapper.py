@@ -108,6 +108,7 @@ class Autoclass():
             self.columns.append(col)
         msg =  "    Found {} rows and {} columns\n".format(self.nrows, self.ncols+1)
         msg += "    Columns are: "
+        msg += "'{}' ".format(self.df.index.name)
         for col in self.columns:
             msg += "'{}' ".format(col.name)
         self.log.add(msg)
@@ -171,8 +172,10 @@ class Autoclass():
         """
         create .db2 file
         """
-        print("{} / writing .db2 file".format(self.inputfolder))
+        self.log.add("Writing .db2 file")
         self.df.to_csv("clust.db2", header=False, sep="\t", na_rep=self.missing_coding)
+        self.log.add("Writing .tsv file [for later use]")
+        self.df.to_csv("clust.tsv", header=True, sep="\t", na_rep="")
     
 
     @handle_error
@@ -180,7 +183,7 @@ class Autoclass():
         """
         create .hd2 file
         """
-        print("{} / writing .hd2 file".format(self.inputfolder))
+        self.log.add("Writing .hd2 file")
         error_type = "rel_error"
         error_value = self.error
         with open("clust.hd2", "w") as hd2:
@@ -202,7 +205,7 @@ class Autoclass():
         """
         Create .model file
         """
-        print("{} / writing .model file".format(self.inputfolder))
+        self.log.add("Writing .model file")
         real_values_normals = ""
         real_values_missing = ""
         multinomial_values = ""
@@ -237,7 +240,7 @@ class Autoclass():
         """
         create  .s-params file
         """
-        print("{} / writing .s-params file".format(self.inputfolder))
+        self.log.add("Writing .s-params file")
         with open("clust.s-params", "w") as sparams:
             sparams.write('screen_output_p = false \n')
             sparams.write('break_on_warnings_p = false \n')
@@ -279,7 +282,7 @@ class Autoclass():
         report_mode = "data"
         comment_data_headers_p = true
         """
-        print("{} / writing .r-params file".format(self.inputfolder))
+        self.log.add("Writing .r-params file")
         with open("clust.r-params", "w") as rparams:
             rparams.write('xref_class_report_att_list = 0, 1, 2 \n')
 
@@ -289,7 +292,7 @@ class Autoclass():
         """
         Create .sh file
         """
-        print("{} / writing run file".format(self.inputfolder))
+        self.log.add("Writing run file")
         with open('run_autoclass.sh', 'w') as runfile:
             runfile.write("../autoclass -search clust.db2 clust.hd2 clust.model clust.s-params \n")
             runfile.write("../autoclass -reports clust.results-bin clust.search clust.r-params \n")

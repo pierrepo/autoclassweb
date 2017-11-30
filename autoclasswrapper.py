@@ -1,6 +1,7 @@
 import os   
 import random
 import subprocess
+import re
 import numpy as np
 import pandas as pd 
 
@@ -57,23 +58,20 @@ class Feature():
                 self.name, self.type, self.missing)
 
 
-class Autoclass():
+class Process():
     """
     Class to handle autoclass input files and parameters
     """
 
-    def __init__(self, datatype='linear', inputfolder='', inputfile='', error=0.0):
+    def __init__(self, inputfolder='', missing_encoding="?"):
         """
         Object instanciation
         """
         self.log = Log()
 
         self.inputfolder = inputfolder
-        self.datatype = datatype
-        self.inputfile = inputfile
-        self.error = error
-        self.columns = []
-        self.missing_coding = "?"
+        self.missing_encoding = missing_encoding
+        self.input_data_lst = []
 
 
     def handle_error(f):
@@ -95,76 +93,14 @@ class Autoclass():
         os.chdir(self.inputfolder)
 
 
-    @handle_error
-    def read_datafile(self):
-        """
-        Read datafile as pandas dataframe
-        """
-        self.log.add("Reading {}".format(self.inputfile))
-        self.df = pd.read_table(self.inputfile, sep='\t', header=0, index_col=0)
-        self.nrows, self.ncols = self.df.shape
-        for name in self.df.columns.tolist():
-            col = Feature(name=name, type=self.datatype)
-            self.columns.append(col)
-        msg =  "    Found {} rows and {} columns\n".format(self.nrows, self.ncols+1)
-        msg += "    Columns are: "
-        msg += "'{}' ".format(self.df.index.name)
-        for col in self.columns:
-            msg += "'{}' ".format(col.name)
-        self.log.add(msg)
-
 
     @handle_error
-    def check_data_type(self):
+    def add_input_data(self, input_file, input_type, input_error):
         """
-        check data type
+        Add input data for clustering
         """
-        self.log.add("Checking data format")
-        if self.datatype in ['scalar', 'linear']:
-            for col in self.df.columns:
-                try:
-                    self.df[col].astype('float64')
-                except:
-                    print("{} is {}".format(col, self.df[col].dtype))
-                    msg = "Cannot cast column '{}' to float".format(col)
-                    print(msg)
-                    self.log.adderror(msg)
-                    self.log.adderror("Check your input file format!")
-
-
-    @handle_error
-    def check_missing_values(self):
-        """
-        check missing values
-        """
-        self.log.add('Checking missing values')
-        are_missing_lst = self.df.isnull().any().tolist()
-        missing_str = ''
-        for index, missing in enumerate(are_missing_lst):
-            if missing:
-                self.columns[index].missing = True
-                missing_str += "'{}' ".format(self.columns[index].name)
-        if missing_str:
-            self.log.add('    Missing values found in columns: {}'
-                         .format(missing_str))
-            self.log.add('    Missing values will be coded with: {}'
-                         .format(self.missing_coding)) 
-        else:
-            self.log.add('    No missing values found.')
-
-
-    @handle_error
-    def clean_column_names(self):
-        """
-        Cleanup column names
-        """
-        self.log.add("Checking column names")
-        for col_id, col_name in enumerate(self.df.columns):
-            if " " in col_name:
-                self.df.rename(columns={col_name: col_name.replace(" ", "_")}, inplace=True)
-                msg = "Column '{}' renamed to '{}'".format(col_name, self.df.columns[col_id])
-                self.log.add(msg)
-                print(msg)
+        input_data = Data(input_file, input_type, input_error)
+        self.input_data_lst.append(input_data)
 
 
     @handle_error
@@ -173,7 +109,8 @@ class Autoclass():
         create .db2 file
         """
         self.log.add("Writing .db2 file")
-        self.df.to_csv("clust.db2", header=False, sep="\t", na_rep=self.missing_coding)
+        self.log.add("If any, missing values will be encoded as: {}".format(self.missing_encoding))
+        self.df.to_csv("clust.db2", header=False, sep="\t", na_rep=self.missing_encoding)
         self.log.add("Writing .tsv file [for later use]")
         self.df.to_csv("clust.tsv", header=True, sep="\t", na_rep="")
     
@@ -386,3 +323,103 @@ class Autoclass():
             self.df['cluster_class'] = case_class
             self.df['cluster_prob'] = case_prob
             self.df.sort(['cluster_class'], ascending=[True], inplace=True)
+
+
+class Data():
+    """
+    Class to handle autoclass data files
+    """
+
+    def __init__(self, filename='', type='', error=0.0):
+        """
+        Object instantiation
+        """
+        self.log = Log()
+
+        self.type = type
+        self.filename = filename
+        self.error = error
+        self.df = None
+        self.columns = []
+    
+
+    @handle_error
+    def read_datafile(self):
+        """
+        Read datafile as pandas dataframe
+        """
+        self.log.add("Reading {}".format(self.inputfile))
+        # header is on first row (header=0)
+        # gene/protein/orf names are on first column (index_col=0)
+        self.df = pd.read_table(self.inputfile, sep='\t', header=0, index_col=0)
+        self.nrows, self.ncols = self.df.shape
+        for name in self.df.columns.tolist():
+            col = Feature(name=name, type=self.datatype)
+            self.columns.append(col)
+        msg =  "    Found {} rows and {} columns\n".format(self.nrows, self.ncols+1)
+        msg += "    Columns are: "
+        msg += "'{}' ".format(self.df.index.name)
+        for col in self.columns:
+            msg += "'{}' ".format(col.name)
+        self.log.add(msg)
+
+
+    @handle_error
+    def check_data_type(self):
+        """
+        check data type
+        """
+        self.log.add("Checking data format")
+        if self.datatype in ['scalar', 'linear']:
+            for col in self.df.columns:
+                try:
+                    self.df[col].astype('float64')
+                except:
+                    print("{} is {}".format(col, self.df[col].dtype))
+                    msg = "Cannot cast column '{}' to float".format(col)
+                    print(msg)
+                    self.log.adderror(msg)
+                    self.log.adderror("Check your input file format!")
+
+
+    @handle_error
+    def check_missing_values(self):
+        """
+        check missing values
+        """
+        self.log.add('Checking missing values')
+        are_missing_lst = self.df.isnull().any().tolist()
+        missing_str = ''
+        for index, missing in enumerate(are_missing_lst):
+            if missing:
+                self.columns[index].missing = True
+                missing_str += "'{}' ".format(self.columns[index].name)
+        if missing_str:
+            self.log.add('    Missing values found in columns: {}'
+                         .format(missing_str))
+        else:
+            self.log.add('    No missing values found.')
+
+
+    @handle_error
+    def clean_column_names(self):
+        """
+        Cleanup column names
+        """
+        regex = re.compile('[^A-Za-z0-9 .-]+')
+        self.log.add("Checking column names")
+        for col_name in self.df.columns:
+            col_name_new = regex.sub("_", col_name)
+            if col_name_new != col_name:
+                self.df.rename(columns={col_name: col_name_new}, inplace=True)
+                msg = "Column '{}' renamed to '{}'".format(col_name, col_name_new)
+                self.log.add(msg)
+                print(msg)
+
+
+    def load(self):
+        """
+        Load data
+        """
+        self.read_datafile():
+        self.

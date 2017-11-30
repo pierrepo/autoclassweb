@@ -36,28 +36,6 @@ class Log():
         self.add(message, status="error")
 
 
-
-class Feature():
-    """
-    Class to handle feature in dataset
-    """
-    def __init__(self, name="", type="", missing=False):
-        """
-        Object instanciation
-        """
-        self.name = name
-        self.type=type
-        self.missing = missing
-
-
-    def __repr__(self):
-        """
-        __repr___
-        """
-        return "feature {} / type {} / missing values {}".format(
-                self.name, self.type, self.missing)
-
-
 class Process():
     """
     Class to handle autoclass input files and parameters
@@ -93,14 +71,93 @@ class Process():
         os.chdir(self.inputfolder)
 
 
-
     @handle_error
     def add_input_data(self, input_file, input_type, input_error):
         """
         Add input data for clustering
         """
         input_data = Data(input_file, input_type, input_error)
+        self.read_datafile(input_data)
+        self.clean_column_names(input_data)
+        self.check_data_type(input_data)
+        self.check_missing_values(input_data)
         self.input_data_lst.append(input_data)
+
+
+    @handle_error
+    def read_datafile(self, dataset):
+        """
+        Read datafile as pandas dataframe
+        """
+        self.log.add("Reading {}".format(dataset.input_file))
+        # header is on first row (header=0)
+        # gene/protein/orf names are on first column (index_col=0)
+        dataset.df = pd.read_table(dataset.input_file, sep='\t', header=0, index_col=0)
+        nrows, ncols = dataset.df.shape
+        msg =  "    Found {} rows and {} columns\n".format(nrows, ncols+1)
+        self.log.add(msg)
+
+
+    @handle_error
+    def clean_column_names(self, dataset):
+        """
+        Cleanup column names
+        """
+        regex = re.compile('[^A-Za-z0-9 .-]+')
+        self.log.add("Checking column names")
+        # check index column name first
+        col_name = dataset.df.index.name
+        col_name_new = regex.sub("_", col_name)
+        if col_name_new != col_name:
+            dataset.df.index.name = col_name_new
+            msg = "Column '{}' renamed to '{}'".format(col_name, col_name_new)
+            self.log.add(msg)
+        # then other column names
+        for col_name in dataset.df.columns:
+            col_name_new = regex.sub("_", col_name)
+            if col_name_new != col_name:
+                dataset.df.rename(columns={col_name: col_name_new}, inplace=True)
+                msg = "Column '{}' renamed to '{}'".format(col_name, col_name_new)
+                self.log.add(msg)
+        # print all columns names
+        col_names = dataset.df.index.name + " " + " ".join(dataset.df.columns) 
+        self.log.add("Column names: {}".format(col_names))
+
+
+    @handle_error
+    def check_data_type(self, dataset):
+        """
+        check data type
+        """
+        self.log.add("Checking data format")
+        if dataset.data_type in ['scalar', 'linear']:
+            for col in dataset.df.columns:
+                self.log.add(col)
+                try:
+                    dataset.df[col].astype('float64')
+                    self.log.add(dataset.df[col].describe(percentiles=[]).to_string())
+                except:
+                    print("{} is {}".format(col, dataset.df[col].dtype))
+                    msg = "Cannot cast column '{}' to float".format(col)
+                    print(msg)
+                    self.log.adderror(msg)
+                    self.log.adderror("Check your input file!")
+
+
+
+    @handle_error
+    def check_missing_values(self, dataset):
+        """
+        check missing values
+        """
+        self.log.add('Checking missing values')
+        columns_with_missing = dataset.df.columns[ dataset.df.isnull().any() ].tolist()
+        if columns_with_missing:
+            dataset.columns_with_missing = columns_with_missing
+            self.log.add('    Missing values found in columns: {}'
+                         .format(" ".join(columns_with_missing)))
+        else:
+            self.log.add('    No missing values found.')
 
 
     @handle_error
@@ -330,96 +387,31 @@ class Data():
     Class to handle autoclass data files
     """
 
-    def __init__(self, filename='', type='', error=0.0):
+    def __init__(self, input_file='', data_type='', error=0.0):
         """
         Object instantiation
         """
-        self.log = Log()
 
-        self.type = type
-        self.filename = filename
+        self.data_type = data_type
+        # filename of input_file
+        self.input_file = input_file
         self.error = error
         self.df = None
         self.columns = []
+        self.columns_with_missing = []
     
 
-    @handle_error
-    def read_datafile(self):
-        """
-        Read datafile as pandas dataframe
-        """
-        self.log.add("Reading {}".format(self.inputfile))
-        # header is on first row (header=0)
-        # gene/protein/orf names are on first column (index_col=0)
-        self.df = pd.read_table(self.inputfile, sep='\t', header=0, index_col=0)
-        self.nrows, self.ncols = self.df.shape
-        for name in self.df.columns.tolist():
-            col = Feature(name=name, type=self.datatype)
-            self.columns.append(col)
-        msg =  "    Found {} rows and {} columns\n".format(self.nrows, self.ncols+1)
-        msg += "    Columns are: "
-        msg += "'{}' ".format(self.df.index.name)
-        for col in self.columns:
-            msg += "'{}' ".format(col.name)
-        self.log.add(msg)
 
 
-    @handle_error
-    def check_data_type(self):
-        """
-        check data type
-        """
-        self.log.add("Checking data format")
-        if self.datatype in ['scalar', 'linear']:
-            for col in self.df.columns:
-                try:
-                    self.df[col].astype('float64')
-                except:
-                    print("{} is {}".format(col, self.df[col].dtype))
-                    msg = "Cannot cast column '{}' to float".format(col)
-                    print(msg)
-                    self.log.adderror(msg)
-                    self.log.adderror("Check your input file format!")
 
 
-    @handle_error
-    def check_missing_values(self):
-        """
-        check missing values
-        """
-        self.log.add('Checking missing values')
-        are_missing_lst = self.df.isnull().any().tolist()
-        missing_str = ''
-        for index, missing in enumerate(are_missing_lst):
-            if missing:
-                self.columns[index].missing = True
-                missing_str += "'{}' ".format(self.columns[index].name)
-        if missing_str:
-            self.log.add('    Missing values found in columns: {}'
-                         .format(missing_str))
-        else:
-            self.log.add('    No missing values found.')
-
-
-    @handle_error
-    def clean_column_names(self):
-        """
-        Cleanup column names
-        """
-        regex = re.compile('[^A-Za-z0-9 .-]+')
-        self.log.add("Checking column names")
-        for col_name in self.df.columns:
-            col_name_new = regex.sub("_", col_name)
-            if col_name_new != col_name:
-                self.df.rename(columns={col_name: col_name_new}, inplace=True)
-                msg = "Column '{}' renamed to '{}'".format(col_name, col_name_new)
-                self.log.add(msg)
-                print(msg)
 
 
     def load(self):
         """
         Load data
         """
-        self.read_datafile():
-        self.
+        self.read_datafile()
+        self.clean_column_names()
+        self.check_data_type()
+        self.check_missing_values()

@@ -2,38 +2,22 @@ import os
 import random
 import subprocess
 import re
+import logging
 import numpy as np
 import pandas as pd 
 
 import utilities
 
-class Log():
+logging.basicConfig(level=logging.DEBUG)
+
+
+class CastFloat64(Exception):
     """
-    Class to handle message and error message
+    Exception raised when data column cannot be casted to float64
     """
-    def __init__(self):
-        self.error = False
-        self.msg = ""
 
-
-    def add(self, message, status="OK"):
-        """
-        Add message
-        """
-        header = ""
-        if status == "error":
-            header = "ERROR: "
-            self.error = True
-        for line in message.split('\n'):
-            if line.strip() != "":
-                self.msg += "{}{}\n".format(header, line)
-
-
-    def adderror(self, message):
-        """
-        Add error message
-        """
-        self.add(message, status="error")
+    def __init__(self, message):
+        self.message = message
 
 
 class Process():
@@ -41,24 +25,30 @@ class Process():
     Class to handle autoclass input files and parameters
     """
 
-    def __init__(self, inputfolder='', missing_encoding="?"):
+    def __init__(self, inputfolder='', missing_encoding="?", tolerate_error=False):
         """
         Object instanciation
         """
-        self.log = Log()
-
         self.inputfolder = inputfolder
         self.missing_encoding = missing_encoding
+        self.tolerate_error = tolerate_error
+
         self.input_data_lst = []
+        self.had_error = False
 
 
     def handle_error(f):
+        """
+        Handle error during data parsing and formating
+        """
         def try_function(self, *args, **kwargs):
-            if not self.log.error:
+            if self.tolerate_error or not self.had_error:
                 try:
                     return f(self, *args, **kwargs)
                 except Exception as e:
-                    self.log.adderror(str(e))
+                    for line in str(e).split('\n'):
+                        logging.error(line)
+                    self.had_error = True
         return try_function
 
 
@@ -67,7 +57,7 @@ class Process():
         """
         change working dir
         """
-        self.log.add("Changing working directory")
+        logging.info("Changing working directory")
         os.chdir(self.inputfolder)
 
 
@@ -89,13 +79,13 @@ class Process():
         """
         Read datafile as pandas dataframe
         """
-        self.log.add("Reading {}".format(dataset.input_file))
+        logging.info("Reading {}".format(dataset.input_file))
         # header is on first row (header=0)
         # gene/protein/orf names are on first column (index_col=0)
         dataset.df = pd.read_table(dataset.input_file, sep='\t', header=0, index_col=0)
         nrows, ncols = dataset.df.shape
-        msg =  "    Found {} rows and {} columns\n".format(nrows, ncols+1)
-        self.log.add(msg)
+        logging.info("Found {} rows and {} columns"
+                     .format(nrows, ncols+1))
 
 
     @handle_error
@@ -104,24 +94,26 @@ class Process():
         Cleanup column names
         """
         regex = re.compile('[^A-Za-z0-9 .-]+')
-        self.log.add("Checking column names")
+        logging.debug("Checking column names")
         # check index column name first
         col_name = dataset.df.index.name
         col_name_new = regex.sub("_", col_name)
         if col_name_new != col_name:
             dataset.df.index.name = col_name_new
-            msg = "Column '{}' renamed to '{}'".format(col_name, col_name_new)
-            self.log.add(msg)
+            logging.warning("Column '{}' renamed to '{}'"
+                            .format(col_name, col_name_new))
+            
         # then other column names
         for col_name in dataset.df.columns:
             col_name_new = regex.sub("_", col_name)
             if col_name_new != col_name:
                 dataset.df.rename(columns={col_name: col_name_new}, inplace=True)
-                msg = "Column '{}' renamed to '{}'".format(col_name, col_name_new)
-                self.log.add(msg)
+                logging.warning("Column '{}' renamed to '{}'"
+                                .format(col_name, col_name_new))
         # print all columns names
-        col_names = dataset.df.index.name + " " + " ".join(dataset.df.columns) 
-        self.log.add("Column names: {}".format(col_names))
+        logging.debug("Index name: ''{}'".format(dataset.df.index.name))
+        for name in dataset.df.columns:
+            logging.debug("Column name: '{}'".format(name))
 
 
     @handle_error
@@ -129,19 +121,25 @@ class Process():
         """
         check data type
         """
-        self.log.add("Checking data format")
+        logging.info("Checking data format")
         if dataset.data_type in ['scalar', 'linear']:
             for col in dataset.df.columns:
-                self.log.add(col)
-                try:
-                    dataset.df[col].astype('float64')
-                    self.log.add(dataset.df[col].describe(percentiles=[]).to_string())
-                except:
-                    print("{} is {}".format(col, dataset.df[col].dtype))
-                    msg = "Cannot cast column '{}' to float".format(col)
-                    print(msg)
-                    self.log.adderror(msg)
-                    self.log.adderror("Check your input file!")
+                self.check_data_numeric(dataset, col)    
+
+
+    @handle_error
+    def check_data_numeric(self, dataset, col):
+        """
+        Verify that column is realy numeric
+        """
+        try:
+            dataset.df[col].astype('float64')
+            logging.info("Column '{}'\n".format(col)
+                         +dataset.df[col].describe(percentiles=[]).to_string())
+        except:
+            msg  = "Cannot cast column '{}' to float\n".format(col)
+            msg += "Check your input file!"
+            raise CastFloat64(msg)
 
 
 
@@ -150,14 +148,14 @@ class Process():
         """
         check missing values
         """
-        self.log.add('Checking missing values')
+        logging.info('Checking missing values')
         columns_with_missing = dataset.df.columns[ dataset.df.isnull().any() ].tolist()
         if columns_with_missing:
             dataset.columns_with_missing = columns_with_missing
-            self.log.add('    Missing values found in columns: {}'
-                         .format(" ".join(columns_with_missing)))
+            logging.warning('Missing values found in columns: {}'
+                            .format(" ".join(columns_with_missing)))
         else:
-            self.log.add('    No missing values found.')
+            logging.info('No missing values found.')
 
 
     @handle_error
@@ -165,10 +163,10 @@ class Process():
         """
         create .db2 file
         """
-        self.log.add("Writing .db2 file")
-        self.log.add("If any, missing values will be encoded as: {}".format(self.missing_encoding))
+        logging.info("Writing .db2 file")
+        logging.info("If any, missing values will be encoded as: {}".format(self.missing_encoding))
         self.df.to_csv("clust.db2", header=False, sep="\t", na_rep=self.missing_encoding)
-        self.log.add("Writing .tsv file [for later use]")
+        logging.debug("Writing .tsv file [for later use]")
         self.df.to_csv("clust.tsv", header=True, sep="\t", na_rep="")
     
 
@@ -177,7 +175,7 @@ class Process():
         """
         create .hd2 file
         """
-        self.log.add("Writing .hd2 file")
+        logging.info("Writing .hd2 file")
         error_type = "rel_error"
         error_value = self.error
         with open("clust.hd2", "w") as hd2:
@@ -199,7 +197,7 @@ class Process():
         """
         Create .model file
         """
-        self.log.add("Writing .model file")
+        logging.info("Writing .model file")
         real_values_normals = ""
         real_values_missing = ""
         multinomial_values = ""
@@ -234,7 +232,7 @@ class Process():
         """
         create  .s-params file
         """
-        self.log.add("Writing .s-params file")
+        logging.info("Writing .s-params file")
         with open("clust.s-params", "w") as sparams:
             sparams.write('screen_output_p = false \n')
             sparams.write('break_on_warnings_p = false \n')
@@ -276,7 +274,7 @@ class Process():
         report_mode = "data"
         comment_data_headers_p = true
         """
-        self.log.add("Writing .r-params file")
+        logging.info("Writing .r-params file")
         with open("clust.r-params", "w") as rparams:
             rparams.write('xref_class_report_att_list = 0, 1, 2 \n')
 
@@ -286,7 +284,7 @@ class Process():
         """
         Create .sh file
         """
-        self.log.add("Writing run file")
+        logging.info("Writing run file")
         with open('run_autoclass.sh', 'w') as runfile:
             runfile.write("../autoclass -search clust.db2 clust.hd2 clust.model clust.s-params \n")
             runfile.write("../autoclass -reports clust.results-bin clust.search clust.r-params \n")
@@ -297,12 +295,8 @@ class Process():
         """
         Prepare input and parameters files
         """
-        self.log.add("Preparing data and parameters files")
+        logging.info("Preparing data and parameters files")
         self.change_working_dir()
-        self.read_datafile()
-        self.check_data_type()
-        self.check_missing_values()
-        self.clean_column_names()
         self.create_db2_file()
         self.create_hd2_file()
         self.create_model_file()
@@ -316,7 +310,7 @@ class Process():
         """
         Run autoclass
         """
-        self.log.add("Running clustering...")
+        logging.info("Running clustering...")
         proc = subprocess.Popen(['bash', 'run_autoclass.sh', self.inputfolder])
         print(" ".join(proc.args))
         return True
@@ -329,7 +323,7 @@ class Process():
 
         Token is 8 characters long and always start with the 'T' letter
         """
-        print("{} / writing access file".format(self.inputfolder))
+        logging.info("{} / writing access file".format(self.inputfolder))
         token = utilities.create_random_string(password_length-1)
         token = 'P' + token
         with open('access', 'w') as accessfile:

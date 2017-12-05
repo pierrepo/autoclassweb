@@ -33,7 +33,8 @@ class Process():
         self.missing_encoding = missing_encoding
         self.tolerate_error = tolerate_error
 
-        self.input_data_lst = []
+        self.datasets = []
+        self.df = None
         self.had_error = False
 
 
@@ -71,7 +72,7 @@ class Process():
         self.clean_column_names(input_data)
         self.check_data_type(input_data)
         self.check_missing_values(input_data)
-        self.input_data_lst.append(input_data)
+        self.datasets.append(input_data)
 
 
     @handle_error
@@ -102,7 +103,6 @@ class Process():
             dataset.df.index.name = col_name_new
             logging.warning("Column '{}' renamed to '{}'"
                             .format(col_name, col_name_new))
-            
         # then other column names
         for col_name in dataset.df.columns:
             col_name_new = regex.sub("_", col_name)
@@ -142,7 +142,6 @@ class Process():
             raise CastFloat64(msg)
 
 
-
     @handle_error
     def check_missing_values(self, dataset):
         """
@@ -150,12 +149,31 @@ class Process():
         """
         logging.info('Checking missing values')
         columns_with_missing = dataset.df.columns[ dataset.df.isnull().any() ].tolist()
+        dataset.columns_with_missing = columns_with_missing
         if columns_with_missing:
             dataset.columns_with_missing = columns_with_missing
             logging.warning('Missing values found in columns: {}'
                             .format(" ".join(columns_with_missing)))
         else:
             logging.info('No missing values found.')
+
+
+    @handle_error
+    def merge_dataframes(self):
+        """
+        Merge input datasets
+        """
+        if len(self.datasets) == 1:
+            self.df = self.datasets[0].df
+        else:
+            logging.info("Merging input data")
+            df_lst = []
+            for dataset in self.datasets:
+                df_lst.append(dataset.df)
+            # https://pandas.pydata.org/pandas-docs/stable/merging.html
+            self.df = pd.concat(df_lst, axis=1, join="outer")
+        nrows, ncols = self.df.shape
+        logging.info("Final datafram has {} lines and {} columns".format(nrows, ncols+1))
 
 
     @handle_error
@@ -394,12 +412,6 @@ class Data():
         self.columns = []
         self.columns_with_missing = []
     
-
-
-
-
-
-
 
     def load(self):
         """

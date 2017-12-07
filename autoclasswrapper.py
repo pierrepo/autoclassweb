@@ -403,8 +403,12 @@ class Data():
         """
         Object instantiation
         """
-
+        assert data_type in ['real_scalar', 'real_location', 'discrete'], \
+               ("data_type in {} should be: "
+                "'real_scalar', 'real_location' or 'discrete'"
+                .format(input_file))
         self.data_type = data_type
+
         # filename of input_file
         self.input_file = input_file
         self.error = error

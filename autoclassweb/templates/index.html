@@ -6,33 +6,45 @@
         <h1>Welcome at autoclass@web</h1>
     </header>
     <p>Enter here your input data and parameters:</p>
+    <div class="helper">
+    The data file must comply with the <a href="https://en.wikipedia.org/wiki/Tab-separated_values">tabulation-separated values</a> format.<br />
+    First line must be a header with column names.<br />
+    First column must be gene/protein/object names.
+    </div>
     <form action="" method="POST" enctype="multipart/form-data">
         {{ form.csrf_token }}
         <fieldset>
             <legend>Real Scalar</legend>
             <div>singly bounded real values, typically bounded below at zero (e.g: length)</div>
             <p>{{form.scalar_input_file.label}} {{form.scalar_input_file}}</p>
-            <div class="helper">
-            The data file must comply with the <a href="https://en.wikipedia.org/wiki/Tab-separated_values">tabulation-separated values</a> format.<br />
-            First line must be a header with column names.<br />
-            First column must be gene/protein/object names.
-            </div>
             <p>{{form.scalar_error.label}} {{form.scalar_error}}</p>
-            <div class="helper">Relative error on data (optional, default = 0.01 i.e. 1%)</div>
+            <div class="helper">Relative error on data. Optional. Default = 0.01 i.e. 1% of value)</div>
+        </fieldset>
+        <fieldset>
+            <legend>Real Location</legend>
+            <div>Other real values (e.g: microarray log ratio, elevation, position)</div>
+            <p>{{form.location_input_file.label}} {{form.location_input_file}}</p>
+            <p>{{form.location_error.label}} {{form.location_error}}</p>
+            <div class="helper">Absolute error on data. Optional. Default = 0.01 i.e. value ± 0.01)</div>
+        </fieldset>
+        <fieldset>
+            <legend>Discrete</legend>
+            <div>Qualitative data (e.g. color, phenotype, name...)</div>
+            <p>{{form.discrete_input_file.label}} {{form.discrete_input_file}}</p>
         </fieldset>
         <p>{{form.submit}}</p>
     </form>
-    
+
     <hr />
     <h1>Server status</h1>
-    <p>{{ job_m.running | length }} jobs running / {{ job_m.max }} max 
+    <p>{{ job_m.running | length }} jobs running / {{ job_m.max }} max
         {% for job in job_m.running %}
-        [ {{ job.name }} ] 
+        [ {{ job.name }} ]
         {% endfor %}
     </p>
     <p>{{ job_m.completed | length }} jobs completed
         {% for job in job_m.completed %}
-        [ <a href="download/{{ job.name }}">{{ job.name }}</a> ] 
+        [ <a href="download/{{ job.name }}">{{ job.name }}</a> ]
         {% endfor %}
     </p>
     <a href="status">Show jobs / retrieve results</a>

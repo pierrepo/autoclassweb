@@ -29,7 +29,7 @@ def index():
     os.chdir(os.environ['FLASK_HOME'])
     print("We are in: {}".format(os.getcwd()))
 
-    # create form 
+    # create form
     input_form = forms.InputDataUpload()
 
     # list current jobs (running and completed)
@@ -39,21 +39,50 @@ def index():
     # handle form data after POST
     # flash(input_form.errors)
     if input_form.validate_on_submit():
+        if not (input_form.scalar_input_file.data or input_form.location_input_file.data or input_form.discrete_input_file.data):
+            return render_template('index.html', form=input_form, job_m=job_manager)
+            print("Missing files in input form!")
         print("input form validated!")
         # create job directory
         job = model.Job()
         job.create_new(app.config['UPLOAD_FOLDER'], app.config['JOB_NAME_LENGTH'])
         print(job.path, job.name)
-        # get scalar input data
-        filename = secure_filename(input_form.scalar_input_file.data.filename)
-        input_form.scalar_input_file.data.save(os.path.join(job.path, filename))
+        # get 'real scalar' input data
         scalar = {}
-        scalar['file'] = filename
-        scalar['error'] = input_form.scalar_error.data
+        if input_form.scalar_input_file.data:
+            filename = secure_filename(input_form.scalar_input_file.data.filename)
+            input_form.scalar_input_file.data.save(os.path.join(job.path, filename))
+            scalar['file'] = filename
+            scalar['error'] = input_form.scalar_error.data
+        else:
+            scalar['file'] = None
+            scalar['error'] = None
+        # get 'real location' input data
+        location = {}
+        if input_form.location_input_file.data:
+            filename = secure_filename(input_form.location_input_file.data.filename)
+            input_form.location_input_file.data.save(os.path.join(job.path, filename))
+            location['file'] = filename
+            location['error'] = input_form.location_error.data
+        else:
+            location['file'] = None
+            location['error'] = None
+        # get 'discrete' input data
+        discrete = {}
+        if input_form.discrete_input_file.data:
+            filename = secure_filename(input_form.discrete_input_file.data.filename)
+            input_form.discrete_input_file.data.save(os.path.join(job.path, filename))
+            discrete['file'] = filename
+            discrete['error'] = None
+        else:
+            discrete['file'] = None
+            discrete['error'] = None
         # prepare data to be stored in session
         session['job_name'] = job.name
         session['job_path'] = job.path
         session['scalar'] = scalar
+        session['location'] = location
+        session['discrete'] = discrete
         return redirect(url_for('startjob'))
 
     return render_template('index.html', form=input_form, job_m=job_manager)
@@ -72,7 +101,7 @@ def startjob():
         content_files = scalar_clust.print_files()
         print(run_status, access_token)
         return render_template('startjob.html',
-                               job_name=job_name, 
+                               job_name=job_name,
                                msg=scalar_clust.log.msg.split('\n'),
                                run_status=run_status,
                                access_token=access_token,
@@ -98,8 +127,8 @@ def status():
 @app.route('/download/<job_name>', methods=['GET', 'POST'])
 def download(job_name):
     print("Looking for job {}".format(job_name))
-    
-    # create form 
+
+    # create form
     job_form = forms.GetJobResults()
     msg = {}
 
@@ -128,4 +157,3 @@ def download(job_name):
         return render_template('download.html', name=job_name, form=job_form, message=msg)
 
     return render_template('download.html', name=job_name, form=job_form, message=msg)
-

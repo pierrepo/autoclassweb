@@ -7,38 +7,24 @@ A web app to run autoclass clustering.
 1. Install virtualenv
 
     ```
-    $ sudo pip3 install virtualenv
+    $ sudo pip3 install pipenv
     ```
 
 2. Create virtual environment
 
     ```
-    $ virtualenv -p /usr/bin/python3 venv
+    $ pipenv --three
     ```
 
-3. Activate virtualenv
+3. Install requirements
 
     ```
-    $ source venv/bin/activate
-    ```
-
-4. Install requirements
-
-    ```
-    $ pip install -r requirements.txt
+    $ pipenv install pandas flask flask-script Flask-WTF psutil
     ```
 
 # Usage
 
-1. Activate virtualenv
-
-    ```
-    $ source venv/bin/activate
-    ```
-
-2. Run web server 
-    
-    ```
-    $ python3 manage.py runserver
-    ```
+```
+$ pipenv run python manage.py runserver
+```
 

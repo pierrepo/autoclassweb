@@ -8,7 +8,7 @@ app_conf = config.BaseConfig()
 
 class InputDataUpload(FlaskForm):
     submit = SubmitField('Run autoclass@web',
-                         render_kw={"class": "btn btn-info btn-lg", "id": "submit-button"}
+                         render_kw={"class": "btn btn-info", "id": "submit-button"}
                          )
     # real scalar data fields
     scalar_input_file = FileField("Input data file:",

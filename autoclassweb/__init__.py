@@ -93,10 +93,30 @@ def startjob():
     if 'job_name' in session:
         job_name = session['job_name']
         job_path = session['job_path']
+        # initiate autoclass autoclass wrapper
+        print(job_path)
+        clust = wrapper.Input(job_path)
+        # load scalar data if any
         scalar = session['scalar']
-        scalar_clust= wrapper.Autoclass('scalar', job_path, scalar['file'], scalar['error'])
-        scalar_clust.prepare_input_files()
-        run_status = scalar_clust.run()
+        if scalar['file']:
+            clust.add_input_data(scalar['file'], "real scalar", scalar['error'])
+        # load location data if any
+        location = session['location']
+        if location['file']:
+            clust.add_input_data(location['file'], "real location", scalar['location'])
+        # load discrete data if any
+        discrete = session['discrete']
+        if discrete['file']:
+            clust.add_input_data(discrete['file'], "real discrete")
+        # prepare input files
+        clust.merge_dataframes()
+        clust.create_db2_file()
+        clust.create_hd2_file()
+        clust.create_model_file()
+        clust.create_sparams_file()
+        clust.create_rparams_file()
+        clust.create_run_file()
+        ## TODO: run clustering
         access_token = scalar_clust.set_password(app.config['JOB_PASSWD_LENGTH'])
         content_files = scalar_clust.print_files()
         print(run_status, access_token)

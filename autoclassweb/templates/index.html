@@ -15,17 +15,22 @@
         {{ form.csrf_token }}
         <fieldset>
             <legend>Real Scalar</legend>
-            <div>singly bounded real values, typically bounded below at zero (e.g: length)</div>
+            <div>Singly bounded real values, typically bounded below at zero (e.g: length)</div>
+            <label for="scarlarInputFile">{{form.scalar_input_file.label}}</label>
+            <input type="file" class="form-control-file" id="scarlarInputFile" name="scalar_input_file">
+            <label for="scarlarInputError">{{form.scalar_error.label}}</label>
+            <input type="text" class="form-control" id="scarlarInputFile" name="scalar_error">
+            <!--
             <p>{{form.scalar_input_file.label}} {{form.scalar_input_file}}</p>
             <p>{{form.scalar_error.label}} {{form.scalar_error}}</p>
-            <div class="helper">Relative error on data. Optional. Default = 0.01 i.e. 1% of value)</div>
+            -->
+            <small class="form-text text-muted helper">Relative error on data. Optional. Default = 0.01 i.e. 1% of value.</small>
         </fieldset>
         <fieldset>
             <legend>Real Location</legend>
             <div>Other real values (e.g: microarray log ratio, elevation, position)</div>
             <p>{{form.location_input_file.label}} {{form.location_input_file}}</p>
-            <p>{{form.location_error.label}} {{form.location_error}}</p>
-            <div class="helper">Absolute error on data. Optional. Default = 0.01 i.e. value ± 0.01)</div>
+            <small class="form-text text-muted helper">Absolute error on data. Optional. Default = 0.01 i.e. value ± 0.01.</small>
         </fieldset>
         <fieldset>
             <legend>Discrete</legend>

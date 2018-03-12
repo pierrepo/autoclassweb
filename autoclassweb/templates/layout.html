@@ -6,42 +6,57 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Autoclass@web</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <!-- Un commentaire -->
 </head>
 
 <body>
-    <header>
-        <nav>
-            <ul>
-                <li>menu : élément 1</li>
-                <li>menu : élément 2</li>
-            </ul>
-        </nav>
-    </header>
-      {% for message in get_flashed_messages() %}
+
+<header>
+  <!-- Fixed navbar -->
+  <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+    <a class="navbar-brand" href="/">autoclass@web</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarCollapse">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item active">
+          <a class="nav-link" href="/">Run job <span class="sr-only">(current)</span></a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/status">Job status / retrieve results</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/about">About</a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+</header>
+
+    {% for message in get_flashed_messages() %}
         <div class="flash">{{ message }}</div>
     {% endfor %}
-    
-    <section>
-    {% block body %}{% endblock %}
-    </section>
 
-    <section>
-    <article>
-    <hr />
-    <a href="/">Home / run new autoclass job</a> | <a href="/status">Job status / retrieve results</a>
-    <hr />
-    </article>
-    </section>
+    <div class="container">
+        <section>
+        {% block body %}{% endblock %}
+        </section>
+    </div>
 
-
-    <footer>
-        <p>Nom, Prénom, date</p>
-        <p>licence</p>
+    <footer class="footer">
+        <div class="container">
+            <span class="text-muted">Université Paris Diderot | CNRS | 2018.</span>
+      </div>
     </footer>
 
 
 </body>
+
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 
 </html>

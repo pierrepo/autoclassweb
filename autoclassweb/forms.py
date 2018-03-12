@@ -11,21 +11,21 @@ class InputDataUpload(FlaskForm):
                          render_kw={"class": "btn btn-info", "id": "submit-button"}
                          )
     # real scalar data fields
-    scalar_input_file = FileField("Input data file:",
+    scalar_input_file = FileField("Input data file",
                            validators=[]
                            )
-    scalar_error = FloatField("Error:",
+    scalar_error = FloatField("Error",
                        default='0.01',
                        render_kw={"placeholder": "default is 0.01"}
                        )
-    location_input_file = FileField("Input data file:",
+    location_input_file = FileField("Input data file",
                            validators=[]
                            )
-    location_error = FloatField("Error:",
+    location_error = FloatField("Error",
                        default='0.01',
                        render_kw={"placeholder": "default is 0.01"}
                        )
-    discrete_input_file = FileField("Input data file:",
+    discrete_input_file = FileField("Input data file",
                            validators=[]
                            )
 

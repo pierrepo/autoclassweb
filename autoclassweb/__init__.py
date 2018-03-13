@@ -138,10 +138,9 @@ def startjob():
         print(run_status, access_token)
         return render_template('startjob.html',
                                job_name=job_name,
-                               msg=logcontent,
+                               log_msg=logcontent,
                                run_status=run_status,
-                               access_token=access_token,
-                               content_files=logcontent)
+                               access_token=access_token)
         #return "Create a new job {} in {} with param {}".format(job.name, job.folder, scalar)
     else:
         return "No job found!"

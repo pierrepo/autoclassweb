@@ -3,10 +3,9 @@
 
 <article>
     <header>
-        <p>Download results for job {{ name }}</p>
+        <p>Results for job {{ name }}</p>
     </header>
-    
-    <p>Enter password to download results:</p>
+
     {% from "_formhelpers.html" import render_field %}
     <form action="" method="POST" enctype="multipart/form-data">
         {{ form.csrf_token }}

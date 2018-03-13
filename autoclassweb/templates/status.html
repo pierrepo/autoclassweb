@@ -2,43 +2,46 @@
 {% block body %}
 
 <article>
-    <header>
-        <p>Status of autoclass@web server</p>
-    </header>
-
-    <hr />
-    <table>
-        <tr>
-            <th>Job name </th>
-            <th>Created</th>
-            <th>Status</th>
-            <th>Running time (min)</th>
-            <th>Results</th>
-        </tr>
-        <!-- start with running jobs -->
-        {% for job in job_m.running %}
-        <tr class="running">
-            <td>{{ job.name }}</td>
-            <td>{{ job.ctime.strftime("%Y-%m-%d %H:%M:%S") }}</td>
-            <td>{{ job.status }}</td>
-            <td>{{ "{:.2f}".format(job.running_time) }}</td>
-            <td></td>
-        </tr>
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>Job name </th>
+                <th>Created</th>
+                <th>Status</th>
+                <th>Running time (min)</th>
+                <th>Results</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- start with running jobs -->
+            {% for job in job_m.running %}
+            <tr class="running">
+                <td>{{ job.name }}</td>
+                <td>{{ job.ctime.strftime("%Y-%m-%d %H:%M:%S") }}</td>
+                <td>{{ job.status }}</td>
+                <td>{{ "{:.2f}".format(job.running_time) }}</td>
+                <td></td>
+            </tr>
+            {% endfor %}
+            <!-- and then with completed jobs -->
+            {% for job in job_m.completed %}
+            <tr class="completed">
+                <td>{{ job.name }}</td>
+                <td>{{ job.ctime.strftime("%Y-%m-%d %H:%M:%S") }}</td>
+                <td>{{ job.status }}</td>
+                <td>{{ "{:.2f}".format(job.running_time) }}</td>
+                {% if job.password %}
+                <td>
+                    <a href="download/{{ job.name }}"  class="btn btn-success btn-sm">
+                        Download
+                    </a>
+                </td>
+                {% else %}
+                <td></td>
+                {% endif %}
+            </tr>
         {% endfor %}
-        <!-- and then with completed jobs -->
-        {% for job in job_m.completed %}
-        <tr class="completed">
-            <td>{{ job.name }}</td>
-            <td>{{ job.ctime.strftime("%Y-%m-%d %H:%M:%S") }}</td>
-            <td>{{ job.status }}</td>
-            <td>{{ "{:.2f}".format(job.running_time) }}</td>
-            {% if job.password %}
-            <td><a href="download/{{ job.name }}">Download</a></td>
-            {% else %}
-            <td></td>
-            {% endif %}
-        </tr>
-        {% endfor %}
+    </tbody>
     </table>
 
 </article>

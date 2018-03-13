@@ -31,11 +31,11 @@ class InputDataUpload(FlaskForm):
 
 class GetJobResults(FlaskForm):
     submit = SubmitField('Get results',
-                         render_kw={"class": "btn btn-info btn-lg", "id": "submit-button"}
+                         render_kw={"class": "btn btn-info", "id": "submit-button"}
                          )
 
     # get job password
-    password = StringField("Password:",
+    password = StringField("Enter password:",
                                validators=[Required(),
                                            Length(min=app_conf.JOB_PASSWD_LENGTH,
                                                   max=app_conf.JOB_PASSWD_LENGTH,

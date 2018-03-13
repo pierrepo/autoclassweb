@@ -5,15 +5,12 @@
     <header>
         <h1>Reading input file(s)</h1>
     </header>
-    <pre>
-{{ msg }} 
-    </pre>
     {% if run_status %}
     <div class="success">
     <p>
-    Congratulation. Your autoclass job {{ job_name }} is now running. Let's hope it'll cluster your data nicely!
+    Congratulation. Your autoclass job <button type="button" class="btn btn-success">{{ job_name }}</button> is now running. Let's hope your data will cluster nicely!
 		</p>
-		<p>Your token is: <span class="highlight">{{ access_token }}</span>.</p>
+		<p>Your token is <button type="button" class="btn btn-warning">{{ access_token }}</button></p>
 		<p>You will need  your token to get your results back upon completion of your autoclass job.</p>
 		<p>Check regularly your job status.</p>
     </div>
@@ -23,9 +20,7 @@
     </div>
     {% endif %}
     <pre>
-    {{ content_files }}
+{{ log_msg }}
     </pre>
 
-
-<a href="status">Show jobs / retrieve results</a>
 {% endblock %}

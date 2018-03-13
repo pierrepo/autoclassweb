@@ -2,25 +2,20 @@
 {% block body %}
 
 <article>
-    <header>
-        <h1>Reading input file(s)</h1>
-    </header>
-    {% if run_status %}
-    <div class="success">
+    {% if status == "running" %}
     <p>
     Congratulation. Your autoclass job <button type="button" class="btn btn-success">{{ job_name }}</button> is now running. Let's hope your data will cluster nicely!
-		</p>
-		<p>Your token is <button type="button" class="btn btn-warning">{{ access_token }}</button></p>
-		<p>You will need  your token to get your results back upon completion of your autoclass job.</p>
-		<p>Check regularly your job status.</p>
-    </div>
+	</p>
+	<p>Your token is <button type="button" class="btn btn-warning">{{ password }}</button></p>
+	<p>You will need  your token to get your results back upon completion of your autoclass job.</p>
+	<p>Check regularly your job status.</p>
     {% else %}
-    <div class='fail'>
-    Something went wrong in autoclass job initialisation.
+    <div class='error'>
+    Something went wrong in autoclass job initialization. Check your input files and parameters.
     </div>
     {% endif %}
     <pre>
-{{ log_msg }}
+{{ log }}
     </pre>
 
 {% endblock %}

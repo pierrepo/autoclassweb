@@ -37,7 +37,7 @@ class Job():
         # get running status
         self.get_status()
         # get password if any
-        self.find_access()
+        self.get_password()
 
 
     def create_from_name(self, root, name):
@@ -106,7 +106,7 @@ class Job():
         path = Path(self.path)
         # first try to find log file for autoclass search (.log)
         try:
-            log_file = [str(x) for x in path.iterdir() if ".log" in str(x)][0]
+            log_file = [str(x) for x in path.iterdir() if "clust.log" in str(x)][0]
             # modified time
             mtimestamp = os.path.getmtime(log_file)
             mtime = datetime.datetime.fromtimestamp(mtimestamp)
@@ -120,17 +120,18 @@ class Job():
             self.status = 'failed'
         # then try to find log file for autoclass report (.rlog)
         try:
-            log_file = [str(x) for x in path.iterdir() if ".rlog" in str(x)][0]
+            log_file = [str(x) for x in path.iterdir() if "clust.rlog" in str(x)][0]
             # update running status
             self.status = 'completed'
         except:
             pass
 
 
-    def find_access(self):
+    def get_password(self):
         """
-        Find access password
+        Find job password for results retrieval
         """
+        self.password = ""
         access_name = os.path.join(self.path, 'access')
         if os.path.exists(access_name):
             with open(access_name, 'r') as access_file:

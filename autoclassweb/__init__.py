@@ -1,4 +1,5 @@
 import os
+import io
 import logging
 
 from flask import Flask, jsonify, render_template, url_for, redirect, request, flash, session
@@ -97,16 +98,21 @@ def startjob():
         os.chdir(job_path)
         # create logger
         logger = logging.getLogger("autoclasswrapper")
-        logger.setLevel(logging.INFO)
+        logger.setLevel(logging.DEBUG)
         # create a file handler
         handler = logging.FileHandler('input.log')
         handler.setLevel(logging.INFO)
+        # create a stream handler
+        log_capture_string = io.StringIO()
+        handler_stream = logging.StreamHandler(log_capture_string)
+        handler_stream.setLevel(logging.INFO)
         # create a logging format
-        formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+        formatter = logging.Formatter('%(asctime)s - %(levelname)-8s - %(message)s')
         handler.setFormatter(formatter)
+        handler_stream.setFormatter(formatter)
         # add the handlers to the logger
         logger.addHandler(handler)
-        logger.info("Let's go!")
+        logger.addHandler(handler_stream)
         # initiate autoclass autoclass wrapper
         clust = wrapper.Input(job_path)
         # load scalar data if any
@@ -129,19 +135,26 @@ def startjob():
         clust.create_sparams_file()
         clust.create_rparams_file()
         clust.create_run_file()
-        ## TODO: run clustering
+        # run autoclass
+        clust.run(job_name)
+        # add password
         job = model.Job()
-        access_token = job.create_password(app.config['JOB_PASSWD_LENGTH'])
-        run_status = "running"
-        with open("input.log", "r") as inputfile:
-            logcontent = inputfile.read()
-        print(run_status, access_token)
+        password = job.create_password(app.config['JOB_PASSWD_LENGTH'])
+
+        #with open("input.log", "r") as inputfile:
+        #    logcontent = inputfile.read()
+        log_content = log_capture_string.getvalue()
+        log_capture_string.close()
+
+        if "ERROR" not in log_content:
+            status = "running"
+        else:
+            status = "failed"
         return render_template('startjob.html',
                                job_name=job_name,
-                               log_msg=logcontent,
-                               run_status=run_status,
-                               access_token=access_token)
-        #return "Create a new job {} in {} with param {}".format(job.name, job.folder, scalar)
+                               status=status,
+                               log=log_content,
+                               password=password)
     else:
         return "No job found!"
 

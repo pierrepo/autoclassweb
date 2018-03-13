@@ -7,3 +7,12 @@ body > .container {
     color: red;
     padding-left:0;
 }
+
+.flash {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+.flash > .error {
+    color:red;
+}

@@ -175,17 +175,19 @@ def download(job_name):
         if job_name == job.name:
             job_selected = job
 
-
     if job_selected is None:
-        msg['error'] = "Job {} not found or not completed yet. Cannot get results.".format(job_name)
-        return render_template('download.html', name=job_name, form=job_form, message=msg)
+        msg = ("Job {} not found, failed or not completed yet."
+               "Cannot get results.").format(job_name)
+        flash(msg, "error")
+        return redirect(url_for('status'))
 
     if job_form.validate_on_submit():
         print("job form validated!")
         # get password and enforce capital letter
         password = job_form.password.data.upper()
         if password != job_selected.password:
-            msg['error'] = "Wrong password! Try again."
+            msg = "Wrong password! Try again."
+            flash(msg, "error")
             return render_template('download.html', name=job_name, form=job_form, message=msg)
         else:
             msg['download'] = "sdsdsdsdsd"

@@ -22,3 +22,7 @@ body > .container {
 .flash > .error {
     color:red;
 }
+
+#inputlog {
+    display: none;
+}

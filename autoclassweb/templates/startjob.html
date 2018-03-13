@@ -4,18 +4,29 @@
 <article>
     {% if status == "running" %}
     <p>
-    Congratulation. Your autoclass job <button type="button" class="btn btn-success">{{ job_name }}</button> is now running. Let's hope your data will cluster nicely!
+    Congratulation. Your autoclass job is now running. Let's hope your data will cluster nicely!
 	</p>
-	<p>Your token is <button type="button" class="btn btn-warning">{{ password }}</button></p>
-	<p>You will need  your token to get your results back upon completion of your autoclass job.</p>
-	<p>Check regularly your job status.</p>
+    <div class="form-group row">
+        <label for="jobid" class="col-sm-2 col-form-label">Job id</label>
+        <input type="text" readonly class="form-control col-sm-10" id="jobid" value="{{ job_name }}">
+    </div>
+    <div class="form-group row">
+        <label for="jobpasswd" class="col-sm-2 col-form-label">Password</label>
+        <input type="text" readonly class="form-control col-sm-10" id="jobpasswd" value="{{ password }}">
+    </div>
+	<p>Note carefuly your job id and password. You will need them to retrieve your results.</p>
+	<p>Check regularly your <a href="/status">job status</a>.</p>
     {% else %}
     <div class='error'>
     Something went wrong in autoclass job initialization. Check your input files and parameters.
     </div>
     {% endif %}
-    <pre>
+
+    <p>Click <a href="#" onclick="$('#inputlog').toggle();">here</a> to hide/show log of data preparation.</p>
+
+    <pre id="inputlog">
 {{ log }}
     </pre>
+</article>
 
 {% endblock %}

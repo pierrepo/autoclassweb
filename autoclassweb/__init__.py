@@ -1,4 +1,5 @@
 import os
+import logging
 
 from flask import Flask, jsonify, render_template, url_for, redirect, request, flash, session
 from werkzeug import secure_filename
@@ -93,8 +94,20 @@ def startjob():
     if 'job_name' in session:
         job_name = session['job_name']
         job_path = session['job_path']
+        os.chdir(job_path)
+        # create logger
+        logger = logging.getLogger("autoclasswrapper")
+        logger.setLevel(logging.INFO)
+        # create a file handler
+        handler = logging.FileHandler('input.log')
+        handler.setLevel(logging.INFO)
+        # create a logging format
+        formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+        handler.setFormatter(formatter)
+        # add the handlers to the logger
+        logger.addHandler(handler)
+        logger.info("Let's go!")
         # initiate autoclass autoclass wrapper
-        print(job_path)
         clust = wrapper.Input(job_path)
         # load scalar data if any
         scalar = session['scalar']
@@ -117,15 +130,18 @@ def startjob():
         clust.create_rparams_file()
         clust.create_run_file()
         ## TODO: run clustering
-        access_token = scalar_clust.set_password(app.config['JOB_PASSWD_LENGTH'])
-        content_files = scalar_clust.print_files()
+        job = model.Job()
+        access_token = job.create_password(app.config['JOB_PASSWD_LENGTH'])
+        run_status = "running"
+        with open("input.log", "r") as inputfile:
+            logcontent = inputfile.read()
         print(run_status, access_token)
         return render_template('startjob.html',
                                job_name=job_name,
-                               msg=scalar_clust.log.msg.split('\n'),
+                               msg=logcontent,
                                run_status=run_status,
                                access_token=access_token,
-                               content_files=content_files)
+                               content_files=logcontent)
         #return "Create a new job {} in {} with param {}".format(job.name, job.folder, scalar)
     else:
         return "No job found!"

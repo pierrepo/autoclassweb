@@ -1,6 +1,7 @@
 import os
 import datetime
 import re
+import logging
 from pathlib import Path
 
 import utilities
@@ -65,7 +66,7 @@ class Job():
             print("Directory {} already exists".format(self.folder))
         except:
             print("Cannot create folder: {}".format(self.folder))
-            raise 
+            raise
 
 
 
@@ -78,7 +79,7 @@ class Job():
         # create random name from unambiguous characters
         self.name = utilities.create_random_string(name_length-1)
         self.name = "N" + self.name
-        
+
         self.ctime = datetime.datetime.now()
         date = datetime.datetime.strftime(self.ctime, "%Y%m%d")
         time = datetime.datetime.strftime(self.ctime, "%H%M%S")
@@ -92,7 +93,7 @@ class Job():
             print("Directory {} already exists".format(self.folder))
         except:
             print("Cannot create folder: {}".format(self.folder))
-            raise 
+            raise
 
 
     def get_status(self):
@@ -166,6 +167,19 @@ class Job():
                 return False
 
 
+    def create_password(self, password_length):
+        """
+        Output access token for user
+
+        Token is 8 characters long and always start with the 'P' letter
+        """
+        filename = "access"
+        logging.info("Writing access file {}".format(filename))
+        token = utilities.create_random_string(password_length-1)
+        token = 'P' + token
+        with open(filename, 'w') as accessfile:
+            accessfile.write(token)
+        return token
 
 
 class JobManager():
@@ -194,7 +208,7 @@ class JobManager():
         #job_folder_lst = next(os.walk(self.path))[1]
         p = Path(self.path)
         job_folder_lst = [str(x) for x in p.iterdir() if x.is_dir()]
-        
+
         # create jobs
         for job_folder in job_folder_lst:
             if Job.verify_folder_name(job_folder):

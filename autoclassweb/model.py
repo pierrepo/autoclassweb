@@ -211,16 +211,19 @@ class JobManager():
         job_folder_lst = [str(x) for x in p.iterdir() if x.is_dir()]
 
         # create jobs
+        jobs = {}
         for job_folder in job_folder_lst:
             if Job.verify_folder_name(job_folder):
                 job = Job(alive=self.alive)
                 job.create_from_path(job_folder)
-                if job.status == 'running':
-                    self.running.append(job)
-                else:
-                    self.completed.append(job)
-
-
+                jobs[job.ctime.strftime("%Y-%m-%d %H:%M:%S")] = job
+        # store jobs against creation time and status
+        for creation_time in sorted(jobs, reverse=True):
+            job = jobs[creation_time]
+            if job.status == 'running':
+                self.running.append(job)
+            else:
+                self.completed.append(job)
 
 
 if __name__ == '__main__':

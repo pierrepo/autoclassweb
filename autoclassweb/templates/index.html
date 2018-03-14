@@ -3,42 +3,70 @@
 
 <article>
     <p>Enter your input data and parameters</p>
-    <div class="helper">
+    <div class="text-muted helper">
     The data file must comply with the <a href="https://en.wikipedia.org/wiki/Tab-separated_values">tabulation-separated values</a> format.<br />
     First line must be a header with column names.
-    First column must be gene/protein/object names.
+    First column must be gene/protein/object names.<br />
+    You can add data in one or several categories below.
     </div>
     <form action="" method="POST" enctype="multipart/form-data">
         {{ form.csrf_token }}
         <fieldset>
             <legend>Real Scalar</legend>
-            <p>Singly bounded real values, typically bounded below at zero (e.g: length)</p>
+            <p>Singly bounded real values, typically bounded below at zero
+                (e.g: length)
+            </p>
             <div class="form-group row">
-                <label class="col-sm-2 col-form-label" for="scarlarInputFile">{{form.scalar_input_file.label}}</label>
+                <label class="col-sm-2 col-form-label"
+                       for="scarlarInputFile">
+                       {{form.scalar_input_file.label}}
+                </label>
                 <div class="col-sm-10">
-                <input type="file" class="form-control-file" id="scarlarInputFile" name="scalar_input_file">
+                    <input type="file" class="form-control-file"
+                           id="scarlarInputFile"
+                           name="scalar_input_file">
                 </div>
-                <label class="col-sm-2 col-form-label" for="scarlarInputError">{{form.scalar_error.label}}</label>
+                    <label class="col-sm-2 col-form-label"
+                           for="scarlarInputError">
+                           {{ form.scalar_error.label }}
+                    </label>
                 <div class="col-sm-10">
-                <input type="text" class="form-control" id="scarlarInputError" name="scalar_error"
-                       value={{form.scalar_error.default}}
-                       placeholder="{{form.scalar_error.placeholder}}">
-                <small class="form-text text-muted helper">Relative error on data. Optional. Default = 0.01 i.e. 1% of value.</small>
+                    <input type="text" class="form-control"
+                           id="scarlarInputError"
+                           name="scalar_error"
+                           value={{form.scalar_error.default}}
+                           placeholder="{{ form.scalar_error.placeholder }}">
+                    <small class="form-text text-muted helper">
+                        Relative error on data. Optional.
+                        Default = 0.01 i.e. 1% of value.
+                    </small>
                 </div>
             </div>
         <fieldset>
             <legend>Real Location</legend>
-            <p>Other real values (e.g: microarray log ratio, elevation, position)</p>
+            <p>Other real values
+                (e.g: microarray log ratio, elevation, position)
+            </p>
             <div class="form-group row">
                 <label class="col-sm-2 col-form-label" for="locationInputFile">{{form.location_input_file.label}}</label>
                 <div class="col-sm-10">
-                <input type="file" class="form-control-file" id="locationInputFile" name="location_input_file">
+                    <input type="file" class="form-control-file"
+                           id="locationInputFile"
+                           name="location_input_file">
                 </div>
-                <label class="col-sm-2 col-form-label" for="locationInputError">{{form.location_error.label}}</label>
+                <label class="col-sm-2 col-form-label"
+                       for="locationInputError">
+                       {{ form.location_error.label }}
+                </label>
                 <div class="col-sm-10">
-                <input type="text" class="form-control" id="locationInputError" name="location_error"
-                       value={{form.location_error.default}}>
-                <small class="form-text text-muted helper">Absolute error on data. Optional. Default = 0.01 i.e. value ± 0.01.</small>
+                    <input type="text" class="form-control"
+                           id="locationInputError"
+                           name="location_error"
+                           value={{ form.location_error.default }}>
+                    <small class="form-text text-muted helper">
+                        Absolute error on data. Optional.
+                        Default = 0.01 i.e. value ± 0.01.
+                    </small>
                 </div>
             </div>
         </fieldset>
@@ -46,13 +74,18 @@
             <legend>Discrete</legend>
             <p>Qualitative data (e.g. color, phenotype, name...)</p>
             <div class="form-group row">
-                <label class="col-sm-2 col-form-label" for="discreteInputFile">{{form.discrete_input_file.label}}</label>
+                <label class="col-sm-2 col-form-label"
+                       for="discreteInputFile">
+                       {{ form.discrete_input_file.label }}
+                </label>
                 <div class="col-sm-10">
-                <input type="file" class="form-control-file" id="discreteInputFile" name="discrete_input_file">
+                <input type="file" class="form-control-file"
+                       id="discreteInputFile"
+                       name="discrete_input_file">
                 </div>
             </div>
         </fieldset>
-        <p>{{form.submit}}</p>
+        <p>{{ form.submit }}</p>
     </form>
 
     <hr />

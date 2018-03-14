@@ -2,7 +2,7 @@ import os
 import io
 import logging
 
-from flask import Flask, jsonify, render_template, url_for, redirect, request, flash, session
+from flask import Flask, jsonify, render_template, url_for, redirect, request, flash, session, send_from_directory
 from werkzeug import secure_filename
 
 import sys
@@ -201,9 +201,35 @@ def download(job_name):
         if password != job_selected.password:
             msg = "Wrong password! Try again."
             flash(msg, "error")
-            return render_template('download.html', name=job_name, form=job_form, message=msg)
         else:
-            msg['download'] = "sdsdsdsdsd"
-        return render_template('download.html', name=job_name, form=job_form, message=msg)
-
+            # create logger
+            logger = logging.getLogger("autoclasswrapper")
+            logger.setLevel(logging.DEBUG)
+            # create a file handler
+            handler = logging.FileHandler('output.log')
+            handler.setLevel(logging.INFO)
+            # create a stream handler
+            log_capture_string = io.StringIO()
+            handler_stream = logging.StreamHandler(log_capture_string)
+            handler_stream.setLevel(logging.INFO)
+            # create a logging format
+            formatter = logging.Formatter('%(asctime)s :: %(levelname)-8s :: %(message)s', datefmt="%Y-%m-%d %H:%M:%S")
+            handler.setFormatter(formatter)
+            handler_stream.setFormatter(formatter)
+            # add the handlers to the logger
+            logger.addHandler(handler)
+            logger.addHandler(handler_stream)
+            os.chdir(job_selected.path)
+            results = wrapper.Output()
+            results.extract_results()
+            results.aggregate_input_data("clust.tsv")
+            results.write_cdt()
+            results.write_cdt(with_proba=True)
+            results.write_cluster_stats()
+            outputzip = results.wrap_outputs()
+            log_content = log_capture_string.getvalue()
+            log_capture_string.close()
+            msg['log'] = log_content
+            fullpath = os.path.join(os.environ['FLASK_HOME'], job_selected.path)
+            return send_from_directory(fullpath, outputzip, as_attachment=True)
     return render_template('download.html', name=job_name, form=job_form, message=msg)

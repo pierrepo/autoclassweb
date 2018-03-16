@@ -1,7 +1,7 @@
 import os
 import io
 import logging
-
+import psutil
 from flask import Flask, jsonify, render_template, url_for, redirect, request, flash, session, send_from_directory
 from werkzeug import secure_filename
 
@@ -14,7 +14,8 @@ app = Flask(__name__)
 
 # set config
 app.config.from_object('autoclassweb.config.TestingConfig')
-
+if "MAX_JOB" not in app.config:
+    app.config["MAX_JOB"] = psutil.cpu_count() - 1
 
 @app.route('/ping', methods=['GET'])
 def ping_pong():
@@ -35,7 +36,9 @@ def index():
     input_form = forms.InputDataUpload()
 
     # list current jobs (running and completed)
-    job_manager = model.JobManager(app.config['UPLOAD_FOLDER'], 4, alive=4)
+    job_manager = model.JobManager(app.config['UPLOAD_FOLDER'],
+                                   app.config["MAX_JOB"],
+                                   alive=4)
     job_manager.autodiscover()
 
     # handle form data after POST
@@ -134,7 +137,7 @@ def startjob():
         clust.create_model_file()
         clust.create_sparams_file()
         clust.create_rparams_file()
-        clust.create_run_file()
+        clust.create_run_file_test()
         # run autoclass
         clust.run(job_name)
         # add password

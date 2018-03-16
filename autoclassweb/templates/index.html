@@ -90,14 +90,17 @@
 
     <hr />
     <h1>Server status</h1>
-    <p>{{ job_m.running | length }} jobs running / {{ job_m.max }} max
+    <p>{{ job_m.running | length }} jobs running ({{ job_m.max }} max)
+        {% if job_m.running %}
+        :
+        {% endif %}
         {% for job in job_m.running %}
-        [ {{ job.name }} ]
+        {{ job.name }} |
         {% endfor %}
     </p>
     <p>{{ job_m.completed | length }} jobs completed
-        {% for job in job_m.completed %}
-        [ <a href="download/{{ job.name }}">{{ job.name }}</a> ]
-        {% endfor %}
+        {% if job_m.completed %}
+        : <a href="/status">get results</a>
+        {% endif %}
     </p>
 {% endblock %}

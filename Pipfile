@@ -12,6 +12,7 @@ flask = "*"
 flask-script = "*"
 flask-wtf = "*"
 psutil = "*"
+chardet = "*"
 
 
 [dev-packages]

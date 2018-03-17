@@ -12,9 +12,9 @@ class TestingConfig(BaseConfig):
     """Testing configuration"""
     DEBUG = True
     TESTING = True
+    MAX_JOB = 2
 
 
 class ProductionConfig(BaseConfig):
     """Production configuration"""
     DEBUG = False
-    MAX_JOB = 4

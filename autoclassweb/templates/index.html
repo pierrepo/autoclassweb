@@ -11,7 +11,12 @@
     </div>
     <form action="" method="POST" enctype="multipart/form-data">
         {{ form.csrf_token }}
+        {% if job_m.running | length < job_m.max %}
         <fieldset>
+        {% else %}
+        <fieldset disabled>
+        {% endif %}
+
             <legend>Real Scalar</legend>
             <p>Singly bounded real values, typically bounded below at zero
                 (e.g: length)
@@ -42,7 +47,6 @@
                     </small>
                 </div>
             </div>
-        <fieldset>
             <legend>Real Location</legend>
             <p>Other real values
                 (e.g: microarray log ratio, elevation, position)
@@ -69,8 +73,6 @@
                     </small>
                 </div>
             </div>
-        </fieldset>
-        <fieldset>
             <legend>Discrete</legend>
             <p>Qualitative data (e.g. color, phenotype, name...)</p>
             <div class="form-group row">
@@ -84,8 +86,15 @@
                        name="discrete_input_file">
                 </div>
             </div>
+            <div>
+                {{ form.submit }}
+                {% if job_m.running | length >= job_m.max %}
+                <small class="form-text text-muted helper">
+                Max number of jobs reached. Please wait.
+                </small>
+                {% endif %}
+            </div>
         </fieldset>
-        <p>{{ form.submit }}</p>
     </form>
 
     <hr />

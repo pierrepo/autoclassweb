@@ -1,6 +1,17 @@
-body > .container {
-        padding-top: 60px;
+html, body {
+  height: 100%;
 }
+
+body > .container {
+        padding-top: 50px;
+        padding-bottom: 50px;
+}
+
+.navbar {
+    padding-top: 3px;
+    padding-bottom: 3px;
+}
+
 
 .errors {
     list-style-type: none;

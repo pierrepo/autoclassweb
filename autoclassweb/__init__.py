@@ -32,6 +32,9 @@ def index():
     os.chdir(os.environ['FLASK_HOME'])
     print("We are in: {}".format(os.getcwd()))
 
+    session["flask_res_mail"] = False
+    if os.environ["FLASK_RES_MAIL"] == "True":
+        session["flask_res_mail"] = True
     # create form
     input_form = forms.InputDataUpload()
 
@@ -42,16 +45,28 @@ def index():
     job_manager.autodiscover()
 
     # handle form data after POST
-    # flash(input_form.errors)
     if input_form.validate_on_submit():
-        if not (input_form.scalar_input_file.data or input_form.location_input_file.data or input_form.discrete_input_file.data):
+
+        if not (input_form.scalar_input_file.data
+                or input_form.location_input_file.data
+                or input_form.discrete_input_file.data):
+            flash("Missing files input data! Provide at least one type of data", "error")
             return render_template('index.html', form=input_form, job_m=job_manager)
-            print("Missing files in input form!")
-        print("input form validated!")
+
+        if os.environ["FLASK_RES_MAIL"] == "True" \
+           and not input_form.mail_address.data:
+            flash("Missing e-mail address!", "error")
+            return render_template('index.html', form=input_form, job_m=job_manager)
+
         # create job directory
         job = model.Job()
         job.create_new(app.config['UPLOAD_FOLDER'], app.config['JOB_NAME_LENGTH'])
         print(job.path, job.name)
+        # get e-mail address
+        if input_form.mail_address.data:
+            mail_address = input_form.mail_address.data
+        else:
+            mail_address = ""
         # get 'real scalar' input data
         scalar = {}
         if input_form.scalar_input_file.data:
@@ -85,17 +100,22 @@ def index():
         # prepare data to be stored in session
         session['job_name'] = job.name
         session['job_path'] = job.path
+        session['mail_address'] = mail_address
         session['scalar'] = scalar
         session['location'] = location
         session['discrete'] = discrete
         return redirect(url_for('startjob'))
 
-    return render_template('index.html', form=input_form, job_m=job_manager)
+    return render_template('index.html',
+                           form=input_form,
+                           job_m=job_manager)
 
 
 @app.route('/startjob', methods=['GET'])
 def startjob():
     if 'job_name' in session:
+        print(session)
+        mail_address = session["mail_address"]
         job_name = session['job_name']
         job_path = session['job_path']
         os.chdir(job_path)
@@ -117,7 +137,7 @@ def startjob():
         logger.addHandler(handler)
         logger.addHandler(handler_stream)
         # initiate autoclass autoclass wrapper
-        clust = wrapper.Input(job_path)
+        clust = wrapper.Input()
         # load scalar data if any
         scalar = session['scalar']
         if scalar['file']:
@@ -137,12 +157,16 @@ def startjob():
         clust.create_model_file()
         clust.create_sparams_file()
         clust.create_rparams_file()
-        clust.create_run_file_test()
+        clust.create_run_file()
+        # prepare results export and send
+        import shutil
+        shutil.copy("../../export_results.py", "./")
+        with open("clust.sh", "a") as f:
+            f.write("python3 export_results.py {}".format(mail_address))
         # run autoclass
         clust.run(job_name)
         # add password
         job = model.Job()
-        password = job.create_password(app.config['JOB_PASSWD_LENGTH'])
 
         #with open("input.log", "r") as inputfile:
         #    logcontent = inputfile.read()
@@ -156,38 +180,37 @@ def startjob():
         return render_template('startjob.html',
                                job_name=job_name,
                                status=status,
-                               log=log_content,
-                               password=password)
+                               log=log_content)
     else:
         return "No job found!"
 
 
 @app.route('/status', methods=['GET', 'POST'])
 def status():
-    print("We are in: {}".format(os.getcwd()))
-    print("Flask is in : {}".format(os.environ['FLASK_HOME']))
     os.chdir(os.environ['FLASK_HOME'])
-    print("We are in: {}".format(os.getcwd()))
-
+    session["link_results"] = False
+    if os.environ["FLASK_RES_LINK"] == "True":
+        session["link_results"] = True
     job_manager = model.JobManager(app.config['UPLOAD_FOLDER'], 4, alive=4)
     job_manager.autodiscover()
-
     return render_template('status.html', job_m=job_manager)
 
 
-@app.route('/download/<job_name>', methods=['GET', 'POST'])
+@app.route('/download/<job_name>', methods=['GET'])
 def download(job_name):
-    print("Looking for job {}".format(job_name))
+    print(job_name)
+    if not session["link_results"]:
+        msg = "Results download is not allowed."
+        print(msg)
+        flash(msg, "error")
+        return redirect(url_for('status'))
 
-    # create form
-    job_form = forms.GetJobResults()
-    msg = {}
-
+    # retrieve all jobs
     job_manager = model.JobManager(app.config['UPLOAD_FOLDER'], 4, alive=4)
     job_manager.autodiscover()
-
+    # find wanted job
     job_selected = None
-    for job in job_manager.completed:
+    for job in job_manager.stopped:
         if job_name == job.name:
             job_selected = job
 
@@ -196,43 +219,7 @@ def download(job_name):
                "Cannot get results.").format(job_name)
         flash(msg, "error")
         return redirect(url_for('status'))
-
-    if job_form.validate_on_submit():
-        print("job form validated!")
-        # get password and enforce capital letter
-        password = job_form.password.data.upper()
-        if password != job_selected.password:
-            msg = "Wrong password! Try again."
-            flash(msg, "error")
-        else:
-            # create logger
-            logger = logging.getLogger("autoclasswrapper")
-            logger.setLevel(logging.DEBUG)
-            # create a file handler
-            handler = logging.FileHandler('output.log')
-            handler.setLevel(logging.INFO)
-            # create a stream handler
-            log_capture_string = io.StringIO()
-            handler_stream = logging.StreamHandler(log_capture_string)
-            handler_stream.setLevel(logging.INFO)
-            # create a logging format
-            formatter = logging.Formatter('%(asctime)s :: %(levelname)-8s :: %(message)s', datefmt="%Y-%m-%d %H:%M:%S")
-            handler.setFormatter(formatter)
-            handler_stream.setFormatter(formatter)
-            # add the handlers to the logger
-            logger.addHandler(handler)
-            logger.addHandler(handler_stream)
-            os.chdir(job_selected.path)
-            results = wrapper.Output()
-            results.extract_results()
-            results.aggregate_input_data("clust.tsv")
-            results.write_cdt()
-            results.write_cdt(with_proba=True)
-            results.write_cluster_stats()
-            outputzip = results.wrap_outputs()
-            log_content = log_capture_string.getvalue()
-            log_capture_string.close()
-            msg['log'] = log_content
-            fullpath = os.path.join(os.environ['FLASK_HOME'], job_selected.path)
-            return send_from_directory(fullpath, outputzip, as_attachment=True)
-    return render_template('download.html', name=job_name, form=job_form, message=msg)
+    fullpath = os.path.join(os.environ['FLASK_HOME'], job_selected.path)
+    return send_from_directory(fullpath,
+                               os.path.basename(job_selected.results_file),
+                               as_attachment=True)

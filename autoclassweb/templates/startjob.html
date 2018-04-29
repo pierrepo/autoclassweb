@@ -10,12 +10,12 @@
         <label for="jobid" class="col-sm-2 col-form-label">Job id</label>
         <input type="text" readonly class="form-control col-sm-10" id="jobid" value="{{ job_name }}">
     </div>
-    <div class="form-group row">
-        <label for="jobpasswd" class="col-sm-2 col-form-label">Password</label>
-        <input type="text" readonly class="form-control col-sm-10" id="jobpasswd" value="{{ password }}">
-    </div>
-	<p>Note carefuly your job id and password. You will need them to retrieve your results.</p>
-	<p>Check regularly your <a href="/status">job status</a>.</p>
+    {% if session["mail_address"] %}
+        <p>A mail will be send to {{ session["mail_address"] }}</p>
+        <p>You can also check your <a href="/status">job status</a>.</p>
+    {% else %}
+    	<p>Check regularly your <a href="/status">job status</a>.</p>
+        {% endif %}
     {% else %}
     <div class='error'>
     Something went wrong in autoclass job initialization. Check your input files and parameters.

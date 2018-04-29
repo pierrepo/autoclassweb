@@ -4,6 +4,9 @@ venv
 # temp data
 tmp
 
+# config file
+autoclassweb.ini
+
 # data sample for tests
 test-data/
 

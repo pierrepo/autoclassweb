@@ -1,8 +1,10 @@
 import os
 import datetime
 import re
+import glob
 import logging
 from pathlib import Path
+import glob
 
 import utilities
 
@@ -19,14 +21,13 @@ class Job():
         self.folder = None
         self.name = None
         self.ctime = None
-        self.status = ''
+        self.status = ""
         self.running_time = 0
         self.alive = alive
-        self.password = ''
+        self.results_file = ""
 
     def create_from_path(self, path):
-        """
-        Create Job from path
+        """Create Job from path
         """
         self.path = path
         answer = self.verify_folder_name(self.path)
@@ -36,8 +37,8 @@ class Job():
             raise("{} is not a valid Job path".format(self.path))
         # get running status
         self.get_status()
-        # get password if any
-        self.get_password()
+        # get results file if any
+        self.get_results_file()
 
 
     def create_from_name(self, root, name):
@@ -103,39 +104,44 @@ class Job():
         We considere that the time to make search clusters is much smaller
         than the time to build reports.
         """
-        path = Path(self.path)
+        # default values
+        self.running_time = 0
+        self.status = "failed"
         # first try to find log file for autoclass search (.log)
-        try:
-            log_file = [str(x) for x in path.iterdir() if "clust.log" in str(x)][0]
+        file_lst = glob.glob(os.path.join(self.path, "clust.log"))
+        if file_lst:
+            log_file = file_lst[0]
             # modified time
             mtimestamp = os.path.getmtime(log_file)
             mtime = datetime.datetime.fromtimestamp(mtimestamp)
             # running status
             if ((datetime.datetime.now() - mtime).seconds < self.alive ):
-                self.status = 'running'
+                self.status = "running"
+            else:
+                self.status = "failed"
             # running time
             self.running_time = (mtime - self.ctime).seconds / 60
-        except:
-            self.running_time = 0
-            self.status = 'failed'
         # then try to find log file for autoclass report (.rlog)
-        try:
-            log_file = [str(x) for x in path.iterdir() if "clust.rlog" in str(x)][0]
-            # update running status
-            self.status = 'completed'
-        except:
-            pass
+        file_lst = glob.glob(os.path.join(self.path, "job-completed"))
+        if file_lst:
+            self.status = "completed"
+            start = datetime.datetime.fromtimestamp(
+                      os.path.getmtime(os.path.join(self.path, "clust.model"))
+                     )
+            end = datetime.datetime.fromtimestamp(
+                       os.path.getmtime(os.path.join(file_lst[0]))
+                    )
+            self.running_time = (end - start).seconds / 60
 
 
-    def get_password(self):
+    def get_results_file(self):
         """
-        Find job password for results retrieval
+        Find results file
         """
-        self.password = ""
-        access_name = os.path.join(self.path, 'access')
-        if os.path.exists(access_name):
-            with open(access_name, 'r') as access_file:
-                self.password = access_file.readline()
+        self.results_file = ""
+        zip_lst = glob.glob(os.path.join(self.path,"*autoclass*.zip"))
+        if len(zip_lst) >= 1:
+            self.results_file = zip_lst[0]
 
 
     def __repr__(self):
@@ -168,21 +174,6 @@ class Job():
                 return False
 
 
-    def create_password(self, password_length):
-        """
-        Output access token for user
-
-        Token is 8 characters long and always start with the 'P' letter
-        """
-        filename = "access"
-        logging.info("Writing access file {}".format(filename))
-        token = utilities.create_random_string(password_length-1)
-        token = 'P' + token
-        with open(filename, 'w') as accessfile:
-            accessfile.write(token)
-        return token
-
-
 class JobManager():
     """
     Manager for autoclass jobs
@@ -195,7 +186,7 @@ class JobManager():
         self.path = path
         self.max = max_jobs
         self.running = []
-        self.completed = []
+        self.stopped = []
         self.alive = alive
 
 
@@ -223,7 +214,7 @@ class JobManager():
             if job.status == 'running':
                 self.running.append(job)
             else:
-                self.completed.append(job)
+                self.stopped.append(job)
 
 
 if __name__ == '__main__':

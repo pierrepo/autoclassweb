@@ -9,7 +9,6 @@
                 <th>Created</th>
                 <th>Status</th>
                 <th>Running time (min)</th>
-                <th>Results</th>
             </tr>
         </thead>
         <tbody>
@@ -20,25 +19,24 @@
                 <td>{{ job.ctime.strftime("%Y-%m-%d %H:%M:%S") }}</td>
                 <td>{{ job.status }}</td>
                 <td>{{ "{:.2f}".format(job.running_time) }}</td>
-                <td></td>
             </tr>
             {% endfor %}
             <!-- and then with completed jobs -->
-            {% for job in job_m.completed %}
-            <tr class="completed">
+            {% for job in job_m.stopped %}
+            <tr class="stopped">
                 <td>{{ job.name }}</td>
                 <td>{{ job.ctime.strftime("%Y-%m-%d %H:%M:%S") }}</td>
-                <td>{{ job.status }}</td>
-                <td>{{ "{:.2f}".format(job.running_time) }}</td>
-                {% if job.password %}
-                <td>
-                    <a href="download/{{ job.name }}"  class="btn btn-success btn-sm">
-                        Download
-                    </a>
-                </td>
+                {% if session["link_results"] and job.status == "completed" %}
+                    <td>
+                        <a href="/download/{{ job.name }}"
+                           class="btn btn-success btn-sm">
+                            {{ job.status }}
+                        </a>
+                    </td>
                 {% else %}
-                <td></td>
+                    <td>{{ job.status }}</td>
                 {% endif %}
+                <td>{{ "{:.2f}".format(job.running_time) }}</td>
             </tr>
         {% endfor %}
     </tbody>

@@ -3,31 +3,32 @@
 
 <article>
     <h2>Enter your input data and parameters</h2>
-    {% if session["flask_res_mail"] %}
-    <div class="form-group row">
-        <label class="col-sm-2 col-form-label"
-               for="mailaddress">
-               {{form.mail_address.label}}
-        </label>
-        <div class="col-sm-10">
-            <input type="text" class="form-control"
-                   id="mailaddress"
-                   name="mail_address"
-                   placeholder="enter here your e-mail address">
-        </div>
-    </div>
-    {% endif %}
-    <div class="text-muted helper">
-    The data file must comply with the
-    <a href="https://en.wikipedia.org/wiki/Tab-separated_values"
-       target="_blank">tabulation-separated values
-    </a> format.<br />
-    First line must be a header with column names.
-    First column must be gene/protein/object names.<br />
-    You can add data in one or several categories below.
-    </div>
     <form action="" method="POST" enctype="multipart/form-data">
         {{ form.csrf_token }}
+        {% if session["flask_res_mail"] %}
+        <div class="form-group row">
+            <label class="col-sm-2 col-form-label"
+                   for="mailaddress">
+                   {{form.mail_address.label}}
+            </label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control"
+                       id="mailaddress"
+                       name="mail_address"
+                       placeholder="enter here your e-mail address">
+            </div>
+        </div>
+        {% endif %}
+        <div class="text-muted helper">
+        The data file must comply with the
+        <a href="https://en.wikipedia.org/wiki/Tab-separated_values"
+           target="_blank">tabulation-separated values
+        </a> format.<br />
+        First line must be a header with column names.
+        First column must be gene/protein/object names.<br />
+        You can add data in one or several categories below.
+        </div>
+
         {% if job_m.running | length < job_m.max %}
         <fieldset>
         {% else %}

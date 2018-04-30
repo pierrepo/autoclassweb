@@ -13,7 +13,7 @@ from email import encoders
 
 
 def send_results_mail(host, port, SSL, login, password, sender,
-                      mail_address, job_id, results_file):
+                      mail_address, job_id, results_file, timeout=5):
     """Send mail with results
 
     Docs:
@@ -50,17 +50,18 @@ AutoclassWeb Bot
 
     try:
         if SSL:
-            mailserver = smtplib.SMTP_SSL(host, port)
+            mailserver = smtplib.SMTP_SSL(host, port, timeout=timeout)
             mailserver.login(login,password)
             mailserver.sendmail(login, mail_address, msg_str)
+            mailserver.quit()
         else:
-            mailserver = smtplib.SMTP(host, port)
+            mailserver = smtplib.SMTP(host, port, timeout=timeout)
             mailserver.sendmail(sender, mail_address, msg_str)
+            mailserver.quit()
         logger.info("Successfully sent email.")
     except:
         logger.error("Error: unable to send email.")
-    finally:
-        mailserver.quit()
+
 
 
 

@@ -3,9 +3,6 @@ from flask_wtf.file import FileField, FileRequired
 from wtforms import StringField, RadioField, FloatField, SubmitField
 from wtforms.validators import Required, DataRequired, Length
 
-from autoclassweb import config
-app_conf = config.BaseConfig()
-
 class InputDataUpload(FlaskForm):
     mail_address = StringField("Mail address",
                                validators=[]

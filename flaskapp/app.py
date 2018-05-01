@@ -3,6 +3,7 @@ import sys
 import io
 import logging
 import psutil
+import shutil
 from flask import Flask, jsonify, render_template, url_for, redirect, request, flash, session, send_from_directory
 from werkzeug import secure_filename
 
@@ -23,6 +24,16 @@ print("FLASK_HOME is {}".format(os.environ["FLASK_HOME"]))
 # instantiate Flask app
 app = Flask(__name__)
 
+# search autoclass executable in path
+autoclass_path = shutil.which("autoclass")
+if autoclass_path:
+    print("autoclass found in {}".format(autoclass_path))
+else:
+    print("autoclass not found in path!")
+    print("Exiting autoclassweb")
+    sys.exit(1)
+
+
 # load user Parameters
 config.read_ini("autoclassweb.ini")
 
@@ -34,6 +45,7 @@ if "MAX_JOB" not in app.config:
 
 @app.route('/ping', methods=['GET'])
 def ping_pong():
+    print(app.config)
     return jsonify({
         'status': 'success',
         'message': 'pong!'

@@ -1,21 +1,36 @@
 import os
+import sys
 import io
 import logging
 import psutil
 from flask import Flask, jsonify, render_template, url_for, redirect, request, flash, session, send_from_directory
 from werkzeug import secure_filename
 
-import sys
-sys.path.insert(0,'..')
+sys.path.insert(0,'.')
 import autoclasswrapper as wrapper
 
-# instantiate the app
+os.environ["FLASK_RES_LINK"] = "True"
+os.environ["FLASK_RES_MAIL"] = "False"
+
+import config
+import forms
+import model
+
+#  set Flask base directory
+os.environ["FLASK_HOME"] = os.getcwd()
+print("FLASK_HOME is {}".format(os.environ["FLASK_HOME"]))
+
+# instantiate Flask app
 app = Flask(__name__)
 
+# load user Parameters
+config.read_ini("autoclassweb.ini")
+
 # set config
-app.config.from_object('autoclassweb.config.TestingConfig')
+app.config.from_object('config.TestingConfig')
 if "MAX_JOB" not in app.config:
     app.config["MAX_JOB"] = psutil.cpu_count() - 1
+    print("MAX JOB defined as {}".format(app.config["MAX_JOB"]))
 
 @app.route('/ping', methods=['GET'])
 def ping_pong():
@@ -27,9 +42,6 @@ def ping_pong():
 
 @app.route('/', methods=('GET', 'POST'))
 def index():
-    print("We are in: {}".format(os.getcwd()))
-    print("Flask is in : {}".format(os.environ['FLASK_HOME']))
-    os.chdir(os.environ['FLASK_HOME'])
     print("We are in: {}".format(os.getcwd()))
 
     session["flask_res_mail"] = False

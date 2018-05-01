@@ -5,8 +5,16 @@ import glob
 import logging
 from pathlib import Path
 import glob
+import random
 
-import utilities
+
+UNAMBIGUOUS_CHARACTERS = "234679ACDEFGHJKMNPRTWXYZ"
+
+def create_random_string(length):
+    """Create random string from a character set.
+    """
+    string = ''.join(random.choice(UNAMBIGUOUS_CHARACTERS) for _ in range(length))
+    return string
 
 
 class Job():
@@ -78,7 +86,7 @@ class Job():
         Create new job in root directory
         """
         # create random name from unambiguous characters
-        self.name = utilities.create_random_string(name_length-1)
+        self.name = create_random_string(name_length-1)
         self.name = "N" + self.name
 
         self.ctime = datetime.datetime.now()

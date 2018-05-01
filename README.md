@@ -19,12 +19,18 @@ A web app to run autoclass clustering.
 3. Install requirements
 
     ```
-    $ pipenv install pandas flask flask-script Flask-WTF psutil
+    $ pipenv install pandas flask flask-wtf psutil chardet
     ```
 
 # Usage
 
 ```
-$ pipenv run python manage.py runserver
+$ export FLASK_APP=flaskapp/app.py
+$ pipenv run flask run
 ```
 
+or quicker:
+
+```
+make run
+```

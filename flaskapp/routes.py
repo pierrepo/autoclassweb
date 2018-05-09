@@ -7,41 +7,11 @@ import shutil
 from flask import Flask, jsonify, render_template, url_for, redirect, request, flash, session, send_from_directory
 from werkzeug import secure_filename
 
-sys.path.insert(0,'.')
+from flaskapp import app
+from flaskapp import forms
+from flaskapp import model
+
 import autoclasswrapper as wrapper
-
-os.environ["FLASK_RES_LINK"] = "True"
-os.environ["FLASK_RES_MAIL"] = "False"
-
-import config
-import forms
-import model
-
-#  set Flask base directory
-os.environ["FLASK_HOME"] = os.getcwd()
-print("FLASK_HOME is {}".format(os.environ["FLASK_HOME"]))
-
-# instantiate Flask app
-app = Flask(__name__)
-
-# search autoclass executable in path
-autoclass_path = shutil.which("autoclass")
-if autoclass_path:
-    print("autoclass found in {}".format(autoclass_path))
-else:
-    print("autoclass not found in path!")
-    print("Exiting autoclassweb")
-    sys.exit(1)
-
-
-# load user Parameters
-config.read_ini("autoclassweb.ini")
-
-# set config
-app.config.from_object('config.TestingConfig')
-if "MAX_JOB" not in app.config:
-    app.config["MAX_JOB"] = psutil.cpu_count() - 1
-    print("MAX JOB defined as {}".format(app.config["MAX_JOB"]))
 
 @app.route('/ping', methods=['GET'])
 def ping_pong():

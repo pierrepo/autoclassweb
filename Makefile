@@ -5,4 +5,5 @@ clean:
 	rm -rf tmp/20*.*.*
 
 run:
-	FLASK_APP=autoclassweb; pipenv run flask run
+	export FLASK_APP=autoclassweb; pipenv run flask run
+

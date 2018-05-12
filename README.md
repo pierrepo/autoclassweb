@@ -25,12 +25,12 @@ A web app to run autoclass clustering.
 # Usage
 
 ```
-$ export FLASK_APP=flaskapp/app.py
+$ export FLASK_APP=autoclassweb
 $ pipenv run flask run
 ```
 
 or quicker:
 
 ```
-make run
+$ make run
 ```

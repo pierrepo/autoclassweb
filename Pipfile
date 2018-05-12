@@ -1,23 +1,17 @@
 [[source]]
-
 url = "https://pypi.python.org/simple"
 name = "pypi"
 verify_ssl = true
 
-
 [packages]
-
 pandas = "*"
 flask = "*"
 flask-wtf = "*"
 psutil = "*"
 chardet = "*"
-
+autoclasswrapper = "*"
 
 [dev-packages]
 
-
-
 [requires]
-
 python_version = "3.5"

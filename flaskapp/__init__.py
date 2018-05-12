@@ -8,15 +8,10 @@ app = Flask(__name__)
 
 from flaskapp import routes
 
-
-sys.path.insert(0,'.')
 import autoclasswrapper as wrapper
 
 os.environ["FLASK_RES_LINK"] = "True"
 os.environ["FLASK_RES_MAIL"] = "False"
-
-print(os.getcwd())
-
 
 #  set Flask base directory
 os.environ["FLASK_HOME"] = os.getcwd()

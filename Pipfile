@@ -9,7 +9,8 @@ flask = "*"
 flask-wtf = "*"
 psutil = "*"
 chardet = "*"
-autoclasswrapper = "*"
+#autoclasswrapper = "*"
+gunicorn = "*"
 
 [dev-packages]
 

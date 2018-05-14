@@ -6,16 +6,18 @@ from flask import Flask
 
 app = Flask(__name__)
 
-from flaskapp import routes
-
-import autoclasswrapper as wrapper
-
-os.environ["FLASK_RES_LINK"] = "True"
-os.environ["FLASK_RES_MAIL"] = "False"
-
 #  set Flask base directory
 os.environ["FLASK_HOME"] = os.getcwd()
 print("FLASK_HOME is {}".format(os.environ["FLASK_HOME"]))
+
+
+# load user Parameters
+from flaskapp import tools
+tools.read_ini(os.path.join(os.environ["FLASK_HOME"], "autoclassweb.ini"))
+
+from flaskapp import routes
+
+import autoclasswrapper as wrapper
 
 
 # search autoclass executable in path
@@ -28,8 +30,7 @@ else:
     sys.exit(1)
 
 
-# load user Parameters
-#config.read_ini("autoclassweb.ini")
+
 
 # set config
 app.config.from_pyfile('flaskapp.cfg')

@@ -4,10 +4,10 @@ A web app to run autoclass clustering.
 
 # Setup
 
-1. Install virtualenv
+1. Install pipenv
 
     ```
-    $ sudo pip3 install pipenv
+    $ pip3 install --user pipenv
     ```
 
 2. Create virtual environment
@@ -19,7 +19,7 @@ A web app to run autoclass clustering.
 3. Install requirements
 
     ```
-    $ pipenv install pandas flask flask-wtf psutil chardet
+    $ pipenv install
     ```
 
 # Usage
@@ -30,7 +30,11 @@ $ pipenv run flask run
 ```
 
 or quicker:
-
 ```
 $ make run
+```
+
+with gunicorn :
+```
+$ pipenv run gunicorn -b localhost:8000 -w 4 flaskapp:app
 ```

@@ -2,7 +2,6 @@ import smtplib
 import os
 import io
 import sys
-sys.path.insert(0,'../..')
 import autoclasswrapper as wrapper
 import logging
 from email.mime.multipart import MIMEMultipart

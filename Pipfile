@@ -9,10 +9,8 @@ flask = "*"
 flask-wtf = "*"
 psutil = "*"
 chardet = "*"
-#autoclasswrapper = "*"
+autoclasswrapper = "*"
 gunicorn = "*"
 
 [dev-packages]
 
-[requires]
-python_version = "3.5"

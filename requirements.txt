@@ -1,6 +1,0 @@
-pandas
-flask
-flask-script
-Flask-WTF
-psutil
-

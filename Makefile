@@ -1,9 +1,10 @@
-.PHONY: clean
-
+.PHONY: clean run run-gunicorn
 
 clean:
 	rm -rf tmp/20*.*.*
 
 run:
-	export FLASK_APP=autoclassweb; pipenv run flask run
+	pipenv run flask run
 
+run-gunicorn:
+	pipenv run gunicorn --config gunicorn-conf.py flaskapp:app

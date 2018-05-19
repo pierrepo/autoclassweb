@@ -2,7 +2,10 @@
 venv
 
 # temp data
-tmp
+tmp/
+
+# miscellaneous
+misc/
 
 # config file
 autoclassweb.ini

@@ -1,7 +1,14 @@
 {% extends "layout.html" %}
-{% block body %}
 
+{% block meta %}
+    <meta http-equiv="refresh" content="30">
+{% endblock %}
+
+{% block body %}
 <article>
+    <div class="text-muted helper status">
+    Page will autorefresh every 30 seconds.
+    </div>
     <table class="table table-hover">
         <thead>
             <tr>
@@ -41,7 +48,5 @@
         {% endfor %}
     </tbody>
     </table>
-
 </article>
-
 {% endblock %}

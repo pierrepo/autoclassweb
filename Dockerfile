@@ -16,7 +16,9 @@ WORKDIR /app
 # Install autoclass-c binary
 # https://ti.arc.nasa.gov/tech/rse/synthesis-projects-applications/autoclass/autoclass-c/
 RUN wget https://ti.arc.nasa.gov/m/project/autoclass/autoclass-c-3-3-6.tar.gz \
-&& tar zxvf autoclass-c-3-3-6.tar.gz
+&& tar zxvf autoclass-c-3-3-6.tar.gz \
+&& rm -f autoclass-c-3-3-6.tar.gz
+
 ENV PATH "/app/autoclass-c/:${PATH}"
 
 # Install app dependencies
@@ -29,9 +31,9 @@ RUN mkdir /app/tmp
 RUN pipenv install
 
 VOLUME /app/tmp
-EXPOSE 8000
+EXPOSE 5000
 
 ENV FLASK_APP autoclassweb
 
 
-CMD [ "pipenv", "run", "gunicorn", "--config gunicorn-conf.py", "flaskapp:app" ]
+CMD [ "pipenv", "run", "gunicorn", "--config", "gunicorn.conf", "flaskapp:app" ]

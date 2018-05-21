@@ -24,16 +24,10 @@ ENV PATH "/app/autoclass-c/:${PATH}"
 # Install app dependencies
 COPY . /app/
 
-# Create temp directory
-RUN mkdir /app/tmp
-
-
 RUN pipenv install
 
-VOLUME /app/tmp
+VOLUME /app
 EXPOSE 5000
 
-ENV FLASK_APP autoclassweb
-
-
-CMD [ "pipenv", "run", "gunicorn", "--config", "gunicorn.conf", "flaskapp:app" ]
+#CMD [ "pipenv", "run", "gunicorn", "--config", "gunicorn.conf", "flaskapp:app" ]
+CMD ["make", "run-gunicorn"]

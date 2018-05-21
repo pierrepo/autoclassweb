@@ -33,7 +33,7 @@ def index():
     input_form = forms.InputDataUpload()
 
     # list current jobs (running and completed)
-    job_manager = model.JobManager(app.config['UPLOAD_FOLDER'],
+    job_manager = model.JobManager(app.config["RESULTS_FOLDER"],
                                    app.config["FLASK_MAX_JOBS"],
                                    alive=4)
     job_manager.autodiscover()
@@ -54,7 +54,7 @@ def index():
 
         # create job directory
         job = model.Job()
-        job.create_new(app.config['UPLOAD_FOLDER'], app.config['JOB_NAME_LENGTH'])
+        job.create_new(app.config["RESULTS_FOLDER"], app.config['JOB_NAME_LENGTH'])
         print(job.path, job.name)
         # get e-mail address
         if input_form.mail_address.data:
@@ -185,7 +185,7 @@ def startjob():
 @app.route('/status', methods=['GET', 'POST'])
 def status():
     os.chdir(os.environ['FLASK_HOME'])
-    job_manager = model.JobManager(app.config['UPLOAD_FOLDER'], 4, alive=4)
+    job_manager = model.JobManager(app.config["RESULTS_FOLDER"], 4, alive=4)
     job_manager.autodiscover()
     return render_template('status.html', job_m=job_manager)
 
@@ -200,7 +200,7 @@ def download(job_name):
         return redirect(url_for('status'))
 
     # retrieve all jobs
-    job_manager = model.JobManager(app.config['UPLOAD_FOLDER'], 4, alive=4)
+    job_manager = model.JobManager(app.config["RESULTS_FOLDER"], 4, alive=4)
     job_manager.autodiscover()
     # find wanted job
     job_selected = None

@@ -69,5 +69,5 @@ class CreateConfig():
 
     # internal parameters
     SECRET_KEY = os.urandom(16)
-    UPLOAD_FOLDER = "results"
+    RESULTS_FOLDER = "results"
     JOB_NAME_LENGTH = 8

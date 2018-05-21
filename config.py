@@ -27,10 +27,12 @@ class CreateConfig():
     # FLASK_RESULTS_ARE_PUBLIC
     FLASK_RESULTS_ARE_PUBLIC = format_true_false("FLASK_RESULTS_ARE_PUBLIC",
                                                  "False")
+    print("FLASK_RESULTS_ARE_PUBLIC is", FLASK_RESULTS_ARE_PUBLIC)
 
     # FLASK_RESULTS_BY_EMAIL
     FLASK_RESULTS_BY_EMAIL = format_true_false("FLASK_RESULTS_BY_EMAIL",
                                                "False")
+    print("FLASK_RESULTS_BY_EMAIL is", FLASK_RESULTS_BY_EMAIL)
 
     if FLASK_RESULTS_ARE_PUBLIC == False \
       and FLASK_RESULTS_BY_EMAIL == False:

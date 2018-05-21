@@ -34,7 +34,6 @@ def index():
 
     # list current jobs (running and completed)
     job_manager = model.JobManager(app.config["RESULTS_FOLDER"],
-                                   app.config["FLASK_MAX_JOBS"],
                                    alive=4)
     job_manager.autodiscover()
 
@@ -185,7 +184,7 @@ def startjob():
 @app.route('/status', methods=['GET', 'POST'])
 def status():
     os.chdir(os.environ['FLASK_HOME'])
-    job_manager = model.JobManager(app.config["RESULTS_FOLDER"], 4, alive=4)
+    job_manager = model.JobManager(app.config["RESULTS_FOLDER"], alive=4)
     job_manager.autodiscover()
     return render_template('status.html', job_m=job_manager)
 
@@ -200,7 +199,7 @@ def download(job_name):
         return redirect(url_for('status'))
 
     # retrieve all jobs
-    job_manager = model.JobManager(app.config["RESULTS_FOLDER"], 4, alive=4)
+    job_manager = model.JobManager(app.config["RESULTS_FOLDER"], alive=4)
     job_manager.autodiscover()
     # find wanted job
     job_selected = None

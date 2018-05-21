@@ -124,7 +124,7 @@ if os.environ.get("FLASK_RESULTS_BY_EMAIL", "False") == "True" \
                       os.environ["MAIL_PASSWORD"],
                       "autoclass-bot@no.reply",
                       mail_address,
-                      os.getcwd().split(".")[-1],
+                      os.getcwd().split("-")[-1],
                       outputzip)
 
 logger.info("Results export done!")

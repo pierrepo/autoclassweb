@@ -29,7 +29,7 @@
         You can add data in one or several categories below.
         </div>
 
-        {% if job_m.running | length < job_m.max %}
+        {% if job_m.running | length < config["FLASK_MAX_JOBS"] %}
         <fieldset>
         {% else %}
         <fieldset disabled>
@@ -105,7 +105,7 @@
             </div>
             <div>
                 {{ form.submit }}
-                {% if job_m.running | length >= job_m.max %}
+                {% if job_m.running | length >= config["FLASK_MAX_JOBS"] %}
                 <small class="form-text text-muted helper">
                 Max number of jobs reached. Please wait.
                 </small>
@@ -115,6 +115,8 @@
     </form>
 
     <hr />
-    <p>Server status: {{ job_m.running | length }} jobs running ({{ job_m.max }} max)</p>
+    <p>Server status: {{ job_m.running | length }} jobs running
+        ({{ config["FLASK_MAX_JOBS"] }} max)
+    </p>
 
 {% endblock %}

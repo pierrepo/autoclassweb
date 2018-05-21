@@ -2,24 +2,24 @@ import os
 import datetime
 import re
 import glob
-import logging
 from pathlib import Path
 import glob
 import random
 
 
-UNAMBIGUOUS_CHARACTERS = "234679ACDEFGHJKMNPRTWXYZ"
+UNAMBIGUOUS_CHARACTERS = "234679ACDEFGHJKMNPQRTWXYZ"
 
 def create_random_string(length):
     """Create random string from a character set.
     """
-    string = ''.join(random.choice(UNAMBIGUOUS_CHARACTERS) for _ in range(length))
+    string = ''.join(random.choice(UNAMBIGUOUS_CHARACTERS)
+                     for _ in range(length)
+                    )
     return string
 
 
 class Job():
-    """
-    Autoclass job management
+    """Autoclass job management
     """
     def __init__(self, alive=30):
         """
@@ -49,51 +49,15 @@ class Job():
         self.get_results_file()
 
 
-    def create_from_name(self, root, name):
-        """
-        Create Job from root directory and job name
-        """
-        # clean name
-        name_clean = ""
-        for character in name:
-            if character in "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMONPQRSTUVWXYZ_-":
-                name_clean += character
-            else:
-                name_clean += "-"
-        self.name = name_clean
-
-        self.ctime = datetime.datetime.now()
-        date = datetime.datetime.strftime(self.ctime, "%Y%m%d")
-        time = datetime.datetime.strftime(self.ctime, "%H%M%S")
-
-        self.folder =  "{}.{}.{}".format(date, time, self.name)
-        self.path = os.path.join(root, self.folder)
-        try:
-            os.makedirs(self.path)
-            print("Created folder {}".format(self.folder))
-        except OSError:
-            print("Directory {} already exists".format(self.folder))
-        except:
-            print("Cannot create folder: {}".format(self.folder))
-            raise
-
-
-
-
-
     def create_new(self, root, name_length):
         """
         Create new job in root directory
         """
         # create random name from unambiguous characters
-        self.name = create_random_string(name_length-1)
-        self.name = "N" + self.name
-
+        self.name = create_random_string(name_length)
         self.ctime = datetime.datetime.now()
-        date = datetime.datetime.strftime(self.ctime, "%Y%m%d")
-        time = datetime.datetime.strftime(self.ctime, "%H%M%S")
-
-        self.folder =  "{}.{}.{}".format(date, time, self.name)
+        date_time = datetime.datetime.strftime(self.ctime, "%Y%m%d-%H%M%S")
+        self.folder =  "{}-{}".format(date_time, self.name)
         self.path = os.path.join(root, self.folder)
         try:
             os.makedirs(self.path)
@@ -106,16 +70,15 @@ class Job():
 
 
     def get_status(self):
-        """
-        Test job status and how long it has run (or is running)
+        """Test job status and how long it has run (or is running)
 
-        We considere that the time to make search clusters is much smaller
-        than the time to build reports.
+        We considere that the time to build classification (i.e clustering)
+        is much larger than the time to build reports.
         """
         # default values
         self.running_time = 0
         self.status = "failed"
-        # first try to find log file for autoclass search (.log)
+        # first try to find autoclass search log file (.log)
         file_lst = glob.glob(os.path.join(self.path, "clust.log"))
         if file_lst:
             log_file = file_lst[0]
@@ -129,7 +92,7 @@ class Job():
                 self.status = "failed"
             # running time
             self.running_time = (mtime - self.ctime).seconds / 60
-        # then try to find log file for autoclass report (.rlog)
+        # then try to find autoclass report log file (.rlog)
         file_lst = glob.glob(os.path.join(self.path, "job-completed"))
         if file_lst:
             self.status = "completed"
@@ -143,8 +106,7 @@ class Job():
 
 
     def get_results_file(self):
-        """
-        Find results file
+        """Find results file
         """
         self.results_file = ""
         zip_lst = glob.glob(os.path.join(self.path,"*autoclass*.zip"))
@@ -153,22 +115,17 @@ class Job():
 
 
     def __repr__(self):
-        """
-        __repr___
+        """Job representation
         """
         return "{} in {} created: {}  status: {}".format(
                 self.name, self.folder, self.ctime,  self.status)
 
 
-
-
-
     @staticmethod
     def verify_folder_name(folder):
+        """Verify folder name is compliant with naming convention
         """
-        Verify folder name is compliant with naming convention
-        """
-        regex = re.compile("^(\w+)/([0-9]{8})\.([0-9]{6})\.(\w+)$")
+        regex = re.compile("^(\w+)/([0-9]{8})-([0-9]{6})-(\w+)$")
         find = regex.search(folder)
         if find:
             root = find.group(1)
@@ -183,29 +140,22 @@ class Job():
 
 
 class JobManager():
-    """
-    Manager for autoclass jobs
+    """Manager for autoclass jobs
     """
 
-    def __init__(self, path, max_jobs, alive=30):
-        """
-        Constructor
+    def __init__(self, path, alive=30):
+        """Constructor
         """
         self.path = path
-        self.max = max_jobs
         self.running = []
         self.stopped = []
         self.alive = alive
 
 
     def autodiscover(self):
-        """
-        Discover autoclass jobs automatically
+        """Discover autoclass jobs automatically
         """
         # list sub folders
-        #print(os.walk(self.path))
-
-        #job_folder_lst = next(os.walk(self.path))[1]
         p = Path(self.path)
         job_folder_lst = [str(x) for x in p.iterdir() if x.is_dir()]
 
@@ -227,7 +177,7 @@ class JobManager():
 
 if __name__ == '__main__':
 
-    job_manager = JobManager("tmp", 4)
+    job_manager = JobManager("results")
     job_manager.autodiscover()
     for job in job_manager.jobs:
         print(job)

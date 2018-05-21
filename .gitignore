@@ -1,9 +1,6 @@
 # Python virtual environment
 venv
 
-# temp data
-tmp/
-
 # miscellaneous
 misc/
 

@@ -11,7 +11,7 @@ from email.utils import formatdate
 from email import encoders
 
 
-def send_results_mail(host, port, SSL, login, password, sender,
+def send_results_mail(host, port, SSL, username, password, sender,
                       mail_address, job_id, results_file, timeout=5):
     """Send mail with results
 
@@ -30,6 +30,8 @@ Regards.
 
 AutoclassWeb Bot
 """
+    if SSL:
+        sender = username
     msg = MIMEMultipart()
     msg['From'] = "AutoclassWeb Bot <{}>".format(sender)
     msg['To'] = mail_address
@@ -50,38 +52,39 @@ AutoclassWeb Bot
     try:
         if SSL:
             mailserver = smtplib.SMTP_SSL(host, port, timeout=timeout)
-            mailserver.login(login,password)
-            mailserver.sendmail(login, mail_address, msg_str)
+            mailserver.login(username,password)
+            mailserver.sendmail(username, mail_address, msg_str)
             mailserver.quit()
         else:
             mailserver = smtplib.SMTP(host, port, timeout=timeout)
             mailserver.sendmail(sender, mail_address, msg_str)
             mailserver.quit()
-        logger.info("Successfully sent email.")
+        logger.info("Successfully sent email to {}.".format(mail_address))
     except:
-        logger.error("Error: unable to send email.")
-
-
-
+        logger.exception("Error: unable to send email.")
 
 
 logger = logging.getLogger("autoclasswrapper")
 logger.setLevel(logging.DEBUG)
 # create a file handler
-handler = logging.FileHandler('output.log')
+handler = logging.FileHandler("output.log")
 handler.setLevel(logging.INFO)
 # create a stream handler
 log_capture_string = io.StringIO()
 handler_stream = logging.StreamHandler(log_capture_string)
 handler_stream.setLevel(logging.INFO)
 # create a logging format
-formatter = logging.Formatter('%(asctime)s :: %(levelname)-8s :: %(message)s', datefmt="%Y-%m-%d %H:%M:%S")
+formatter = logging.Formatter("%(asctime)s :: %(levelname)-8s :: %(message)s",
+                              datefmt="%Y-%m-%d %H:%M:%S")
 handler.setFormatter(formatter)
 handler_stream.setFormatter(formatter)
 # add the handlers to the logger
 logger.addHandler(handler)
 logger.addHandler(handler_stream)
+
+# prepare results
 results = wrapper.Output()
+logger.info("autoclasswrapper {}".format(wrapper.__version__))
 results.extract_results()
 results.aggregate_input_data()
 results.write_cdt()
@@ -95,34 +98,31 @@ if "ERROR" not in log_content:
         f.write("\n")
 #log_capture_string.close()
 
-
-
 try:
     mail_address = sys.argv[1]
     logger.info("E-mail address is: {}".format(mail_address))
 except:
     mail_address = ""
-    logger.info("E-mail address not defined. Results cannot be send")
+    logger.warning("E-mail address not defined. Results cannot be send")
 
 
-if os.environ.get("FLASK_RES_MAIL", "False") == "True" \
+if os.environ.get("FLASK_RESULTS_BY_EMAIL", "False") == "True" \
     and mail_address != "" \
-    and os.environ.get("FLASK_MAIL_HOST", "") != "" \
-    and os.environ.get("FLASK_MAIL_PORT", "") != "0" \
-    and os.environ.get("FLASK_MAIL_SENDER", "") != "":
+    and os.environ.get("MAIL_SERVER", "") != "" \
+    and os.environ.get("MAIL_PORT", "0") != "0":
 
     job_id = os.getcwd().split(".")[-1]
 
-    if os.environ["FLASK_MAIL_SSL"] == "True":
+    if os.environ["MAIL_USE_TLS"] == "True":
         SSL = True
     else:
         SSL = False
-    send_results_mail(os.environ["FLASK_MAIL_HOST"],
-                      int(os.environ["FLASK_MAIL_PORT"]),
+    send_results_mail(os.environ["MAIL_SERVER"],
+                      int(os.environ["MAIL_PORT"]),
                       SSL,
-                      os.environ["FLASK_MAIL_LOGIN"],
-                      os.environ["FLASK_MAIL_PASSWORD"],
-                      os.environ["FLASK_MAIL_SENDER"],
+                      os.environ["MAIL_USERNAME"],
+                      os.environ["MAIL_PASSWORD"],
+                      "autoclass-bot@no.reply",
                       mail_address,
                       os.getcwd().split(".")[-1],
                       outputzip)

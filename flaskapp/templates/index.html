@@ -5,7 +5,7 @@
     <h2>Enter your input data and parameters</h2>
     <form action="" method="POST" enctype="multipart/form-data">
         {{ form.csrf_token }}
-        {% if session["FLASK_RESULTS_BY_EMAIL"] %}
+        {% if config["FLASK_RESULTS_BY_EMAIL"] %}
         <div class="form-group row">
             <label class="col-sm-2 col-form-label"
                    for="mailaddress">

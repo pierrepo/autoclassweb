@@ -26,19 +26,15 @@ def ping_pong():
 def index():
     print("We are in: {}".format(os.getcwd()))
 
-    if "FLASK_INIT_ERROR" in os.environ:
-        message = os.environ["FLASK_INIT_ERROR"].split("--")
-        return render_template("error.html", message=message)
+    if app.config["FLASK_INIT_ERROR"]:
+        return render_template("error.html")
 
-    session["FLASK_RESULTS_BY_EMAIL"] = False
-    if os.environ["FLASK_RESULTS_BY_EMAIL"] == "True":
-        session["FLASK_RESULTS_BY_EMAIL"] = True
     # create form
     input_form = forms.InputDataUpload()
 
     # list current jobs (running and completed)
     job_manager = model.JobManager(app.config['UPLOAD_FOLDER'],
-                                   app.config["MAX_JOB"],
+                                   app.config["FLASK_MAX_JOBS"],
                                    alive=4)
     job_manager.autodiscover()
 
@@ -51,8 +47,8 @@ def index():
             flash("Missing files input data! Provide at least one type of data", "error")
             return render_template('index.html', form=input_form, job_m=job_manager)
 
-        if os.environ["FLASK_RESULTS_BY_EMAIL"] == "True" \
-           and not input_form.mail_address.data:
+        if app.config["FLASK_RESULTS_BY_EMAIL"] \
+        and not input_form.mail_address.data:
             flash("Missing e-mail address!", "error")
             return render_template('index.html', form=input_form, job_m=job_manager)
 
@@ -134,7 +130,7 @@ def startjob():
         # add the handlers to the logger
         logger.addHandler(handler)
         logger.addHandler(handler_stream)
-        # initiate autoclass autoclass wrapper
+        # initiate autoclass wrapper input
         clust = wrapper.Input()
         # load scalar data if any
         scalar = session['scalar']
@@ -155,16 +151,19 @@ def startjob():
         clust.create_model_file()
         clust.create_sparams_file()
         clust.create_rparams_file()
-        clust.create_run_file()
-        # prepare results export and send
-        import shutil
+        # initiate autoclass wrapper run
+        run = wrapper.Run()
+        # prepare script to run autoclass
+        run.create_run_file()
+        # prepare script to export and send results
         shutil.copy("../../export_results.py", "./")
         with open("clust.sh", "a") as f:
-            f.write("python3 export_results.py {}".format(mail_address))
+            f.write("python3 export_results.py {}\n".format(mail_address))
         # run autoclass
-        clust.run(job_name)
-        # add password
-        job = model.Job()
+        run.run(job_name)
+
+        # create new job
+        #job = model.Job()
 
         #with open("input.log", "r") as inputfile:
         #    logcontent = inputfile.read()
@@ -186,9 +185,6 @@ def startjob():
 @app.route('/status', methods=['GET', 'POST'])
 def status():
     os.chdir(os.environ['FLASK_HOME'])
-    session["FLASK_RESULTS_ARE_PUBLIC"] = False
-    if os.environ["FLASK_RESULTS_ARE_PUBLIC"] == "True":
-        session["FLASK_RESULTS_ARE_PUBLIC"] = True
     job_manager = model.JobManager(app.config['UPLOAD_FOLDER'], 4, alive=4)
     job_manager.autodiscover()
     return render_template('status.html', job_m=job_manager)
@@ -197,7 +193,7 @@ def status():
 @app.route('/download/<job_name>', methods=['GET'])
 def download(job_name):
     print(job_name)
-    if not session["link_results"]:
+    if not app.config["FLASK_RESULTS_ARE_PUBLIC"]:
         msg = "Results download is not allowed."
         print(msg)
         flash(msg, "error")

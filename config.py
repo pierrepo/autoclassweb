@@ -1,51 +1,73 @@
 import os
-import configparser
+import psutil
+import autoclasswrapper as wrapper
 
-class BaseConfig:
-    """Base configuration"""
-    DEBUG = False
-    TESTING = False
-    UPLOAD_FOLDER = "tmp"
-    SECRET_KEY = "1234"
-    JOB_NAME_LENGTH = 8
-    JOB_PASSWD_LENGTH = 8
+class CreateConfig():
+    """Create Flask app configuration
 
-
-class TestingConfig(BaseConfig):
-    """Testing configuration"""
-    DEBUG = True
-    TESTING = True
-    MAX_JOB = 2
-
-
-class ProductionConfig(BaseConfig):
-    """Production configuration"""
-    DEBUG = False
-
-# read config parameters
-def read_ini(ininame):
-    """Read config parameters for the web app
-
-    Parameters
-    ----------
-    ininame : str
-    Name of ini file containing parameters
+    Combine global environnement variables with local parameters.
+    Environnement variables are usually defined in the .env file.
     """
-    if not os.path.exists(ininame):
-        os.environ["FLASK_CONFIG"] = "False"
-        os.environ["FLASK_RES_LINK"] = "True"
-        os.environ["FLASK_RES_MAIL"] = "False"
-        return 1
-    os.environ["FLASK_CONFIG"] = "True"
-    config = configparser.ConfigParser()
-    config.read(ininame)
-    # results section
-    os.environ["FLASK_RES_LINK"] = str(config["results"].getboolean("link", False))
-    os.environ["FLASK_RES_MAIL"] = str(config["results"].getboolean("mail", True))
-    # mail section
-    os.environ["FLASK_MAIL_HOST"] = config["mail"].get("host", "")
-    os.environ["FLASK_MAIL_PORT"] = str(config["mail"].getint("port", 0))
-    os.environ["FLASK_MAIL_SSL"] = str(config["mail"].getboolean("SSL", True))
-    os.environ["FLASK_MAIL_LOGIN"] = config["mail"].get("login", "")
-    os.environ["FLASK_MAIL_PASSWORD"] = config["mail"].get("password", "")
-    os.environ["FLASK_MAIL_SENDER"] = config["mail"].get("sender", os.environ["FLASK_MAIL_LOGIN"])
+
+    def format_true_false(env, default=""):
+        """Format env variable to True / False
+        """
+        content = os.environ.get(env, default)
+        if content.upper() in ["T", "TRUE"]:
+            os.environ[env] = "True"
+            return True
+        else:
+            os.environ[env] = "False"
+            return False
+
+    # not error so far...
+    FLASK_INIT_ERROR = ""
+
+    # FLASK_RESULTS_ARE_PUBLIC
+    FLASK_RESULTS_ARE_PUBLIC = format_true_false("FLASK_RESULTS_ARE_PUBLIC",
+                                                 "False")
+
+    # FLASK_RESULTS_BY_EMAIL
+    FLASK_RESULTS_BY_EMAIL = format_true_false("FLASK_RESULTS_BY_EMAIL",
+                                               "False")
+
+    if FLASK_RESULTS_ARE_PUBLIC == False \
+      and FLASK_RESULTS_BY_EMAIL == False:
+        FLASK_INIT_ERROR = ("FLASK_RESULTS_ARE_PUBLIC "
+                            "and FLASK_RESULTS_BY_EMAIL "
+                            "cannot be undefined or False simultaneously")
+
+    # if FLASK_RESULTS_BY_EMAIL is True,
+    # at least MAIL_SERVER and MAIL_PORT should be defined
+    if FLASK_RESULTS_BY_EMAIL:
+        if os.environ.get("MAIL_SERVER", "") == "":
+            FLASK_INIT_ERROR = ("MAIL_SERVER environnement variable "
+                                "is not defined.")
+        if not os.environ.get("MAIL_PORT", "").isdigit():
+            FLASK_INIT_ERROR = ("MAIL_PORT environnement variable "
+                                "is not defined or is not a valid number.")
+
+    # if FLASK_RESULTS_BY_EMAIL is True,
+    # MAIL_USE_TLS shoud be True or False
+    if FLASK_RESULTS_BY_EMAIL:
+        MAIL_USE_TLS = format_true_false("MAIL_USE_TLS",
+                                         "False")
+
+    # FLASK_MAX_JOBS
+    if ("FLASK_MAX_JOBS" not in os.environ) \
+      or (not os.environ["FLASK_MAX_JOBS"].isdigit()):
+        FLASK_MAX_JOBS = psutil.cpu_count() - 1
+    else:
+        FLASK_MAX_JOBS = int(os.environ["FLASK_MAX_JOBS"])
+
+    # autoclass-c executable
+    print("autoclasswrapper version: ", wrapper.__version__)
+    autoclass_path = wrapper.search_autoclass_in_path()
+    if not autoclass_path:
+        FLASK_INIT_ERROR = "Cannot find autoclass-c executable in PATH."
+
+
+    # internal parameters
+    SECRET_KEY = os.urandom(16)
+    UPLOAD_FOLDER = "results"
+    JOB_NAME_LENGTH = 8

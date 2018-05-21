@@ -33,7 +33,7 @@
             <tr class="stopped">
                 <td>{{ job.name }}</td>
                 <td>{{ job.ctime.strftime("%Y-%m-%d %H:%M:%S") }}</td>
-                {% if session["FLASK_RESULTS_ARE_PUBLIC"] and job.status == "completed" %}
+                {% if config["FLASK_RESULTS_ARE_PUBLIC"] and job.status == "completed" %}
                     <td>
                         <a href="/download/{{ job.name }}"
                            class="btn btn-success btn-sm">

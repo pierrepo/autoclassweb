@@ -1,9 +1,13 @@
-# directory with clustering data
-tmp/
+# content of clustering results
+results/*
 
 # miscellaneous
 misc/
 
-# ignore .env* config files but keep template file
+# git files
+.git
+.gitignore
+
+# .env* config files but keep template file
 .env*
 !.env-template

@@ -7,8 +7,9 @@ tmp/
 # miscellaneous
 misc/
 
-# config file
-autoclassweb.ini
+# ignore .env* config files but keep template file
+.env*
+!.env-template
 
 # data sample for tests
 test-data/

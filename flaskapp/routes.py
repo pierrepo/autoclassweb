@@ -26,9 +26,13 @@ def ping_pong():
 def index():
     print("We are in: {}".format(os.getcwd()))
 
-    session["flask_res_mail"] = False
-    if os.environ["FLASK_RES_MAIL"] == "True":
-        session["flask_res_mail"] = True
+    if "FLASK_INIT_ERROR" in os.environ:
+        message = os.environ["FLASK_INIT_ERROR"].split("--")
+        return render_template("error.html", message=message)
+
+    session["FLASK_RESULTS_BY_EMAIL"] = False
+    if os.environ["FLASK_RESULTS_BY_EMAIL"] == "True":
+        session["FLASK_RESULTS_BY_EMAIL"] = True
     # create form
     input_form = forms.InputDataUpload()
 
@@ -47,7 +51,7 @@ def index():
             flash("Missing files input data! Provide at least one type of data", "error")
             return render_template('index.html', form=input_form, job_m=job_manager)
 
-        if os.environ["FLASK_RES_MAIL"] == "True" \
+        if os.environ["FLASK_RESULTS_BY_EMAIL"] == "True" \
            and not input_form.mail_address.data:
             flash("Missing e-mail address!", "error")
             return render_template('index.html', form=input_form, job_m=job_manager)
@@ -182,9 +186,9 @@ def startjob():
 @app.route('/status', methods=['GET', 'POST'])
 def status():
     os.chdir(os.environ['FLASK_HOME'])
-    session["link_results"] = False
-    if os.environ["FLASK_RES_LINK"] == "True":
-        session["link_results"] = True
+    session["FLASK_RESULTS_ARE_PUBLIC"] = False
+    if os.environ["FLASK_RESULTS_ARE_PUBLIC"] == "True":
+        session["FLASK_RESULTS_ARE_PUBLIC"] = True
     job_manager = model.JobManager(app.config['UPLOAD_FOLDER'], 4, alive=4)
     job_manager.autodiscover()
     return render_template('status.html', job_m=job_manager)

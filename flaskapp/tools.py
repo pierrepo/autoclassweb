@@ -1,31 +1,54 @@
 import os
-import configparser
 
-
-# read config parameters
-def read_ini(ininame):
-    """Read config parameters for the web app
-
-    Parameters
-    ----------
-    ininame : str
-    Name of ini file containing parameters
+def format_true_false_env(env):
+    """Format env variable to True / False
     """
-    if not os.path.exists(ininame):
-        os.environ["FLASK_CONFIG"] = "False"
-        os.environ["FLASK_RES_LINK"] = "True"
-        os.environ["FLASK_RES_MAIL"] = "False"
-        return 1
-    os.environ["FLASK_CONFIG"] = "True"
-    config = configparser.ConfigParser()
-    config.read(ininame)
-    # results section
-    os.environ["FLASK_RES_LINK"] = str(config["results"].getboolean("link", False))
-    os.environ["FLASK_RES_MAIL"] = str(config["results"].getboolean("mail", True))
-    # mail section
-    os.environ["FLASK_MAIL_HOST"] = config["mail"].get("host", "")
-    os.environ["FLASK_MAIL_PORT"] = str(config["mail"].getint("port", 0))
-    os.environ["FLASK_MAIL_SSL"] = str(config["mail"].getboolean("SSL", True))
-    os.environ["FLASK_MAIL_LOGIN"] = config["mail"].get("login", "")
-    os.environ["FLASK_MAIL_PASSWORD"] = config["mail"].get("password", "")
-    os.environ["FLASK_MAIL_SENDER"] = config["mail"].get("sender", os.environ["FLASK_MAIL_LOGIN"])
+    var = os.environ[env]
+    if var.upper() in ["T", "TRUE"]:
+        return "True"
+    elif var.upper() in ["F", "FALSE"]:
+        return "False"
+    else:
+        return ""
+
+# check config parameters
+def read_env_config():
+    """Read config from environnement variables
+
+    Environnement variables are usually defined
+    in the .env file.
+    """
+    # check existence
+    for var in ["FLASK_RESULTS_ARE_PUBLIC", "FLASK_RESULTS_BY_EMAIL"]:
+        if var not in os.environ:
+            os.environ["FLASK_INIT_ERROR"] = \
+                "{} environnement variable not defined.".format(var)
+            return 1
+    # check format
+    for env in ["FLASK_RESULTS_ARE_PUBLIC", "FLASK_RESULTS_BY_EMAIL"]:
+        var_formatted = format_true_false_env(env)
+        if var_formatted:
+            os.environ[env] = var_formatted
+        else:
+            os.environ["FLASK_INIT_ERROR"] = \
+                "{} environnement variable should be True or False.".format(env)
+            return 1
+    # if FLASK_RESULTS_BY_EMAIL is True,
+    # at least MAIL_SERVER and MAIL_PORT should be defined
+    if os.environ["FLASK_RESULTS_BY_EMAIL"] == "True":
+        for env in ["MAIL_SERVER", "MAIL_PORT"]:
+            if env not in os.environ:
+                os.environ["FLASK_INIT_ERROR"] = \
+                    "{} environnement variable not defined.".format(env)
+                return 1
+        # and MAIL_PORT should not be empty
+        if os.environ["MAIL_SERVER"] == "":
+            os.environ["FLASK_INIT_ERROR"] = \
+                "MAIL_SERVER environnement variable should not be empty."
+            return 1
+        # and MAIL_PORT should be a number
+        if not os.environ["MAIL_PORT"].isdigit():
+            os.environ["FLASK_INIT_ERROR"] = \
+                "MAIL_PORT environnement variable should be a number."
+            return 1
+    return 0

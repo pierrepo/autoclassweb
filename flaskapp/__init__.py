@@ -11,25 +11,18 @@ os.environ["FLASK_HOME"] = os.getcwd()
 print("FLASK_HOME is {}".format(os.environ["FLASK_HOME"]))
 
 
-# load user Parameters
+# load config from env variables
 from flaskapp import tools
-tools.read_ini(os.path.join(os.environ["FLASK_HOME"], "autoclassweb.ini"))
+tools.read_env_config()
+
 
 from flaskapp import routes
 
 import autoclasswrapper as wrapper
-
-
-# search autoclass executable in path
-autoclass_path = shutil.which("autoclass")
-if autoclass_path:
-    print("autoclass found in {}".format(autoclass_path))
-else:
-    print("autoclass not found in path!")
-    print("Exiting autoclassweb")
-    sys.exit(1)
-
-
+print("autoclasswrapper version: ", wrapper.__version__)
+autoclass_path = wrapper.search_autoclass_in_path()
+if not autoclass_path:
+    os.environ["FLASK_INIT_ERROR"] = "Cannot find autoclass-c executable in PATH."
 
 
 # set config

@@ -1,0 +1,13 @@
+{% extends "layout.html" %}
+
+{% block body %}
+<article>
+    <h1>Oups! Something went wrong!</h1>
+    <p>Autoclassweb did not start for the following reason(s)</p>
+    <ul style="list-style-type: none;">
+    {% for msg in message %}
+        <li class="error">{{ msg }}</li>
+    {% endfor %}
+    </ul>
+</article>
+{% endblock %}

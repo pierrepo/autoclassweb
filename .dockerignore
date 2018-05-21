@@ -3,3 +3,7 @@ tmp/
 
 # miscellaneous
 misc/
+
+# ignore .env* config files but keep template file
+.env*
+!.env-template

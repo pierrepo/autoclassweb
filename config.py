@@ -1,4 +1,5 @@
 import os
+import uuid
 import psutil
 import autoclasswrapper as wrapper
 
@@ -68,6 +69,8 @@ class CreateConfig():
 
 
     # internal parameters
-    SECRET_KEY = os.urandom(16)
+    if "SECRET_KEY" not in os.environ:
+        print("No SECRET_KEY found in env. Generating.")
+    SECRET_KEY = os.environ.get("SECRET_KEY", str(uuid.uuid4()))
     RESULTS_FOLDER = "results"
     JOB_NAME_LENGTH = 8

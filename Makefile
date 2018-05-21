@@ -1,7 +1,4 @@
-.PHONY: clean run run-gunicorn
-
-clean:
-	rm -rf tmp/20*.*.*
+.PHONY: run run-gunicorn
 
 run:
 	pipenv run flask run

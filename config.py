@@ -24,6 +24,10 @@ class CreateConfig():
     # not error so far...
     FLASK_INIT_ERROR = ""
 
+    # FLASK_ENV
+    # default is 'production'
+    os.environ["FLASK_ENV"] = os.environ.get("FLASK_ENV", "production")
+
     # FLASK_RESULTS_ARE_PUBLIC
     FLASK_RESULTS_ARE_PUBLIC = format_true_false("FLASK_RESULTS_ARE_PUBLIC",
                                                  "False")
@@ -63,7 +67,7 @@ class CreateConfig():
     else:
         FLASK_MAX_JOBS = int(os.environ["FLASK_MAX_JOBS"])
     print("FLASK_MAX_JOBS:", FLASK_MAX_JOBS)
-    
+
     # FLASK_JOB_TIMEOUT
     if ("FLASK_JOB_TIMEOUT" not in os.environ) \
       or (not os.environ["FLASK_JOB_TIMEOUT"].isdigit()):

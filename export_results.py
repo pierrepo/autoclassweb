@@ -30,8 +30,6 @@ Regards.
 
 AutoclassWeb Bot
 """
-    if SSL:
-        sender = username
     msg = MIMEMultipart()
     msg['From'] = "AutoclassWeb Bot <{}>".format(sender)
     msg['To'] = mail_address
@@ -52,13 +50,16 @@ AutoclassWeb Bot
     try:
         if SSL:
             mailserver = smtplib.SMTP_SSL(host, port, timeout=timeout)
+            if os.environ["FLASK_ENV"] == "development":
+                mailserver.set_debuglevel(1)
             mailserver.login(username,password)
-            mailserver.sendmail(username, mail_address, msg_str)
-            mailserver.quit()
+            sender = username
         else:
             mailserver = smtplib.SMTP(host, port, timeout=timeout)
-            mailserver.sendmail(sender, mail_address, msg_str)
-            mailserver.quit()
+            if os.environ["FLASK_ENV"] == "development":
+                mailserver.set_debuglevel(1)
+        response = mailserver.sendmail(sender, mail_address, msg_str)
+        mailserver.quit()
         logger.info("Successfully sent email to {}.".format(mail_address))
     except:
         logger.exception("Error: unable to send email.")
@@ -122,7 +123,7 @@ if os.environ.get("FLASK_RESULTS_BY_EMAIL", "False") == "True" \
                       SSL,
                       os.environ.get("MAIL_USERNAME", ""),
                       os.environ.get("MAIL_PASSWORD", ""),
-                      "autoclass-bot@no.reply",
+                      "autoclass-bot@no-reply.net",
                       mail_address,
                       os.getcwd().split("-")[-1],
                       outputzip)

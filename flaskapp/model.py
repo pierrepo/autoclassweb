@@ -75,16 +75,17 @@ class Job():
         We considere that the time to build classification (i.e clustering)
         is much larger than the time to build reports.
         """
-        # default values
-        self.running_time = 0
-        self.status = "failed"
-        # first try to find autoclass search log file (.log)
-        file_lst = glob.glob(os.path.join(self.path, "clust.log"))
-        if file_lst:
-            log_file = file_lst[0]
+        # search info in 'summary.txt' first
+        full_name = os.path.join(self.path, "summary.txt")
+        if os.path.exists(full_name) and self.search_summary("status"):
+            self.status = self.search_summary("status").split()[1]
+            self.running_time = float(self.search_summary("running-time").split()[1])
+            return 0
+        # if nothing in 'summary.txt', search in log file
+        log_file = os.path.join(self.path, "clust.log")
+        if os.path.exists(log_file):
             # modified time
-            mtimestamp = os.path.getmtime(log_file)
-            mtime = datetime.datetime.fromtimestamp(mtimestamp)
+            mtime = self.get_file_modification_time(log_file)
             # running status
             if ((datetime.datetime.now() - mtime).seconds < self.alive ):
                 self.status = "running"
@@ -92,17 +93,16 @@ class Job():
                 self.status = "failed"
             # running time
             self.running_time = (mtime - self.ctime).seconds / 60
-        # then try to find autoclass report log file (.rlog)
-        file_lst = glob.glob(os.path.join(self.path, "job-completed"))
-        if file_lst:
+        # then try to find autoclass file "job-completed"
+        complete_file = os.path.join(self.path, "job-completed")
+        if os.path.exists(complete_file):
             self.status = "completed"
-            start = datetime.datetime.fromtimestamp(
-                      os.path.getmtime(os.path.join(self.path, "clust.model"))
-                     )
-            end = datetime.datetime.fromtimestamp(
-                       os.path.getmtime(os.path.join(file_lst[0]))
-                    )
-            self.running_time = (end - start).seconds / 60
+            end = self.get_file_modification_time(complete_file)
+            self.running_time = (end - self.ctime).seconds / 60
+        # save status and runnin time for "failed" and "completed" jobs
+        if self.status == "failed" or self.status == "completed":
+            self.write_summary("status: {}".format(self.status))
+            self.write_summary("running-time: {:.2f}".format(self.running_time))
 
 
     def get_results_file(self):
@@ -112,6 +112,34 @@ class Job():
         zip_lst = glob.glob(os.path.join(self.path,"*autoclass*.zip"))
         if len(zip_lst) >= 1:
             self.results_file = zip_lst[0]
+
+
+    def write_summary(self, line, summary_name="summary.txt"):
+        """Write summary of job
+        """
+        summary_full = os.path.join(self.path, summary_name)
+        with open(summary_full, "a") as summary_file:
+            summary_file.write("{}\n".format(line))
+
+
+    def search_summary(self, target, name="summary.txt"):
+        """Read summary of job
+        """
+        name_full = os.path.join(self.path, name)
+        with open(name_full, "r") as summary_file:
+            for line in summary_file:
+                if target in line:
+                    return line[:-1]
+            return None
+
+
+    def get_file_modification_time(self, filename):
+        """Get time when file was last modified
+        """
+        mtime = None
+        if os.path.exists(filename):
+            mtime = datetime.datetime.fromtimestamp(os.path.getmtime(filename))
+        return mtime
 
 
     def __repr__(self):
@@ -125,15 +153,14 @@ class Job():
     def verify_folder_name(folder):
         """Verify folder name is compliant with naming convention
         """
-        regex = re.compile("^(\w+)/([0-9]{8})-([0-9]{6})-(\w+)$")
+        regex = re.compile("\/([0-9]{8})-([0-9]{6})-(\w+)$")
         find = regex.search(folder)
         if find:
-            root = find.group(1)
-            date = "{}.{}".format( find.group(2), find.group(3) )
-            name = find.group(4)
-            folder = "{}.{}".format( date, name )
+            date = "{}-{}".format( find.group(1), find.group(2) )
+            name = find.group(3)
+            folder = "{}-{}".format( date, name )
             try:
-                ctime = datetime.datetime.strptime(date, "%Y%m%d.%H%M%S")
+                ctime = datetime.datetime.strptime(date, "%Y%m%d-%H%M%S")
                 return (folder, name, ctime)
             except:
                 return False

@@ -4,6 +4,7 @@ import io
 import logging
 import psutil
 import shutil
+import datetime
 from flask import Flask, jsonify, render_template, url_for, redirect, request, flash, session, send_from_directory
 from werkzeug import secure_filename
 
@@ -24,6 +25,7 @@ def ping_pong():
 
 @app.route('/', methods=('GET', 'POST'))
 def index():
+    os.chdir(os.environ['FLASK_HOME'])
     print("We are in: {}".format(os.getcwd()))
 
     if app.config["FLASK_INIT_ERROR"]:
@@ -112,11 +114,19 @@ def startjob():
         job_name = session['job_name']
         job_path = session['job_path']
         os.chdir(job_path)
+        # create job to update 'summary.txt'
+        job = model.Job()
+        job.create_from_path(job_path)
+        job.write_summary(
+            "date-start: {}"
+            .format(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+            )
+        job.write_summary("email: {}".format(mail_address))
         # create logger
         logger = logging.getLogger("autoclasswrapper")
         logger.setLevel(logging.DEBUG)
         # create a file handler
-        handler = logging.FileHandler('input.log')
+        handler = logging.FileHandler("input.log")
         handler.setLevel(logging.INFO)
         # create a stream handler
         log_capture_string = io.StringIO()
@@ -171,8 +181,12 @@ def startjob():
 
         if "ERROR" not in log_content:
             status = "running"
+            size = clust.full_dataset.df.shape
+            job.write_summary("data-size: {}x{}".format(*size))
         else:
             status = "failed"
+            job.write_summary("running-time: 0")
+
         return render_template('startjob.html',
                                job_name=job_name,
                                status=status,

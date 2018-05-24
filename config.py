@@ -62,6 +62,16 @@ class CreateConfig():
         FLASK_MAX_JOBS = psutil.cpu_count() - 1
     else:
         FLASK_MAX_JOBS = int(os.environ["FLASK_MAX_JOBS"])
+    print("FLASK_MAX_JOBS:", FLASK_MAX_JOBS)
+    
+    # FLASK_JOB_TIMEOUT
+    if ("FLASK_JOB_TIMEOUT" not in os.environ) \
+      or (not os.environ["FLASK_JOB_TIMEOUT"].isdigit()):
+        FLASK_JOB_TIMEOUT = 3600
+    else:
+        FLASK_JOB_TIMEOUT = int(os.environ["FLASK_JOB_TIMEOUT"])
+    print("FLASK_JOB_TIMEOUT:", FLASK_JOB_TIMEOUT)
+
 
     # autoclass-c executable
     print("autoclasswrapper version: ", wrapper.__version__)

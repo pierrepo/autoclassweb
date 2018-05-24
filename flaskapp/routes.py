@@ -158,7 +158,7 @@ def startjob():
         clust.create_db2_file()
         clust.create_hd2_file()
         clust.create_model_file()
-        clust.create_sparams_file()
+        clust.create_sparams_file(max_duration=app.config["FLASK_JOB_TIMEOUT"])
         clust.create_rparams_file()
         # initiate autoclass wrapper run
         run = wrapper.Run()

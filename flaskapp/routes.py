@@ -148,7 +148,7 @@ def startjob():
         # load location data if any
         location = session['location']
         if location['file']:
-            clust.add_input_data(location['file'], "real location", scalar['location'])
+            clust.add_input_data(location['file'], "real location", scalar['error'])
         # load discrete data if any
         discrete = session['discrete']
         if discrete['file']:

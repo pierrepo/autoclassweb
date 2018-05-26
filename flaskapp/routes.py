@@ -117,6 +117,7 @@ def startjob():
         # create job to update 'summary.txt'
         job = model.Job()
         job.create_from_path(job_path)
+        job.write_summary("reference: {}".format(job_name))
         job.write_summary(
             "date-start: {}"
             .format(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))

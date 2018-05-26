@@ -11,6 +11,19 @@ from email.utils import formatdate
 from email import encoders
 
 
+def get_job_name(summary_name="summary.txt"):
+    """Extract job name from summary file
+    """
+    job_name = ""
+    if os.path.exists(summary_name):
+        with open(summary_name, "r") as summary_file:
+            for line in summary_file:
+                if "reference" in line:
+                    job_name = line.split()[1]
+                    return job_name
+    return job_name
+
+
 def send_results_mail(host, port, SSL, username, password, sender,
                       mail_address, job_id, results_file, timeout=5):
     """Send mail with results
@@ -44,9 +57,7 @@ AutoclassWeb Bot
     part.add_header('Content-Disposition',
                     'attachment; filename="{}"'.format(results_file))
     msg.attach(part)
-
     msg_str = msg.as_string()
-
     try:
         if SSL:
             mailserver = smtplib.SMTP_SSL(host, port, timeout=timeout)
@@ -62,7 +73,7 @@ AutoclassWeb Bot
         mailserver.quit()
         logger.info("Successfully sent email to {}.".format(mail_address))
     except:
-        logger.exception("Error: unable to send email.")
+        logger.exception("Error: unable to send results by e-mail.")
 
 
 logger = logging.getLogger("autoclasswrapper")
@@ -98,6 +109,12 @@ if "ERROR" not in log_content:
     with open("job-completed", "w") as f:
         f.write("\n")
 #log_capture_string.close()
+# get job name from 'summary.txt'
+job_name = get_job_name()
+# rename result file with job name
+outputzip_new = "{}-{}.zip".format(outputzip[:-4], job_name)
+os.rename(outputzip , outputzip_new)
+logger.info("Renamed {} into {}".format(outputzip, outputzip_new))
 
 try:
     mail_address = sys.argv[1]
@@ -112,8 +129,6 @@ if os.environ.get("FLASK_RESULTS_BY_EMAIL", "False") == "True" \
     and os.environ.get("MAIL_SERVER", "") != "" \
     and os.environ.get("MAIL_PORT", "0") != "0":
 
-    job_id = os.getcwd().split(".")[-1]
-
     if os.environ["MAIL_USE_TLS"] == "True":
         SSL = True
     else:
@@ -125,7 +140,7 @@ if os.environ.get("FLASK_RESULTS_BY_EMAIL", "False") == "True" \
                       os.environ.get("MAIL_PASSWORD", ""),
                       "autoclass-bot@no-reply.net",
                       mail_address,
-                      os.getcwd().split("-")[-1],
-                      outputzip)
+                      job_name,
+                      outputzip_new)
 
 logger.info("Results export done!")

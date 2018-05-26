@@ -14,12 +14,16 @@ from flaskapp import model
 
 import autoclasswrapper as wrapper
 
-@app.route('/ping', methods=['GET'])
-def ping_pong():
+@app.route('/config', methods=['GET'])
+def show_me_config():
     print(app.config)
     return jsonify({
-        'status': 'success',
-        'message': 'pong!'
+        "FLASK_RESULTS_ARE_PUBLIC": app.config["FLASK_RESULTS_ARE_PUBLIC"],
+        "FLASK_RESULTS_BY_EMAIL": app.config["FLASK_RESULTS_BY_EMAIL"],
+        "FLASK_MAX_JOBS": app.config["FLASK_MAX_JOBS"],
+        "FLASK_JOB_TIMEOUT": app.config["FLASK_JOB_TIMEOUT"],
+        "autoclasswrapper version": wrapper.__version__,
+        "autoclassweb version": app.config["VERSION"]
     })
 
 

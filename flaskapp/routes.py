@@ -186,10 +186,12 @@ def startjob():
 
         if "ERROR" not in log_content:
             status = "running"
-            size = clust.full_dataset.df.shape
-            job.write_summary("data-size: {}x{}".format(*size))
+            nb_line, nb_col = clust.full_dataset.df.shape
+            job.write_summary("data-size: {} lines x {} columns"
+                              .format(nb_line, nb_col+1))
         else:
             status = "failed"
+            job.write_summary("status: failed")
             job.write_summary("running-time: 0")
 
         return render_template('startjob.html',

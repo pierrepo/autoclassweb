@@ -75,34 +75,32 @@ class Job():
         We considere that the time to build classification (i.e clustering)
         is much larger than the time to build reports.
         """
-        # search info in 'summary.txt' first
-        full_name = os.path.join(self.path, "summary.txt")
-        if os.path.exists(full_name) and self.search_summary("status"):
-            self.status = self.search_summary("status").split()[1]
-            self.running_time = float(self.search_summary("running-time").split()[1])
-            return 0
-        # if nothing in 'summary.txt', search in log file
-        log_file = os.path.join(self.path, "clust.log")
-        if os.path.exists(log_file):
-            # modified time
-            mtime = self.get_file_modification_time(log_file)
-            # running status
-            if ((datetime.datetime.now() - mtime).seconds < self.alive ):
-                self.status = "running"
-            else:
-                self.status = "failed"
-            # running time
-            self.running_time = (mtime - self.ctime).seconds / 60
-        # then try to find autoclass file "job-completed"
-        complete_file = os.path.join(self.path, "job-completed")
-        if os.path.exists(complete_file):
-            self.status = "completed"
-            end = self.get_file_modification_time(complete_file)
-            self.running_time = (end - self.ctime).seconds / 60
-        # save status and runnin time for "failed" and "completed" jobs
-        if self.status == "failed" or self.status == "completed":
-            self.write_summary("status: {}".format(self.status))
-            self.write_summary("running-time: {:.2f}".format(self.running_time))
+        # find status
+        # search in summary file first (for completed jobs)
+        self.status = "running"
+        status = self.search_summary("status")
+        if status:
+            self.status = status.split()[1]
+        # define status from modification time of "clust.log"
+        else:
+            log_file = os.path.join(self.path, "clust.log")
+            if os.path.exists(log_file):
+                mtime = self.get_file_modification_time(log_file)
+                if ((datetime.datetime.now() - mtime).seconds > self.alive ):
+                    self.status = "failed"
+        # define running time
+        # search in summary file first (for completed job)
+        self.running_time = 0.0
+        running_time = self.search_summary("running-time")
+        if running_time:
+            self.running_time = float(running_time.split()[1])
+        # calculate running time
+        else:
+            now = datetime.datetime.now()
+            self.running_time = (now - self.ctime).seconds / 60
+            if self.status == "completed":
+                self.write_summary("running-time: {:.2f}"
+                                    .format(self.running_time))
 
 
     def get_results_file(self):
@@ -114,22 +112,23 @@ class Job():
             self.results_file = zip_lst[0]
 
 
-    def write_summary(self, line, summary_name="summary.txt"):
+    def write_summary(self, text, summary_name="summary.txt"):
         """Write summary of job
         """
         summary_full = os.path.join(self.path, summary_name)
         with open(summary_full, "a") as summary_file:
-            summary_file.write("{}\n".format(line))
+            summary_file.write("{}\n".format(text))
 
 
     def search_summary(self, target, name="summary.txt"):
         """Read summary of job
         """
-        name_full = os.path.join(self.path, name)
-        with open(name_full, "r") as summary_file:
-            for line in summary_file:
-                if target in line:
-                    return line[:-1]
+        summary_name = os.path.join(self.path, name)
+        if os.path.exists(summary_name):
+            with open(summary_name, "r") as summary_file:
+                for line in summary_file:
+                    if target in line:
+                        return line[:-1]
             return None
 
 

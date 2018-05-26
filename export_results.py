@@ -24,6 +24,13 @@ def get_job_name(summary_name="summary.txt"):
     return job_name
 
 
+def write_summary(text, summary_name="summary.txt"):
+    """Write summary of job
+    """
+    with open(summary_name, "a") as summary_file:
+        summary_file.write("{}\n".format(text))
+
+
 def send_results_mail(host, port, SSL, username, password, sender,
                       mail_address, job_id, results_file, timeout=5):
     """Send mail with results
@@ -104,10 +111,11 @@ results.write_cdt(with_proba=True)
 results.write_cluster_stats()
 outputzip = results.wrap_outputs()
 log_content = log_capture_string.getvalue()
-# write 'job-completed' file upon success
-if "ERROR" not in log_content:
-    with open("job-completed", "w") as f:
-        f.write("\n")
+# write final status
+if "ERROR" in log_content:
+    write_summary("status: failed")
+else:
+    write_summary("status: completed")
 #log_capture_string.close()
 # get job name from 'summary.txt'
 job_name = get_job_name()

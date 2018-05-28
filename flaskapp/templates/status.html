@@ -22,7 +22,7 @@
             <!-- start with running jobs -->
             {% for job in job_m.running %}
             <tr class="running">
-                <td>{{ job.name }}</td>
+                <td class="job-name">{{ job.name }}</td>
                 <td>{{ job.ctime.strftime("%Y-%m-%d %H:%M:%S") }}</td>
                 <td>{{ job.status }}</td>
                 <td>{{ "{:.2f}".format(job.running_time) }}</td>
@@ -31,7 +31,7 @@
             <!-- and then with completed jobs -->
             {% for job in job_m.stopped %}
             <tr class="stopped">
-                <td>{{ job.name }}</td>
+                <td class="job-name">{{ job.name }}</td>
                 <td>{{ job.ctime.strftime("%Y-%m-%d %H:%M:%S") }}</td>
                 {% if config["FLASK_RESULTS_ARE_PUBLIC"] and job.status == "completed" %}
                     <td>

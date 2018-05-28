@@ -50,6 +50,9 @@ body > .container {
     margin-bottom: 5px;
 }
 
+ .job-name {
+     font-family: monospace;
+ }
 footer {
     margin-top: 10px;
     border-top: 1px solid #B3B3B3;

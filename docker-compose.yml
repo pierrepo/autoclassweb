@@ -1,25 +1,28 @@
-version: "2"
+version: "3"
 services:
     nginx:
         restart: always
-        build: ./nginx
+        image: nginx:1.13
         volumes:
-            - /www/static
+            - ./nginx/autoclassweb_nginx.conf:/etc/nginx/conf.d/default.conf
+            - flaskapp-static:/www/static
+            - /tmp/flaskapp/logs:/var/log/nginx
         ports:
             - 8000:80
         depends_on:
             - flaskapp
-        volumes_from:
-            - flaskapp
+
 
     flaskapp:
         restart: always
         build: .
-        ports:
-            - 5000
         volumes:
-            - /app/flaskapp/static
+            - flaskapp-static:/app/flaskapp/static
+            - /tmp/flaskapp/results:/app/results
         env_file: .env
         environment:
             FLASK_DEBUG: 1
         command: "pipenv run gunicorn --config gunicorn.conf flaskapp:app"
+
+volumes:
+    flaskapp-static:

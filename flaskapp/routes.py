@@ -50,12 +50,16 @@ def index():
                 or input_form.location_input_file.data
                 or input_form.discrete_input_file.data):
             flash("Missing files input data! Provide at least one type of data", "error")
-            return render_template('index.html', form=input_form, job_m=job_manager)
+            return render_template("index.html",
+                                   form=input_form,
+                                   job_m=job_manager)
 
         if app.config["FLASK_RESULTS_BY_EMAIL"] \
         and not input_form.mail_address.data:
             flash("Missing e-mail address!", "error")
-            return render_template('index.html', form=input_form, job_m=job_manager)
+            return render_template("index.html",
+                                   form=input_form,
+                                   job_m=job_manager)
 
         # create job directory
         job = model.Job()
@@ -165,6 +169,22 @@ def startjob():
         clust.create_model_file()
         clust.create_sparams_file(max_duration=app.config["FLASK_JOB_TIMEOUT"])
         clust.create_rparams_file()
+        # check ERROR in log
+        log_content = log_capture_string.getvalue()
+        if "ERROR" not in log_content:
+            status = "running"
+            nb_line, nb_col = clust.full_dataset.df.shape
+            job.write_summary("data-size: {} lines x {} columns"
+                              .format(nb_line, nb_col+1))
+        else:
+            status = "failed"
+            job.write_summary("status: failed")
+            job.write_summary("running-time: 0")
+            session.pop("job_name")
+            return render_template('startjob.html',
+                                   job_name=job_name,
+                                   status=status,
+                                   log=log_content)
         # initiate autoclass wrapper run
         run = wrapper.Run()
         # prepare script to run autoclass
@@ -175,15 +195,9 @@ def startjob():
             f.write("python3 export_results.py {}\n".format(mail_address))
         # run autoclass
         run.run(job_name)
-
-        # create new job
-        #job = model.Job()
-
-        #with open("input.log", "r") as inputfile:
-        #    logcontent = inputfile.read()
+        # check ERROR in log
         log_content = log_capture_string.getvalue()
         log_capture_string.close()
-
         if "ERROR" not in log_content:
             status = "running"
             nb_line, nb_col = clust.full_dataset.df.shape
@@ -193,13 +207,14 @@ def startjob():
             status = "failed"
             job.write_summary("status: failed")
             job.write_summary("running-time: 0")
-
+        session.clear()
         return render_template('startjob.html',
                                job_name=job_name,
                                status=status,
                                log=log_content)
     else:
-        return "No job found!"
+        flash("Enter input data first!", "error")
+        return redirect(url_for('index'))
 
 
 @app.route('/status', methods=['GET', 'POST'])
@@ -215,9 +230,7 @@ def status():
 def download(job_name):
     print(job_name)
     if not app.config["FLASK_RESULTS_ARE_PUBLIC"]:
-        msg = "Results download is not allowed."
-        print(msg)
-        flash(msg, "error")
+        flash("Results download is not allowed.", "error")
         return redirect(url_for('status'))
 
     # retrieve all jobs
@@ -231,7 +244,7 @@ def download(job_name):
             job_selected = job
 
     if job_selected is None:
-        msg = ("Job {} not found, failed or not completed yet."
+        msg = ("Job '{}' not found, failed or not completed yet. "
                "Cannot get results.").format(job_name)
         flash(msg, "error")
         return redirect(url_for('status'))

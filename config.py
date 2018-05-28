@@ -91,6 +91,6 @@ class CreateConfig():
     SECRET_KEY = os.environ.get("SECRET_KEY", str(uuid.uuid4()))
     RESULTS_FOLDER = os.path.join(os.environ["FLASK_HOME"], "results")
     JOB_NAME_LENGTH = 8
-    # time to check is simulation are still alive
+    # time to check if simulation is still alive
     # in seconds
-    JOB_ALIVE = 180
+    JOB_ALIVE = 300

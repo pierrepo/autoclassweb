@@ -95,7 +95,7 @@ class Job():
         if running_time:
             self.running_time = float(running_time.split()[1])
         # calculate running time
-        else:
+        elif self.status != "failed":
             now = datetime.datetime.now()
             self.running_time = (now - self.ctime).seconds / 60
             if self.status == "completed":

@@ -252,3 +252,7 @@ def download(job_name):
     return send_from_directory(fullpath,
                                os.path.basename(job_selected.results_file),
                                as_attachment=True)
+
+@app.route("/help", methods=["GET"])
+def help():
+    return render_template("help.html")

@@ -2,7 +2,7 @@
 {% block body %}
 
 <article>
-    <h2>Enter your input data and parameters</h2>
+    <h1>Enter your input data and parameters</h1>
     <form action="" method="POST" enctype="multipart/form-data">
         {{ form.csrf_token }}
         {% if config["FLASK_RESULTS_BY_EMAIL"] %}

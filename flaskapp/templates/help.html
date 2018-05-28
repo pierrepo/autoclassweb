@@ -1,0 +1,127 @@
+{% extends "layout.html" %}
+
+{% block meta %}
+    <meta http-equiv="refresh" content="30">
+{% endblock %}
+
+{% block body %}
+<article>
+
+<p>
+autoclass@web is a web interface to <a href="https://ti.arc.nasa.gov/tech/rse/synthesis-projects-applications/autoclass/autoclass-c/" target="_blank">AutoClass C</a>, an unsupervised Bayesian classification system developped by the NASA.
+</p>
+<p>
+It utilizes <a href="https://github.com/pierrepo/autoclasswrapper" target="_blank">autoclasswrapper</a>, a Python wrapper for AutoClass C.
+</p>
+<hr />
+
+<h1>Input data</h1>
+
+<p>
+Input data file is tab-delimeted and must comply with the <a href="https://en.wikipedia.org/wiki/Tab-separated_values"
+target="_blank">tabulation-separated values</a> format.
+</p>
+<p>
+The first line must be a header with column names.
+Avoid <it>weird</it> characters (<tt>$&!/β</tt>) and lengthy column names.
+Column names must be unique.<br />
+The first column must be gene/protein/object names.
+</p>
+<p>
+Missing data are allowed and must be encoded with an empty value, i.e. nothing,
+(don't use <tt>NA</tt>, <tt>?</tt>, <tt>None</tt> or <tt>' '</tt>). <br />
+Example:
+<pre>
+name	exp1	exp2	exp3
+prot1	0.123		550.61
+prot2	0.003	4.966	27.77
+prot3		7.723	9345.34
+</pre>
+</p>
+<p>
+Your data must belong to one of the following categories:
+</p>
+
+<h2>Real Scalar</h2>
+<p>
+Singly bounded real values, typically bounded below at zero
+(e.g: length, weight, age).<br />
+Example:
+<pre>
+name	exp1	exp2	exp3
+prot1	0.123	1.723	550.61
+prot2	0.003	4.966	27.77
+prot3	1.812	7.723	9345.34
+</pre>
+</p>
+
+<h2>Real Location</h2>
+<p>
+Other real values that can be both negative or positive (e.g: microarray log ratio, elevation, position). <br />
+Example:
+<pre>
+name	exp4	exp5	exp6
+prot1	-18.3	1.723	-5.6151
+prot2	14.7	-0.006	-2.7779
+prot3	-22.5	0.023	9.3441
+</pre>
+</p>
+
+<h2>Discrete</h2>
+<p>
+Qualitative data (e.g. color, phenotype, name...). <br />
+Example:
+<pre>
+name	tissu	condition
+prot1	muscle	light
+prot2	nervous	light
+prot3	muscle	shadow
+</pre>
+</p>
+
+<h1>Classification job</h1>
+
+<p>
+Classification jobs are listed in the <a href="/status">status</a> page.
+</p>
+<p>
+The maximum running time for a job is {{ config.FLASK_JOB_TIMEOUT }} seconds.
+</p>
+<p>
+    Depending on how autoclass@web has been configured, you might receive results
+    by e-mail and/or have the ability to download them from
+    the <a href="/status">status</a> page.
+</p>
+
+<h1>Results</h1>
+<p>
+Results file are bundled in a zip archive.
+</p>
+<ul>
+<li>
+    <tt>clust.cdt</tt> and <tt>clust_withprobs.cdt</tt> can be open with
+    <a href="http://jtreeview.sourceforge.net/">Java TreeView</a>.
+    The file <tt>clust_withprobs.cdt</tt> exhibits the probability for each gene
+    to belong to each cluster.
+</li>
+<li>
+    <tt>clust_stat.tsv</tt> contain means and standard deviations
+    of numeric columns (<it>real scalar</it> and <it>real location</it>) for each cluster.
+</li>
+</ul>
+
+<h1>More on the AutoClass algorithm</h1>
+
+<p>
+AutoClass is an unsupervised Bayesian classification system.
+It offers multiple advantages:
+<ul>
+    <li>Number of classes are determined automatically.</li>
+    <li>Missing values are allowed.</li>
+    <li>Real and values can be combined .</li>
+    <li>Class membership probabilties are also computed.</li>
+</ul>
+</p>
+
+</article>
+{% endblock %}

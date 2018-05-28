@@ -59,6 +59,7 @@ class CreateConfig():
     if FLASK_RESULTS_BY_EMAIL:
         MAIL_USE_TLS = format_true_false("MAIL_USE_TLS",
                                          "False")
+        print("MAIL_USE_TLS:", MAIL_USE_TLS)
 
     # FLASK_MAX_JOBS
     if ("FLASK_MAX_JOBS" not in os.environ) \
@@ -91,5 +92,5 @@ class CreateConfig():
     RESULTS_FOLDER = os.path.join(os.environ["FLASK_HOME"], "results")
     JOB_NAME_LENGTH = 8
     # time to check is simulation are still alive
-    # in seconds 
+    # in seconds
     JOB_ALIVE = 180

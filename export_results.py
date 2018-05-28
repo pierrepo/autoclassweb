@@ -66,13 +66,15 @@ AutoclassWeb Bot
     msg.attach(part)
     msg_str = msg.as_string()
     try:
-        if SSL:
+        if SSL == True:
+            logger.info("Mail with SSL")
             mailserver = smtplib.SMTP_SSL(host, port, timeout=timeout)
             if os.environ["FLASK_ENV"] == "development":
                 mailserver.set_debuglevel(1)
             mailserver.login(username,password)
             sender = username
         else:
+            logger.info("Mail without SSL")
             mailserver = smtplib.SMTP(host, port, timeout=timeout)
             if os.environ["FLASK_ENV"] == "development":
                 mailserver.set_debuglevel(1)

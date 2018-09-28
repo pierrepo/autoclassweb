@@ -58,7 +58,7 @@
                            name="scalar_error"
                            value={{form.scalar_error.default}}
                            placeholder="{{ form.scalar_error.placeholder }}">
-                    <small class="form-text text-muted helper">
+                    <small class="form-text text-muted">
                         Relative error on data. Optional.
                         Default = 0.01 i.e. 1% of value.
                     </small>
@@ -84,7 +84,7 @@
                            id="locationInputError"
                            name="location_error"
                            value={{ form.location_error.default }}>
-                    <small class="form-text text-muted helper">
+                    <small class="form-text text-muted">
                         Absolute error on data. Optional.
                         Default = 0.01 i.e. value ± 0.01.
                     </small>
@@ -106,7 +106,7 @@
             <div>
                 {{ form.submit }}
                 {% if job_m.running | length >= config["FLASK_MAX_JOBS"] %}
-                <small class="form-text text-muted helper">
+                <small class="form-text text-muted">
                 Max number of jobs reached. Please wait.
                 </small>
                 {% endif %}

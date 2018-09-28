@@ -18,6 +18,7 @@ body > .container {
 .navbar {
     padding-top: 3px;
     padding-bottom: 3px;
+    border-bottom: 1px solid #B3B3B3;
 }
 
 h1 {
@@ -60,9 +61,10 @@ h2 {
     margin-bottom: 5px;
 }
 
- .job-name {
+.job-name {
      font-family: monospace;
  }
+
 footer {
     margin-top: 10px;
     border-top: 1px solid #B3B3B3;

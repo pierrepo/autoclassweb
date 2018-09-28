@@ -190,10 +190,13 @@ def startjob():
         run = wrapper.Run()
         # prepare script to run autoclass
         run.create_run_file()
-        # prepare script to export and send results
+        # prepare scripts to export and send results
         shutil.copy("../../export_results.py", "./")
+        shutil.copy("../../send_results.py", "./")
         with open("clust.sh", "a") as f:
-            f.write("python3 export_results.py {}\n".format(mail_address))
+            f.write("#added by autoclassweb\n")
+            f.write("python3 export_results.py\n")
+            f.write("python3 send_results.py {}\n".format(mail_address))
         # run autoclass
         run.run(job_name)
         # check ERROR in log
@@ -227,11 +230,11 @@ def status():
     return render_template('status.html', job_m=job_manager)
 
 
+@app.route('/download/', methods=['GET'])
 @app.route('/download/<job_name>', methods=['GET'])
-def download(job_name):
-    print(job_name)
-    if not app.config["FLASK_RESULTS_ARE_PUBLIC"]:
-        flash("Results download is not allowed.", "error")
+def download(job_name=None):
+    if not job_name:
+        flash("You need to specify job name.", "error")
         return redirect(url_for('status'))
 
     # retrieve all jobs

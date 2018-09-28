@@ -45,8 +45,11 @@ class CreateConfig():
                             "cannot be undefined or False simultaneously")
 
     # if FLASK_RESULTS_BY_EMAIL is True,
-    # at least MAIL_SERVER and MAIL_PORT should be defined
+    # at least MAIL_SERVER_URL and MAIL_PORT should be defined
     if FLASK_RESULTS_BY_EMAIL:
+        if os.environ.get("FLASK_SERVER_URL", "") == "":
+            FLASK_INIT_ERROR = ("FLASK_SERVER_URL environnement variable "
+                                "is not defined.")
         if os.environ.get("MAIL_SERVER", "") == "":
             FLASK_INIT_ERROR = ("MAIL_SERVER environnement variable "
                                 "is not defined.")

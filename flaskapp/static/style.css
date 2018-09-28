@@ -35,6 +35,10 @@ h2 {
     margin-bottom: 15px;
 }
 
+.helper a:link, .helper a:visited {
+    color: #171a1c !important;
+}
+
 .errors {
     list-style-type: none;
     color: red;

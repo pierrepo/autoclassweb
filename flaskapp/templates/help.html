@@ -79,6 +79,12 @@ prot3	muscle	shadow
 </pre>
 </p>
 
+<p>
+<strong>Note:</strong> if your dataset contains several types of data
+(real scalar, real location, discrete), then split your dataset into
+mutliple datasets with homogeneous data type.
+</p>
+
 <h1>Classification job</h1>
 
 <p>
@@ -90,7 +96,7 @@ The maximum running time for a job is {{ config.FLASK_JOB_TIMEOUT }} seconds.
 <p>
     Depending on how autoclass@web has been configured, you might receive
     by e-mail a link to download results and/or have the ability to download
-    results them directly from the <a href="/status">status</a> page.
+    results directly from the <a href="/status">status</a> page.
 </p>
 
 <h1>Results</h1>

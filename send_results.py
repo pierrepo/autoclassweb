@@ -1,3 +1,4 @@
+import glob
 import io
 import logging
 import os
@@ -18,27 +19,24 @@ def get_email():
     email_address = None
     try:
         email_address = sys.argv[1]
-        logger.info("E-mail address is: {}".format(email_address))
     except:
-        logger.warning("E-mail address not defined. Results cannot be send")
-    finally:
-        return email_address
+        pass
+    return email_address
 
 
-def get_job_name(summary_name="summary.txt"):
+def get_job_name():
     """Extract job name from summary file
     """
-    job_name = None
-    if os.path.exists(summary_name):
-        with open(summary_name, "r") as summary_file:
-            for line in summary_file:
-                if "reference" in line:
-                    job_name = line.split()[1]
-    if job_name:
-        logger.info("Job name is {}".format(job_name))
-    else:
-        logger.critical("Cannot find job name!")
-    return job_name
+    summary_found = glob.glob("*summary.txt")
+    if summary_found:
+        summary_name = summary_found[0]
+        if os.path.exists(summary_name):
+            with open(summary_name, "r") as summary_file:
+                for line in summary_file:
+                    if "reference" in line:
+                        job_name = line.split()[1]
+                        return job_name
+    return None
 
 
 def send_results_mail(host, port, SSL, username, password, sender,
@@ -116,15 +114,17 @@ if __name__ == "__main__":
 
     # get email address from command line
     email_address = get_email()
+    if not email_address:
+        logger.critical("Email address is not defined or not found.")
+    else:
+        logger.info("Email address is {}".format(email_address))
+
     # get job name from 'summary.txt'
     job_name = get_job_name()
-
-    if os.environ.get("FLASK_RESULTS_BY_EMAIL", "False") == "False":
-        logger.critical("FLASK_RESULTS_BY_EMAIL set to False"
-                        "Nothing to do.")
-
-    if not email_address:
-        logger.critical("Email address not difined or not found.")
+    if not job_name:
+        logger.critical("Cannot find job name in summary file.")
+    else:
+        logger.info("Job name is {}".format(job_name))
 
     if os.environ.get("FLASK_SERVER_URL", "") == "":
         logger.critical("FLASK_SERVER_URL not defined.")

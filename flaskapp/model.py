@@ -112,24 +112,27 @@ class Job():
             self.results_file = zip_lst[0]
 
 
-    def write_summary(self, text, summary_name="summary.txt"):
+    def write_summary(self, text):
         """Write summary of job
         """
+        summary_name = self.folder + "-summary.txt"
         summary_full = os.path.join(self.path, summary_name)
         with open(summary_full, "a") as summary_file:
             summary_file.write("{}\n".format(text))
 
 
-    def search_summary(self, target, name="summary.txt"):
+    def search_summary(self, target, name="*summary.txt"):
         """Read summary of job
         """
-        summary_name = os.path.join(self.path, name)
-        if os.path.exists(summary_name):
-            with open(summary_name, "r") as summary_file:
-                for line in summary_file:
-                    if target in line:
-                        return line[:-1]
-            return None
+        summary_found = glob.glob(os.path.join(self.path, name))
+        if summary_found:
+            summary_name = summary_found[0]
+            if os.path.exists(summary_name):
+                with open(summary_name, "r") as summary_file:
+                    for line in summary_file:
+                        if target in line:
+                            return line[:-1]
+        return None
 
 
     def get_file_modification_time(self, filename):

@@ -196,7 +196,8 @@ def startjob():
         with open("clust.sh", "a") as f:
             f.write("#added by autoclassweb\n")
             f.write("python3 export_results.py\n")
-            f.write("python3 send_results.py {}\n".format(mail_address))
+            if app.config["FLASK_RESULTS_BY_EMAIL"]:
+                f.write("python3 send_results.py {}\n".format(mail_address))
         # run autoclass
         run.run(job_name)
         # check ERROR in log

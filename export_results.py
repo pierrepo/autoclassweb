@@ -1,28 +1,38 @@
-import os
+import glob
 import io
-import sys
-import autoclasswrapper as wrapper
 import logging
+import os
+import sys
+
+import autoclasswrapper as wrapper
 
 
-def get_job_name(summary_name="summary.txt"):
+def get_job_name():
     """Extract job name from summary file
     """
-    job_name = ""
-    if os.path.exists(summary_name):
-        with open(summary_name, "r") as summary_file:
-            for line in summary_file:
-                if "reference" in line:
-                    job_name = line.split()[1]
-                    return job_name
-    return job_name
+    summary_found = glob.glob("*summary.txt")
+    if summary_found:
+        summary_name = summary_found[0]
+        if os.path.exists(summary_name):
+            with open(summary_name, "r") as summary_file:
+                for line in summary_file:
+                    if "reference" in line:
+                        job_name = line.split()[1]
+                        return job_name
+    return None
 
 
-def write_summary(text, summary_name="summary.txt"):
+def write_summary(text):
     """Write summary of job
     """
-    with open(summary_name, "a") as summary_file:
-        summary_file.write("{}\n".format(text))
+    summary_found = glob.glob("*summary.txt")
+    if summary_found:
+        summary_name = summary_found[0]
+        if os.path.exists(summary_name):
+            with open(summary_name, "a") as summary_file:
+                summary_file.write("{}\n".format(text))
+    else:
+        logger.error("Cannot find summary file.")
 
 
 if __name__ == "__main__":
@@ -60,8 +70,14 @@ if __name__ == "__main__":
     else:
         write_summary("status: completed")
     #log_capture_string.close()
-    # get job name from 'summary.txt'
+
+    # get job name from summary file
     job_name = get_job_name()
+    if not job_name:
+        logger.critical("Cannot find job name in summary file.")
+    else:
+        logger.info("Job name is {}".format(job_name))
+
     # rename result file with job name
     outputzip_new = "{}-{}.zip".format(outputzip[:-4], job_name)
     os.rename(outputzip , outputzip_new)

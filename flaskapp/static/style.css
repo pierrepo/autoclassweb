@@ -31,6 +31,10 @@ h2 {
     line-height: 28px;
 }
 
+.helper {
+    margin-bottom: 15px;
+}
+
 .errors {
     list-style-type: none;
     color: red;

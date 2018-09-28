@@ -4,7 +4,7 @@ from wtforms import StringField, RadioField, FloatField, SubmitField
 from wtforms.validators import Required, DataRequired, Length
 
 class InputDataUpload(FlaskForm):
-    mail_address = StringField("Mail address",
+    mail_address = StringField("Email address",
                                validators=[]
                               )
     submit = SubmitField('Run autoclass@web',

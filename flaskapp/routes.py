@@ -22,6 +22,7 @@ def show_me_config():
         "FLASK_RESULTS_BY_EMAIL": app.config["FLASK_RESULTS_BY_EMAIL"],
         "FLASK_MAX_JOBS": app.config["FLASK_MAX_JOBS"],
         "FLASK_JOB_TIMEOUT": app.config["FLASK_JOB_TIMEOUT"],
+        "autoclass-c path": wrapper.run.search_autoclass_in_path(),
         "autoclasswrapper version": wrapper.__version__,
         "autoclassweb version": app.config["VERSION"]
     })

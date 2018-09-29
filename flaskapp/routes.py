@@ -109,15 +109,15 @@ def index():
         session['scalar'] = scalar
         session['location'] = location
         session['discrete'] = discrete
-        return redirect(url_for('startjob'))
+        return redirect(url_for("start"))
 
     return render_template('index.html',
                            form=input_form,
                            job_m=job_manager)
 
 
-@app.route('/startjob', methods=['GET'])
-def startjob():
+@app.route("/start", methods=['GET'])
+def start():
     if "job_name" not in session:
             flash("Enter input data first!", "error")
             return redirect(url_for('index'))
@@ -191,7 +191,7 @@ def startjob():
         # remove "job_name" from session
         # to avoid running twice the same job upon refresh
         session.pop("job_name")
-        return render_template("startjob.html",
+        return render_template("start.html",
                                job_name=job_name)
     # no ERROR, then keep going
     session["status"] = "running"
@@ -216,7 +216,7 @@ def startjob():
     # remove "job_name" from session
     # to avoid running twice the same job upon refresh
     session.pop("job_name")
-    return render_template("startjob.html",
+    return render_template("start.html",
                            job_name=job_name)
 
 

@@ -190,6 +190,7 @@ def startjob():
             return render_template('startjob.html',
                                    job_name=job_name,
                                    status=status,
+                                   mail_address=mail_address,
                                    log=log_content)
         # initiate autoclass wrapper run
         run = wrapper.Run()
@@ -210,6 +211,7 @@ def startjob():
         return render_template('startjob.html',
                                job_name=job_name,
                                status=status,
+                               mail_address=mail_address,
                                log=log_content)
     else:
         flash("Enter input data first!", "error")

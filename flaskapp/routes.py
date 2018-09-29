@@ -205,18 +205,7 @@ def startjob():
                 f.write("python3 send_results.py {}\n".format(mail_address))
         # run autoclass
         run.run(job_name)
-        # check ERROR in log
-        log_content = log_capture_string.getvalue()
-        log_capture_string.close()
-        if "ERROR" not in log_content:
-            status = "running"
-            nb_line, nb_col = clust.full_dataset.df.shape
-            job.write_summary("data-size: {} lines x {} columns"
-                              .format(nb_line, nb_col+1))
-        else:
-            status = "failed"
-            job.write_summary("status: failed")
-            job.write_summary("running-time: 0")
+        # clean session to avoid running twice the same clustering upon refresh
         session.clear()
         return render_template('startjob.html',
                                job_name=job_name,

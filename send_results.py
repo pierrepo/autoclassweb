@@ -52,7 +52,7 @@ def send_results_mail(host, port, SSL, username, password, sender,
     # build message
     message = """Hello,
 
-your autoclass job is now completed.
+your autoclass@web job is now completed.
 
 Your results are available in the following link:
 
@@ -67,10 +67,10 @@ Regards.
 AutoclassWeb Bot
 """.format(server_url, "download", job_id)
     msg = MIMEMultipart()
-    msg['From'] = "AutoclassWeb Bot <{}>".format(sender)
+    msg['From'] = "Autoclass@web Bot <{}>".format(sender)
     msg['To'] = mail_address
     msg['Date'] = formatdate(localtime=True)
-    msg['Subject'] = "Your autoclass-web job {} is ready".format(job_id)
+    msg['Subject'] = "Your autoclass@web job {} is ready".format(job_id)
     msg.attach(MIMEText(message))
     msg_str = msg.as_string()
     try:

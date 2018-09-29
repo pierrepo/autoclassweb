@@ -30,6 +30,7 @@ def show_me_config():
 
 @app.route('/', methods=('GET', 'POST'))
 def index():
+    print(session)
     os.chdir(os.environ['FLASK_HOME'])
     print("We are in: {}".format(os.getcwd()))
 
@@ -117,105 +118,106 @@ def index():
 
 @app.route('/startjob', methods=['GET'])
 def startjob():
-    if 'job_name' in session:
-        print(session)
-        mail_address = session["mail_address"]
-        job_name = session['job_name']
-        job_path = session['job_path']
-        os.chdir(job_path)
-        # create job to update 'summary.txt'
-        job = model.Job()
-        job.create_from_path(job_path)
-        job.write_summary("reference: {}".format(job_name))
-        job.write_summary(
-            "date-start: {}"
-            .format(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
-            )
-        job.write_summary("email: {}".format(mail_address))
-        # create logger
-        logger = logging.getLogger("autoclasswrapper")
-        logger.setLevel(logging.DEBUG)
-        # create a file handler
-        handler = logging.FileHandler("input.log")
-        handler.setLevel(logging.INFO)
-        # create a stream handler
-        log_capture_string = io.StringIO()
-        handler_stream = logging.StreamHandler(log_capture_string)
-        handler_stream.setLevel(logging.INFO)
-        # create a logging format
-        formatter = logging.Formatter('%(asctime)s :: %(levelname)-8s :: %(message)s', datefmt="%Y-%m-%d %H:%M:%S")
-        handler.setFormatter(formatter)
-        handler_stream.setFormatter(formatter)
-        # add the handlers to the logger
-        logger.addHandler(handler)
-        logger.addHandler(handler_stream)
-        # initiate autoclass wrapper input
-        clust = wrapper.Input()
-        # load scalar data if any
-        scalar = session['scalar']
-        if scalar['file']:
-            clust.add_input_data(scalar['file'],
-                                 "real scalar",
-                                 scalar['error'])
-        # load location data if any
-        location = session['location']
-        if location['file']:
-            clust.add_input_data(location['file'],
-                                 "real location",
-                                 location['error'])
-        # load discrete data if any
-        discrete = session['discrete']
-        if discrete['file']:
-            clust.add_input_data(discrete['file'],
-                                 "real discrete")
-        # prepare input files
-        clust.merge_dataframes()
-        clust.create_db2_file()
-        clust.create_hd2_file()
-        clust.create_model_file()
-        clust.create_sparams_file(max_duration=app.config["FLASK_JOB_TIMEOUT"])
-        clust.create_rparams_file()
-        # check ERROR in log
-        log_content = log_capture_string.getvalue()
-        if "ERROR" not in log_content:
-            status = "running"
-            nb_line, nb_col = clust.full_dataset.df.shape
-            job.write_summary("data-size: {} lines x {} columns"
-                              .format(nb_line, nb_col+1))
-        else:
-            status = "failed"
-            job.write_summary("status: failed")
-            job.write_summary("running-time: 0")
-            session.pop("job_name")
-            return render_template('startjob.html',
-                                   job_name=job_name,
-                                   status=status,
-                                   mail_address=mail_address,
-                                   log=log_content)
-        # initiate autoclass wrapper run
-        run = wrapper.Run()
-        # prepare script to run autoclass
-        run.create_run_file()
-        # add scripts to export and send results
-        shutil.copy("../../export_results.py", "./")
-        shutil.copy("../../send_results.py", "./")
-        with open("clust.sh", "a") as f:
-            f.write("#added by autoclassweb\n")
-            f.write("python3 export_results.py\n")
-            if app.config["FLASK_RESULTS_BY_EMAIL"]:
-                f.write("python3 send_results.py {}\n".format(mail_address))
-        # run autoclass
-        run.run(job_name)
-        # clean session to avoid running twice the same clustering upon refresh
-        session.clear()
-        return render_template('startjob.html',
-                               job_name=job_name,
-                               status=status,
-                               mail_address=mail_address,
-                               log=log_content)
-    else:
-        flash("Enter input data first!", "error")
-        return redirect(url_for('index'))
+    if "job_name" not in session:
+            flash("Enter input data first!", "error")
+            return redirect(url_for('index'))
+    # "job_name" is in session,
+    # so we prepare input data and run job
+    print(session)
+    # keep value of job_name for further use
+    job_name = session["job_name"]
+    os.chdir(session["job_path"])
+    # re-create job and update summary file
+    job = model.Job()
+    job.create_from_path(session["job_path"])
+    job.write_summary("reference: {}".format(job_name))
+    job.write_summary(
+        "date-start: {}"
+        .format(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+        )
+    job.write_summary("email: {}".format(session["mail_address"]))
+    # create logger
+    logger = logging.getLogger("autoclasswrapper")
+    logger.setLevel(logging.DEBUG)
+    # create a file handler
+    handler = logging.FileHandler("input.log")
+    handler.setLevel(logging.INFO)
+    # create a stream handler
+    log_capture_string = io.StringIO()
+    handler_stream = logging.StreamHandler(log_capture_string)
+    handler_stream.setLevel(logging.INFO)
+    # create a logging format
+    formatter = logging.Formatter(("%(asctime)s :: "
+                                   "%(levelname)-8s :: "
+                                   "%(message)s"
+                                   ), datefmt="%Y-%m-%d %H:%M:%S")
+    handler.setFormatter(formatter)
+    handler_stream.setFormatter(formatter)
+    # add the handlers to the logger
+    logger.addHandler(handler)
+    logger.addHandler(handler_stream)
+    # initiate autoclass wrapper input
+    clust = wrapper.Input()
+    # load scalar data if any
+    scalar = session['scalar']
+    if scalar['file']:
+        clust.add_input_data(scalar['file'],
+                             "real scalar",
+                             scalar['error'])
+    # load location data if any
+    location = session['location']
+    if location['file']:
+        clust.add_input_data(location['file'],
+                             "real location",
+                             location['error'])
+    # load discrete data if any
+    discrete = session['discrete']
+    if discrete['file']:
+        clust.add_input_data(discrete['file'],
+                             "real discrete")
+    # prepare input files
+    clust.merge_dataframes()
+    clust.create_db2_file()
+    clust.create_hd2_file()
+    clust.create_model_file()
+    clust.create_sparams_file(max_duration=app.config["FLASK_JOB_TIMEOUT"])
+    clust.create_rparams_file()
+    # check ERROR in log
+    log_content = log_capture_string.getvalue()
+    session["log"] = log_content
+    if "ERROR" in log_content:
+        session["status"] = "failed"
+        job.write_summary("status: failed\nrunning-time: 0")
+        # remove "job_name" from session
+        # to avoid running twice the same job upon refresh
+        session.pop("job_name")
+        return render_template("startjob.html",
+                               job_name=job_name)
+    # no ERROR, then keep going
+    session["status"] = "running"
+    nb_line, nb_col = clust.full_dataset.df.shape
+    job.write_summary("data-size: {} lines x {} columns"
+                      .format(nb_line, nb_col+1))
+    # initiate autoclass wrapper run
+    run = wrapper.Run()
+    # prepare master script to run autoclass
+    run.create_run_file()
+    # add scripts to export and send results
+    shutil.copy("../../export_results.py", "./")
+    shutil.copy("../../send_results.py", "./")
+    with open("clust.sh", "a") as script_file:
+        script_file.write("#added by autoclassweb\n")
+        script_file.write("python3 export_results.py\n")
+        if app.config["FLASK_RESULTS_BY_EMAIL"]:
+            script_file.write("python3 send_results.py {}\n"
+                              .format(session["mail_address"]))
+    # run autoclass
+    run.run(job_name)
+    # remove "job_name" from session
+    # to avoid running twice the same job upon refresh
+    session.pop("job_name")
+    return render_template("startjob.html",
+                           job_name=job_name)
 
 
 @app.route('/status', methods=['GET', 'POST'])
@@ -253,6 +255,7 @@ def download(job_name=None):
     return send_from_directory(fullpath,
                                os.path.basename(job_selected.results_file),
                                as_attachment=True)
+
 
 @app.route("/help", methods=["GET"])
 def help():

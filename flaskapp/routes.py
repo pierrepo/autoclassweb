@@ -30,90 +30,85 @@ def show_me_config():
 
 @app.route('/', methods=('GET', 'POST'))
 def index():
-    print(session)
-    os.chdir(os.environ['FLASK_HOME'])
-    print("We are in: {}".format(os.getcwd()))
-
+    # print error if bad iniatilization
     if app.config["FLASK_INIT_ERROR"]:
         return render_template("error.html")
 
+    # change directory
+    os.chdir(os.environ['FLASK_HOME'])
+    print("We are in: {}".format(os.getcwd()))
+
     # create form
     input_form = forms.InputDataUpload()
-
     # list current jobs (running and completed)
     job_manager = model.JobManager(app.config["RESULTS_FOLDER"],
                                    alive=app.config["JOB_ALIVE"])
     job_manager.autodiscover()
 
-    # handle form data after POST
-    if input_form.validate_on_submit():
+    # handle form data after POST request
+    # go back to form if no data
+    if not input_form.validate_on_submit():
+        return render_template("index.html",
+                               form=input_form,
+                               job_m=job_manager)
 
-        if not (input_form.scalar_input_file.data
-                or input_form.location_input_file.data
-                or input_form.discrete_input_file.data):
-            flash("Missing files input data! Provide at least one type of data", "error")
-            return render_template("index.html",
-                                   form=input_form,
-                                   job_m=job_manager)
+    # go back to form if no input file is uploaded
+    if not (input_form.scalar_input_file.data
+            or input_form.location_input_file.data
+            or input_form.discrete_input_file.data):
+        flash("Missing files input data! Provide at least one type of data",
+              "error")
+        return render_template("index.html",
+                               form=input_form,
+                               job_m=job_manager)
 
-        if app.config["FLASK_RESULTS_BY_EMAIL"] \
-        and not input_form.mail_address.data:
-            flash("Missing e-mail address!", "error")
-            return render_template("index.html",
-                                   form=input_form,
-                                   job_m=job_manager)
+    # go back to form if not email is provided (but required)
+    if app.config["FLASK_RESULTS_BY_EMAIL"] \
+    and not input_form.mail_address.data:
+        flash("Missing e-mail address!", "error")
+        return render_template("index.html",
+                               form=input_form,
+                               job_m=job_manager)
 
-        # create job directory
-        job = model.Job()
-        job.create_new(app.config["RESULTS_FOLDER"], app.config['JOB_NAME_LENGTH'])
-        print(job.path, job.name)
-        # get e-mail address
-        if input_form.mail_address.data:
-            mail_address = input_form.mail_address.data
-        else:
-            mail_address = ""
-        # get 'real scalar' input data
-        scalar = {}
-        if input_form.scalar_input_file.data:
-            filename = secure_filename(input_form.scalar_input_file.data.filename)
-            input_form.scalar_input_file.data.save(os.path.join(job.path, filename))
-            scalar['file'] = filename
-            scalar['error'] = input_form.scalar_error.data
-        else:
-            scalar['file'] = None
-            scalar['error'] = None
-        # get 'real location' input data
-        location = {}
-        if input_form.location_input_file.data:
-            filename = secure_filename(input_form.location_input_file.data.filename)
-            input_form.location_input_file.data.save(os.path.join(job.path, filename))
-            location['file'] = filename
-            location['error'] = input_form.location_error.data
-        else:
-            location['file'] = None
-            location['error'] = None
-        # get 'discrete' input data
-        discrete = {}
-        if input_form.discrete_input_file.data:
-            filename = secure_filename(input_form.discrete_input_file.data.filename)
-            input_form.discrete_input_file.data.save(os.path.join(job.path, filename))
-            discrete['file'] = filename
-            discrete['error'] = None
-        else:
-            discrete['file'] = None
-            discrete['error'] = None
-        # prepare data to be stored in session
-        session['job_name'] = job.name
-        session['job_path'] = job.path
-        session['mail_address'] = mail_address
-        session['scalar'] = scalar
-        session['location'] = location
-        session['discrete'] = discrete
-        return redirect(url_for("start"))
-
-    return render_template('index.html',
-                           form=input_form,
-                           job_m=job_manager)
+    # eventually create job and process form data
+    # create job directory
+    job = model.Job()
+    job.create_new(app.config["RESULTS_FOLDER"], app.config['JOB_NAME_LENGTH'])
+    print(job.path, job.name)
+    # get e-mail address
+    if input_form.mail_address.data:
+        mail_address = input_form.mail_address.data
+    else:
+        mail_address = ""
+    # get 'real scalar' input data
+    scalar = {"file": None, "error": None}
+    if input_form.scalar_input_file.data:
+        filename = secure_filename(input_form.scalar_input_file.data.filename)
+        input_form.scalar_input_file.data.save(os.path.join(job.path, filename))
+        scalar["file"] = filename
+        scalar["error"] = input_form.scalar_error.data
+    # get 'real location' input data
+    location = {"file": None, "error": None}
+    if input_form.location_input_file.data:
+        filename = secure_filename(input_form.location_input_file.data.filename)
+        input_form.location_input_file.data.save(os.path.join(job.path, filename))
+        location["file"] = filename
+        location["error"] = input_form.location_error.data
+    # get 'discrete' input data
+    discrete = {"file": None, "error": None}
+    if input_form.discrete_input_file.data:
+        filename = secure_filename(input_form.discrete_input_file.data.filename)
+        input_form.discrete_input_file.data.save(os.path.join(job.path, filename))
+        discrete["file"] = filename
+        discrete["error"] = None
+    # prepare data to be stored in session
+    session["job_name"] = job.name
+    session["job_path"] = job.path
+    session["mail_address"] = mail_address
+    session["scalar"] = scalar
+    session["location"] = location
+    session["discrete"] = discrete
+    return redirect(url_for("start"))
 
 
 @app.route("/start", methods=['GET'])

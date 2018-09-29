@@ -154,15 +154,20 @@ def startjob():
         # load scalar data if any
         scalar = session['scalar']
         if scalar['file']:
-            clust.add_input_data(scalar['file'], "real scalar", scalar['error'])
+            clust.add_input_data(scalar['file'],
+                                 "real scalar",
+                                 scalar['error'])
         # load location data if any
         location = session['location']
         if location['file']:
-            clust.add_input_data(location['file'], "real location", location['error'])
+            clust.add_input_data(location['file'],
+                                 "real location",
+                                 location['error'])
         # load discrete data if any
         discrete = session['discrete']
         if discrete['file']:
-            clust.add_input_data(discrete['file'], "real discrete")
+            clust.add_input_data(discrete['file'],
+                                 "real discrete")
         # prepare input files
         clust.merge_dataframes()
         clust.create_db2_file()
@@ -190,7 +195,7 @@ def startjob():
         run = wrapper.Run()
         # prepare script to run autoclass
         run.create_run_file()
-        # prepare scripts to export and send results
+        # add scripts to export and send results
         shutil.copy("../../export_results.py", "./")
         shutil.copy("../../send_results.py", "./")
         with open("clust.sh", "a") as f:

@@ -200,8 +200,8 @@ def start():
     # add scripts to export and send results
     shutil.copy("../../export_results.py", "./")
     shutil.copy("../../send_results.py", "./")
-    with open("clust.sh", "a") as script_file:
-        script_file.write("#added by autoclassweb\n")
+    with open(run.root_name + ".sh", "a") as script_file:
+        script_file.write("# added by autoclassweb\n")
         script_file.write("python3 export_results.py\n")
         if app.config["FLASK_RESULTS_BY_EMAIL"]:
             script_file.write("python3 send_results.py {}\n"

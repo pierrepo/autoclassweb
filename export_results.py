@@ -61,7 +61,7 @@ if __name__ == "__main__":
     results.aggregate_input_data()
     results.write_cdt()
     results.write_cdt(with_proba=True)
-    results.write_cluster_stats()
+    results.write_class_stats()
     outputzip = results.wrap_outputs()
     log_content = log_capture_string.getvalue()
     # write final status

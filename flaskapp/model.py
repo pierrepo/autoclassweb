@@ -65,10 +65,12 @@ class Job():
             raise
 
 
-    def get_status(self):
+    def get_status(self,
+                   file_for_success="autoclass-run-success",
+                   file_for_failure="autoclass-run-failure"):
         """Test job status and how long it has run (or is running).
 
-        We considere that the time to build classification (i.e clustering)
+        We consider that the time to build classification (i.e clustering)
         is much larger than the time to build reports.
         """
         # find status
@@ -78,12 +80,11 @@ class Job():
         if status:
             self.status = status.split()[1]
         # define status from modification time of "clust.log"
-        else:
+        elif Path(self.path, file_for_success).exists():
+            self.status = "completed"
+        elif Path(self.path, file_for_failure).exists():
+            self.status = "failed"
             log_file = os.path.join(self.path, "clust.log")
-            if os.path.exists(log_file):
-                mtime = self.get_file_modification_time(log_file)
-                if ((datetime.datetime.now() - mtime).seconds > self.alive ):
-                    self.status = "failed"
         # define running time
         # search in summary file first (for completed job)
         self.running_time = 0.0

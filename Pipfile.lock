@@ -16,10 +16,10 @@
     "default": {
         "autoclasswrapper": {
             "hashes": [
-                "sha256:07d2eddaacf208ce8cd8b07db739187af7fc48d27f8871ded60e98eae750db5e"
+                "sha256:b7d6692bdd8f90d292c1e1b052eda96863f4e33e4177605f1d4c399319278dd4"
             ],
             "index": "pypi",
-            "version": "==0.2.0"
+            "version": "==0.2.1"
         },
         "chardet": {
             "hashes": [

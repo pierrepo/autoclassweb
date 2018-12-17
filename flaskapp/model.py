@@ -111,8 +111,8 @@ class Job():
     def write_summary(self, text):
         """Write summary of job."""
         summary_name = self.folder + "-summary.txt"
-        summary_full = os.path.join(self.path, summary_name)
-        with open(summary_full, "a") as summary_file:
+        #summary_full = os.path.join(self.path, summary_name)
+        with open(Path(self.path, summary_name), "a") as summary_file:
             summary_file.write("{}\n".format(text))
 
 

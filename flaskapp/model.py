@@ -10,8 +10,7 @@ import random
 UNAMBIGUOUS_CHARACTERS = "234679ACDEFGHJKMNPQRTWXYZ"
 
 def create_random_string(length):
-    """Create random string from a character set.
-    """
+    """Create random string from a character set."""
     string = ''.join(random.choice(UNAMBIGUOUS_CHARACTERS)
                      for _ in range(length)
                     )
@@ -19,7 +18,7 @@ def create_random_string(length):
 
 
 class Job():
-    """Autoclass job management
+    """Autoclass job management.
     """
     def __init__(self, alive=30):
         """
@@ -35,8 +34,7 @@ class Job():
         self.results_file = ""
 
     def create_from_path(self, path):
-        """Create Job from path
-        """
+        """Create Job from path."""
         self.path = path
         answer = self.verify_folder_name(self.path)
         if answer:
@@ -50,9 +48,7 @@ class Job():
 
 
     def create_new(self, root, name_length):
-        """
-        Create new job in root directory
-        """
+        """Create new job in root directory."""
         # create random name from unambiguous characters
         self.name = create_random_string(name_length)
         self.ctime = datetime.datetime.now()
@@ -70,7 +66,7 @@ class Job():
 
 
     def get_status(self):
-        """Test job status and how long it has run (or is running)
+        """Test job status and how long it has run (or is running).
 
         We considere that the time to build classification (i.e clustering)
         is much larger than the time to build reports.
@@ -104,8 +100,7 @@ class Job():
 
 
     def get_results_file(self):
-        """Find results file
-        """
+        """Find results file."""
         self.results_file = ""
         zip_lst = glob.glob(os.path.join(self.path,"*autoclass*.zip"))
         if len(zip_lst) >= 1:
@@ -113,8 +108,7 @@ class Job():
 
 
     def write_summary(self, text):
-        """Write summary of job
-        """
+        """Write summary of job."""
         summary_name = self.folder + "-summary.txt"
         summary_full = os.path.join(self.path, summary_name)
         with open(summary_full, "a") as summary_file:
@@ -122,8 +116,7 @@ class Job():
 
 
     def search_summary(self, target, name="*summary.txt"):
-        """Read summary of job
-        """
+        """Read summary of job."""
         summary_found = glob.glob(os.path.join(self.path, name))
         if summary_found:
             summary_name = summary_found[0]
@@ -136,8 +129,7 @@ class Job():
 
 
     def get_file_modification_time(self, filename):
-        """Get time when file was last modified
-        """
+        """Get time when file was last modified."""
         mtime = None
         if os.path.exists(filename):
             mtime = datetime.datetime.fromtimestamp(os.path.getmtime(filename))
@@ -145,16 +137,14 @@ class Job():
 
 
     def __repr__(self):
-        """Job representation
-        """
+        """Job representation."""
         return "{} in {} created: {}  status: {}".format(
                 self.name, self.folder, self.ctime,  self.status)
 
 
     @staticmethod
     def verify_folder_name(folder):
-        """Verify folder name is compliant with naming convention
-        """
+        """Verify folder name is compliant with naming convention."""
         regex = re.compile("\/([0-9]{8})-([0-9]{6})-(\w+)$")
         find = regex.search(folder)
         if find:
@@ -169,12 +159,10 @@ class Job():
 
 
 class JobManager():
-    """Manager for autoclass jobs
-    """
+    """Manager for autoclass jobs."""
 
     def __init__(self, path, alive=30):
-        """Constructor
-        """
+        """Constructor."""
         self.path = path
         self.running = []
         self.stopped = []
@@ -182,8 +170,7 @@ class JobManager():
 
 
     def autodiscover(self):
-        """Discover autoclass jobs automatically
-        """
+        """Discover autoclass jobs automatically."""
         # list sub folders
         p = Path(self.path)
         job_folder_lst = [str(x) for x in p.iterdir() if x.is_dir()]

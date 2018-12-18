@@ -88,9 +88,36 @@ $ cd autoclassweb
 $ cp .env-template .env
 ```
 
+### Install and configure Python virtual environment
+
+1. Install pipenv
+    ```
+    $ pip3 install --user pipenv
+    ```
+
+2. Create virtual environment
+    ```
+    $ pipenv --three
+    ```
+
+3. Install required packages
+    ```
+    $ pipenv install
+    ```
+
 ### Run the application:
 ```
 $ make run
 ```
 
 Autoclass@web is now accessible at <http://127.0.0.1:5000/>
+
+
+### Optional: with gunicorn
+
+Gunicorn can also be used:
+```
+$ pipenv run gunicorn -b localhost:8000 -w 4 flaskapp:app
+```
+
+autoclass-web in then accessible at <http://127.0.0.1:8000/>

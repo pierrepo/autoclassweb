@@ -18,8 +18,8 @@ It utilizes <a href="https://github.com/pierrepo/autoclasswrapper" target="_blan
 <h1>Input data</h1>
 
 <p>
-Input data file is tab-delimeted and must comply with the <a href="https://en.wikipedia.org/wiki/Tab-separated_values"
-target="_blank">tabulation-separated values</a> format.
+Input data file is tab-delimited and must comply with the <a href="https://en.wikipedia.org/wiki/Tab-separated_values"
+target="_blank">Tab-separated values</a> format.
 </p>
 <p>
 The first line must be a header with column names.
@@ -106,14 +106,20 @@ Results are bundled in a zip archive with the following files:
 </p>
 <ul>
 <li>
-    <tt>clust.cdt</tt> and <tt>clust_withprobs.cdt</tt> can be open with
+    <tt>something_out.cdt</tt> and <tt>something_out_withproba.cdt</tt> can be open with
     <a href="http://jtreeview.sourceforge.net/">Java TreeView</a>.
-    The file <tt>clust_withprobs.cdt</tt> exhibits the probability for each gene
-    to belong to each cluster.
+    The file <tt>something_out_withproba.cdt</tt> exhibits the probability for each gene/protein/object
+    to belong to each class.
 </li>
 <li>
-    <tt>clust_stat.tsv</tt> contain means and standard deviations
-    of numeric columns (<it>real scalar</it> and <it>real location</it>) for each cluster.
+    <tt>something_out_stats.tsv</tt> contain means and standard deviations
+    of numeric columns (<it>real scalar</it> and <it>real location</it>) for each class.
+</li>
+<li>
+    <tt>something_out_dendrogram.png</tt> is a dendrogram representing the distance between all classes.
+</li>
+<li>
+    <tt>something_out.tsv</tt> contains all the data with the class assignement and membship probabilities for all classes.
 </li>
 </ul>
 

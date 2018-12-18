@@ -1,4 +1,9 @@
-# autoclass-web
+# autoclass@web
+
+## Installation
+
+Documentation is available [here](https://pierrepo.github.io/autoclassweb/).
+
 
 A web app to run autoclass clustering.
 

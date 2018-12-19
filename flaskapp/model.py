@@ -20,7 +20,7 @@ def create_random_string(length):
 class Job():
     """Autoclass job management.
     """
-    def __init__(self, alive=30):
+    def __init__(self):
         """
         Constructor
         """
@@ -30,7 +30,6 @@ class Job():
         self.ctime = None
         self.status = ""
         self.running_time = 0
-        self.alive = alive
         self.results_file = ""
 
     def create_from_path(self, path):
@@ -149,13 +148,11 @@ class Job():
 class JobManager():
     """Manager for autoclass jobs."""
 
-    def __init__(self, path, alive=30):
+    def __init__(self, path):
         """Constructor."""
         self.path = path
         self.running = []
         self.stopped = []
-        self.alive = alive
-
 
     def autodiscover(self):
         """Discover autoclass jobs automatically."""
@@ -167,7 +164,7 @@ class JobManager():
         jobs = {}
         for job_folder in job_folder_lst:
             if Job.verify_folder_name(job_folder):
-                job = Job(alive=self.alive)
+                job = Job()
                 job.create_from_path(job_folder)
                 jobs[job.ctime.strftime("%Y-%m-%d %H:%M:%S")] = job
         # store jobs against creation time and status

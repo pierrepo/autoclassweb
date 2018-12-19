@@ -14,7 +14,7 @@ from email import encoders
 def get_email():
     """Get email address to send results toself.
 
-    Email adress is provided as rgument in the command line.
+    Email adress is provided as argument in the command line.
     """
     email_address = None
     try:
@@ -25,8 +25,7 @@ def get_email():
 
 
 def get_job_name():
-    """Extract job name from summary file
-    """
+    """Extract job name from summary file."""
     summary_found = glob.glob("*summary.txt")
     if summary_found:
         summary_name = summary_found[0]
@@ -58,13 +57,13 @@ Your results are available in the following link:
 
 {}/{}/{}
 
-Let's hope your data clustered nicely ;-)
+Let's hope your data have been nicely classified ;-)
 
-Please note that your results will be available for one week only. After this time period, they will be automatically deleted.
+Please note that your results will be available for one week only. After this period of time, they will be automatically deleted.
 
 Regards.
 
-AutoclassWeb Bot
+Autoclass@web Bot
 """.format(server_url, "download", job_id)
     msg = MIMEMultipart()
     msg['From'] = "Autoclass@web Bot <{}>".format(sender)

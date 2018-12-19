@@ -1,10 +1,10 @@
-import os
 import datetime
-import re
 import glob
+import os
 from pathlib import Path
-import glob
 import random
+import re
+import shutil
 
 
 UNAMBIGUOUS_CHARACTERS = "234679ACDEFGHJKMNPQRTWXYZ"
@@ -46,7 +46,6 @@ class Job():
         # get results file if any
         self.get_results_file()
 
-
     def create_new(self, root, name_length):
         """Create new job in root directory."""
         # create random name from unambiguous characters
@@ -64,10 +63,7 @@ class Job():
             print("Cannot create folder: {}".format(self.folder))
             raise
 
-
-    def get_status(self,
-                   file_for_success="autoclass-run-success",
-                   file_for_failure="autoclass-run-failure"):
+    def get_status(self):
         """Test job status and how long it has run (or is running).
 
         We consider that the time to build classification (i.e clustering)
@@ -90,7 +86,6 @@ class Job():
             now = datetime.datetime.now()
             self.running_time = (now - self.ctime).seconds
 
-
     def get_results_file(self):
         """Find results file."""
         self.results_file = ""
@@ -98,14 +93,15 @@ class Job():
         if len(zip_lst) >= 1:
             self.results_file = zip_lst[0]
 
-
     def write_summary(self, text):
-        """Write summary of job."""
-        summary_name = self.folder + "-summary.txt"
-        #summary_full = os.path.join(self.path, summary_name)
-        with open(Path(self.path, summary_name), "a") as summary_file:
-            summary_file.write("{}\n".format(text))
+        """Write summary of job in file.
 
+        And copy summary file to parent directory.
+        """
+        summary = Path(self.path, self.folder + "-summary.txt")
+        with open(summary, "a") as summary_file:
+            summary_file.write("{}\n".format(text))
+        shutil.copyfile(summary, summary.parent.parent / summary.name)
 
     def search_summary(self, target, name="*summary.txt"):
         """Read summary of job."""

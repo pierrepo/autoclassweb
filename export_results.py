@@ -46,12 +46,16 @@ def get_running_time():
 
 
 def write_summary(text):
-    """Write job summary."""
+    """Write job summary.
+
+    And copy summary file to parent directory.
+    """
     summary_found = list(Path.cwd().glob("*summary.txt"))
     if summary_found:
-        summary_name = summary_found[0]
-        with open(summary_name, "a") as summary_file:
+        summary = summary_found[0]
+        with open(summary, "a") as summary_file:
             summary_file.write("{}\n".format(text))
+        shutil.copyfile(summary, summary.parent.parent / summary.name)
     else:
         logger.error("Cannot find summary file.")
 
@@ -104,7 +108,3 @@ if __name__ == "__main__":
 
     # wrap files
     wrap_output_files()
-
-    # copy summary file in the parent directory
-    for summary in Path.cwd().glob('*summary.txt'):
-        shutil.copyfile(summary, summary.parent.parent / summary.name)

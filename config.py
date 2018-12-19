@@ -81,11 +81,11 @@ class CreateConfig():
     print("FLASK_JOB_TIMEOUT:", FLASK_JOB_TIMEOUT)
 
 
-    # autoclass-c executable
+    # Search AutoClass C executable
     print("autoclasswrapper version: ", wrapper.__version__)
     autoclass_path = wrapper.search_autoclass_in_path()
     if not autoclass_path:
-        FLASK_INIT_ERROR = "Cannot find autoclass-c executable in PATH."
+        FLASK_INIT_ERROR = "Cannot find AutoClass C executable in PATH."
 
 
     # internal parameters
@@ -93,4 +93,4 @@ class CreateConfig():
         print("No SECRET_KEY found in env. Generating.")
     SECRET_KEY = os.environ.get("SECRET_KEY", str(uuid.uuid4()))
     RESULTS_FOLDER = os.path.join(os.environ["FLASK_HOME"], "results")
-    JOB_NAME_LENGTH = 8
+    JOB_NAME_LENGTH = 6

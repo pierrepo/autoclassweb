@@ -7,14 +7,11 @@ import re
 import shutil
 
 
-UNAMBIGUOUS_CHARACTERS = "234679ACDEFGHJKMNPQRTWXYZ"
-
 def create_random_string(length):
     """Create random string from a character set."""
-    string = ''.join(random.choice(UNAMBIGUOUS_CHARACTERS)
+    return ''.join(random.choice("ACDEFGHJKMNPQRTWXYZ")
                      for _ in range(length)
                     )
-    return string
 
 
 class Job():
@@ -39,7 +36,7 @@ class Job():
         if answer:
             self.folder, self.name, self.ctime = answer
         else:
-            raise("{} is not a valid Job path".format(self.path))
+            raise("{} is not a valid job path".format(self.path))
         # get running status
         self.get_status()
         # get results file if any
@@ -47,11 +44,10 @@ class Job():
 
     def create_new(self, root, name_length):
         """Create new job in root directory."""
-        # create random name from unambiguous characters
         self.name = create_random_string(name_length)
         self.ctime = datetime.datetime.now()
-        date_time = datetime.datetime.strftime(self.ctime, "%Y%m%d-%H%M%S")
-        self.folder =  "{}-{}".format(date_time, self.name)
+        date_time = datetime.datetime.strftime(self.ctime, "%Y%m%d_%H%M%S")
+        self.folder =  "{}_{}".format(date_time, self.name)
         self.path = os.path.join(root, self.folder)
         try:
             os.makedirs(self.path)
@@ -97,7 +93,7 @@ class Job():
 
         And copy summary file to parent directory.
         """
-        summary = Path(self.path, self.folder + "-summary.txt")
+        summary = Path(self.path, self.folder + "_summary.txt")
         with open(summary, "a") as summary_file:
             summary_file.write("{}\n".format(text))
         shutil.copyfile(summary, summary.parent.parent / summary.name)
@@ -132,14 +128,14 @@ class Job():
     @staticmethod
     def verify_folder_name(folder):
         """Verify folder name is compliant with naming convention."""
-        regex = re.compile("\/([0-9]{8})-([0-9]{6})-(\w+)$")
+        regex = re.compile("\/([0-9]{8})_([0-9]{6})_(\w+)$")
         find = regex.search(folder)
         if find:
-            date = "{}-{}".format( find.group(1), find.group(2) )
+            date = "{}_{}".format(find.group(1), find.group(2))
             name = find.group(3)
-            folder = "{}-{}".format( date, name )
+            folder = "{}_{}".format(date, name)
             try:
-                ctime = datetime.datetime.strptime(date, "%Y%m%d-%H%M%S")
+                ctime = datetime.datetime.strptime(date, "%Y%m%d_%H%M%S")
                 return (folder, name, ctime)
             except:
                 return False
@@ -159,7 +155,6 @@ class JobManager():
         # list sub folders
         p = Path(self.path)
         job_folder_lst = [str(x) for x in p.iterdir() if x.is_dir()]
-
         # create jobs
         jobs = {}
         for job_folder in job_folder_lst:

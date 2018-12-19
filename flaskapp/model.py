@@ -74,30 +74,21 @@ class Job():
         is much larger than the time to build reports.
         """
         # find status
-        # search in summary file first (for completed jobs)
+        # search in summary file first
         self.status = "running"
         status = self.search_summary("status")
         if status:
             self.status = status.split()[1]
-        # define status from modification time of "clust.log"
-        elif Path(self.path, file_for_success).exists():
-            self.status = "completed"
-        elif Path(self.path, file_for_failure).exists():
-            self.status = "failed"
-            log_file = os.path.join(self.path, "clust.log")
         # define running time
-        # search in summary file first (for completed job)
-        self.running_time = 0.0
+        # search in summary file first
+        self.running_time = 0
         running_time = self.search_summary("running-time")
         if running_time:
-            self.running_time = float(running_time.split()[1])
+            self.running_time = int(running_time.split()[1])
         # calculate running time
-        elif self.status != "failed":
+        else:
             now = datetime.datetime.now()
-            self.running_time = (now - self.ctime).seconds / 60
-            if self.status == "completed":
-                self.write_summary("running-time: {:.2f}"
-                                    .format(self.running_time))
+            self.running_time = (now - self.ctime).seconds
 
 
     def get_results_file(self):

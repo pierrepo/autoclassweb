@@ -23,8 +23,10 @@ target="_blank">Tab-separated values</a> format.
 </p>
 <p>
 The first line must be a header with column names.
-Avoid accentuated or special characters (<tt>$&!/β</tt>) or space. These characters will be automatically replaced by <tt>_</tt>. Avoid also lengthy column names.
-Column names must be unique.<br />
+Avoid accentuated or special characters (<tt>$&!/β</tt>) or space. These characters will be automatically replaced by <tt>_</tt>. Avoid lengthy column names.
+Column names must be unique.
+</p>
+<p>
 The first column must be gene/protein/object names.
 </p>
 <p>
@@ -92,7 +94,7 @@ mutliple datasets with homogeneous data type.
 Classification jobs are listed in the <a href="/status">status</a> page.
 </p>
 <p>
-The maximum running time for a job is {{ config.FLASK_JOB_TIMEOUT }} seconds.
+The maximum running time for a job is {{ config.FLASK_JOB_TIMEOUT }} hours.
 </p>
 <p>
     Depending on how autoclass@web has been configured, you might receive
@@ -119,7 +121,8 @@ Results are bundled in a zip archive with the following files:
     <tt>something_out_dendrogram.png</tt> is a dendrogram representing the distance between all classes.
 </li>
 <li>
-    <tt>something_out.tsv</tt> contains all the data with the class assignement and membership probabilities for all classes. This files is the <it>Tab-separated values</it> format and can then easily parsed with Excel, R, Python...
+    <tt>something_out.tsv</tt> contains all the data with the class assignement and membership probabilities for all classes. This files is in the <a href="https://en.wikipedia.org/wiki/Tab-separated_values"
+    target="_blank">Tab-separated values</a> format and can then easily be parsed with Excel, R, Python...
 </li>
 </ul>
 
@@ -135,6 +138,9 @@ It offers multiple advantages:
     <li>Class membership probabilities are also computed.</li>
 </ul>
 </p>
+
+For more information, see the NASA documentation on <a href="https://ti.arc.nasa.gov/tech/rse/synthesis-projects-applications/autoclass/autoclass-c/"
+target="_blank">AutoClass</a>.
 
 </article>
 {% endblock %}

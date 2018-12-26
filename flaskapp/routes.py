@@ -175,7 +175,8 @@ def start():
     clust.create_db2_file()
     clust.create_hd2_file()
     clust.create_model_file()
-    clust.create_sparams_file(max_duration=app.config["FLASK_JOB_TIMEOUT"])
+    clust.create_sparams_file(
+        max_duration=app.config["FLASK_JOB_TIMEOUT"]*3600)
     clust.create_rparams_file()
     # check ERROR in log
     log_content = log_capture_string.getvalue()

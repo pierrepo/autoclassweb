@@ -4,7 +4,7 @@ import psutil
 import autoclasswrapper as wrapper
 
 class CreateConfig():
-    """Create Flask app configuration
+    """Create Flask app configuration.
 
     Combine global environnement variables with local parameters.
     Environnement variables are usually defined in the .env file.
@@ -75,7 +75,7 @@ class CreateConfig():
     # FLASK_JOB_TIMEOUT
     if ("FLASK_JOB_TIMEOUT" not in os.environ) \
       or (not os.environ["FLASK_JOB_TIMEOUT"].isdigit()):
-        FLASK_JOB_TIMEOUT = 3600
+        FLASK_JOB_TIMEOUT = 24
     else:
         FLASK_JOB_TIMEOUT = int(os.environ["FLASK_JOB_TIMEOUT"])
     print("FLASK_JOB_TIMEOUT:", FLASK_JOB_TIMEOUT)

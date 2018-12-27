@@ -12,5 +12,6 @@ print("FLASK_HOME is {}".format(os.environ["FLASK_HOME"]))
 import config
 app.config.from_object(config.CreateConfig)
 app.config["VERSION"] = "0.1.0"
+print("autoclassweb version:", app.config["VERSION"])
 
 from flaskapp import routes

@@ -1,6 +1,7 @@
 import os
-import uuid
 import psutil
+import uuid
+
 import autoclasswrapper as wrapper
 
 class CreateConfig():
@@ -11,7 +12,7 @@ class CreateConfig():
     """
 
     def format_true_false(env, default=""):
-        """Format env variable to True / False
+        """Format env variable to True / False.
         """
         content = os.environ.get(env, default)
         if content.upper() in ["T", "TRUE"]:
@@ -82,11 +83,13 @@ class CreateConfig():
 
 
     # Search AutoClass C executable
-    print("autoclasswrapper version: ", wrapper.__version__)
-    autoclass_path = wrapper.search_autoclass_in_path()
-    if not autoclass_path:
-        FLASK_INIT_ERROR = "Cannot find AutoClass C executable in PATH."
+    autoclass_version = wrapper.get_autoclass_version()
+    if not autoclass_version:
+        FLASK_INIT_ERROR = "Cannot find/run AutoClass C executable."
 
+    # Print and store autoclasswrapper version
+    print("autoclasswrapper version: ", wrapper.__version__)
+    WRAPPER_VERSION = wrapper.__version__
 
     # internal parameters
     if "SECRET_KEY" not in os.environ:

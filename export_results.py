@@ -9,7 +9,7 @@ import zipfile
 import autoclasswrapper as wrapper
 
 
-FILE_FOR_SUCCESS = "autoclass-run-success"
+FILE_FOR_SUCCESS = "autoclass_run_success"
 
 def wrap_output_files():
     """Wrap output files in a zip archive."""

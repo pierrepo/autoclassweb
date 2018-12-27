@@ -2,6 +2,7 @@ import glob
 import io
 import logging
 import os
+from pathlib import Path
 import smtplib
 import sys
 from email.mime.multipart import MIMEMultipart
@@ -9,6 +10,9 @@ from email.mime.base import MIMEBase
 from email.mime.text import MIMEText
 from email.utils import formatdate
 from email import encoders
+
+
+FILE_FOR_SUCCESS = "autoclass_run_success"
 
 
 def get_email():
@@ -110,6 +114,11 @@ if __name__ == "__main__":
     # add the handlers to the logger
     logger.addHandler(handler)
     logger.addHandler(handler_stream)
+
+    # check AutoClass C worked without error
+    if not Path(Path.cwd(), FILE_FOR_SUCCESS).exists():
+        logger.critical("Cannot find file {} in {}".format(FILE_FOR_SUCCESS, str(Path.cwd())))
+        sys.exit(1)
 
     # get email address from command line
     email_address = get_email()

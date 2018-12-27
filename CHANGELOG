@@ -1,0 +1,3 @@
+**Dev**
+- Format running time as HH:MM:SS
+- Do not send results if job failed

@@ -37,12 +37,21 @@ def wrap_output_files():
 
 
 def get_running_time():
-    """Compute running time."""
+    """Compute running time.
+
+    Format is HH:MM:SS
+    """
     time_older, file_older = min((f.stat().st_mtime, f) for f in Path.cwd().iterdir())
     time_last, file_last = max((f.stat().st_mtime, f) for f in Path.cwd().iterdir())
     logger.info("Older file is {}".format(file_older.name))
     logger.info("Most recent file is {}".format(file_last.name))
-    return int(time_last - time_older)
+    elapsed_time = int(time_last - time_older)
+    hours, remainder = divmod(elapsed_time, 3600)
+    minutes, seconds = divmod(remainder, 60)
+    running_time = "{:02}:{:02}:{:02}".format(int(hours),
+                                              int(minutes),
+                                              int(seconds))
+    return running_time
 
 
 def write_summary(text):

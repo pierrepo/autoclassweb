@@ -26,7 +26,7 @@ class Job():
         self.name = None
         self.ctime = None
         self.status = ""
-        self.running_time = 0
+        self.running_time = "00:00:00"
         self.results_file = ""
 
     def create_from_path(self, path):
@@ -72,14 +72,19 @@ class Job():
             self.status = status.split()[1]
         # define running time
         # search in summary file first
-        self.running_time = 0
+        self.running_time = "00:00:00"
         running_time = self.search_summary("running-time")
         if running_time:
-            self.running_time = int(running_time.split()[1])
+            self.running_time = running_time.split()[1]
         # calculate running time
         else:
             now = datetime.datetime.now()
-            self.running_time = (now - self.ctime).seconds
+            elapsed_time = (now - self.ctime).seconds
+            hours, remainder = divmod(elapsed_time, 3600)
+            minutes, seconds = divmod(remainder, 60)
+            self.running_time = "{:02}:{:02}:{:02}".format(int(hours),
+                                                           int(minutes),
+                                                           int(seconds))
 
     def get_results_file(self):
         """Find results file."""

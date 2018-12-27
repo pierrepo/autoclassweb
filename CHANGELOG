@@ -1,3 +1,4 @@
 **Dev**
 - Format running time as HH:MM:SS
 - Do not send results if job failed
+- Mount Docker volumes in the current directory

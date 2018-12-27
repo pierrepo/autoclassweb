@@ -4,6 +4,10 @@ venv
 # miscellaneous
 misc/
 
+# logs and results
+logs/
+results/
+
 # ignore .env* config files but keep template file
 .env*
 !.env-template
@@ -11,10 +15,5 @@ misc/
 # data sample for tests
 test-data/
 
-# autoclass binary and program archives
-bin/*
-
 __pycache__/
 
-# Sublime Text project and workspace files
-*sublime-*

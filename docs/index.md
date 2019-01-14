@@ -43,7 +43,7 @@ $ cd autoclassweb
     $ cp .env-template .env
     ```
     Update the `.env` file accordingly. Pay attention to the variable `FLASK_SERVER_URL`
-2. In needed, update the `docker-compose.yml` file. In the nginx configuration section, replace `8000` by the desired port.
+2. If needed, update the `docker-compose.yml` file. For instance, in the nginx configuration section, replace `8000` by the desired port.
 
 
 ### Build docker images
@@ -56,9 +56,9 @@ $ docker-compose build
 $ docker-compose up -d
 ```
 
-Autoclass@web is now accessible at <http://193.51.82.72:8000>
+Autoclass@web is now accessible at `FLASK_SERVER_URL` (see `.env` file).
 
-Results files are available in `/tmp/flaskapp/results` and logs file in `/tmp/flaskapp/logs`.
+Results files are available in `/opt/autoclassweb/results` and logs file in `/opt/autoclassweb/logs`.
 
 
 
@@ -121,3 +121,5 @@ $ pipenv run gunicorn -b localhost:8000 -w 4 flaskapp:app
 ```
 
 autoclass-web in then accessible at <http://127.0.0.1:8000/>
+
+

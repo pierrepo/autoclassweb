@@ -7,59 +7,48 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     {% block meta %}{% endblock %}
     <title>Autoclass@web</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/pure-min.css" integrity="sha384-nn4HPE8lTHyVtfCBi5yW9d20FjT8BJwUXyWZT9InLYax14RDjBj46LmSztkmNP9w" crossorigin="anonymous">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
 </head>
 
 <body>
-    <header>
-      <!-- Fixed navbar -->
-      <nav class="navbar navbar-expand-md fixed-top navbar-light bg-light">
-        <a class="navbar-brand" href="/">autoclass@web</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarCollapse">
-          <ul class="navbar-nav mr-auto">
-            <li class="nav-item">
-              <a class="nav-link" href="/">Run 🚀</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/status">Status ⏰</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/help">Help ❓</a>
-            </li>
-          </ul>
-        </div>
-      </nav>
-    </header>
 
-    <div class="container">
-        <section>
-            {% with messages = get_flashed_messages(with_categories=true) %}
-                {% if messages %}
-                    <ul class="flash">
-                        {% for category, message in messages %}
-                        <li class="{{ category }}">{{ message }}</li>
-                        {% endfor %}
-                    </ul>
-                {% endif %}
-            {% endwith %}
-        </section>
-        <section>
-        {% block body %}{% endblock %}
-        </section>
+
+<div class="header">
+    <div class="home-menu pure-menu pure-menu-horizontal pure-menu-fixed">
+        <a class="pure-menu-heading" href="">AutoClassWeb</a>
+        <ul class="pure-menu-list">
+            <li class="pure-menu-item pure-menu-selected"><a href="/" class="pure-menu-link">Run 🚀</a></li>
+            <li class="pure-menu-item"><a href="/status" class="pure-menu-link">Status ⏰</a></li>
+            <li class="pure-menu-item"><a href="/help" class="pure-menu-link">Help ❓</a></li>
+        </ul>
     </div>
-
-    <footer class="navbar navbar-default navbar-fixed-bottom justify-content-center">
-            <div class="text-muted">
-                <a href="https://www.univ-paris-diderot.fr/" target="_blank">Université Paris Diderot</a> |
-                <a href="http://www.cnrs.fr/" target="_blank">CNRS</a> |
-                <a href="https://www.ijm.fr/" target="_blank">Institut Jacques Monod</a> | 2018
+</div>
+<div class="content">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <ul class="flash">
+                {% for category, message in messages %}
+                <li class="{{ category }}">{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
+</div>
+<div class="content">
+    <div class = "pure-g">
+        <div class = "pure-u-1 pure-u-md-1-2 pure-u-lg-1-3">
+        {% block body %}{% endblock %}
         </div>
-    </footer>
+    </div>
+</div>
+<div class="footer l-box is-center">
+        <a href="https://www.univ-paris-diderot.fr/" target="_blank">Université Paris Diderot</a> |
+        <a href="http://www.cnrs.fr/" target="_blank">CNRS</a> |
+        <a href="https://www.ijm.fr/" target="_blank">Institut Jacques Monod</a> | 2018
+</div>
+
 
 </body>
 
@@ -67,7 +56,4 @@
 integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
 crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-<script src="{{ url_for('static', filename='custom.js') }}"></script>
-
 </html>

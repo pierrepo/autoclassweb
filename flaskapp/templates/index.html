@@ -1,25 +1,20 @@
 {% extends "layout.html" %}
 {% block body %}
 
-<article>
+
     <h1>Enter your input data and parameters</h1>
-    <form action="" method="POST" enctype="multipart/form-data">
+    <form class="pure-form pure-form-aligned" action="" method="POST" enctype="multipart/form-data">
         {{ form.csrf_token }}
         {% if config["FLASK_RESULTS_BY_EMAIL"] %}
-        <div class="form-group row">
-            <label class="col-sm-2 col-form-label"
-                   for="mailaddress">
-                   {{form.mail_address.label}}
-            </label>
-            <div class="col-sm-10">
-                <input type="text" class="form-control"
-                       id="mailaddress"
-                       name="mail_address"
-                       placeholder="enter here your e-mail address">
-            </div>
+        <div class="pure-control-group">
+            <label for="mailaddress">{{form.mail_address.label}}</label>
+            <input type="text" class="form-control"
+                   id="mailaddress"
+                   name="mail_address"
+                   placeholder="enter here your e-mail address">
         </div>
         {% endif %}
-        <div class="text-muted helper">
+        <p>
         Input data files must comply with the
         <a href="https://en.wikipedia.org/wiki/Tab-separated_values"
            target="_blank">tab-separated values
@@ -27,7 +22,7 @@
         See <a href="/help" target="_blank">Help</a>
         for more information on input data.<br />
         You can add data in one or several categories below.
-        </div>
+        </p>
 
         {% if job_m.running | length < config["FLASK_MAX_JOBS"] %}
         <fieldset>
@@ -38,79 +33,69 @@
             <p>Singly bounded real values, typically bounded below at zero
                 (e.g: length)
             </p>
-            <div class="form-group row">
-                <label class="col-sm-2 col-form-label"
-                       for="scarlarInputFile">
-                       {{form.scalar_input_file.label}}
+            <div class="pure-control-group">
+                <label for="scarlarInputFile">
+                    {{form.scalar_input_file.label}}
                 </label>
-                <div class="col-sm-10">
-                    <input type="file" class="form-control-file"
-                           id="scarlarInputFile"
-                           name="scalar_input_file">
-                </div>
-                    <label class="col-sm-2 col-form-label"
-                           for="scarlarInputError">
-                           {{ form.scalar_error.label }}
-                    </label>
-                <div class="col-sm-10">
-                    <input type="text" class="form-control"
-                           id="scarlarInputError"
-                           name="scalar_error"
-                           value={{form.scalar_error.default}}
-                           placeholder="{{ form.scalar_error.placeholder }}">
-                    <small class="form-text text-muted">
-                        Relative error on data. Optional.
-                        Default = 0.01 i.e. 1% of value.
-                    </small>
-                </div>
+                <input type="file" class="form-control-file"
+                       id="scarlarInputFile"
+                       name="scalar_input_file">
+            </div>
+            <div class="pure-control-group">
+                <label for="scarlarInputError">
+                       {{ form.scalar_error.label }}
+                </label>
+                <input type="text" class="form-control"
+                       id="scarlarInputError"
+                       name="scalar_error"
+                       value={{form.scalar_error.default}}
+                       placeholder="{{ form.scalar_error.placeholder }}">
+                <span class="pure-form-message-inline">
+                    Relative error on data. Optional.<br />
+                    Default = 0.01 i.e. 1% of value.
+                </span>
             </div>
             <legend>Real Location</legend>
             <p>Other real values
                 (e.g: microarray log ratio, elevation, position)
             </p>
-            <div class="form-group row">
-                <label class="col-sm-2 col-form-label" for="locationInputFile">{{form.location_input_file.label}}</label>
-                <div class="col-sm-10">
-                    <input type="file" class="form-control-file"
-                           id="locationInputFile"
-                           name="location_input_file">
-                </div>
-                <label class="col-sm-2 col-form-label"
-                       for="locationInputError">
+            <div class="pure-control-group">
+                <label for="locationInputFile">
+                    {{form.location_input_file.label}}
+                </label>
+                <input type="file" class="form-control-file"
+                       id="locationInputFile"
+                       name="location_input_file">
+            </div>
+            <div class="pure-control-group">
+                <label for="locationInputError">
                        {{ form.location_error.label }}
                 </label>
-                <div class="col-sm-10">
-                    <input type="text" class="form-control"
-                           id="locationInputError"
-                           name="location_error"
-                           value={{ form.location_error.default }}>
-                    <small class="form-text text-muted">
-                        Absolute error on data. Optional.
-                        Default = 0.01 i.e. value ± 0.01.
-                    </small>
-                </div>
+                <input type="text" class="form-control"
+                       id="locationInputError"
+                       name="location_error"
+                       value={{ form.location_error.default }}>
+                <span class="pure-form-message-inline">
+                    Absolute error on data. Optional.<br />
+                    Default = 0.01 i.e. value ± 0.01.
+                </span>
             </div>
             <legend>Discrete</legend>
             <p>Qualitative data (e.g. color, phenotype, name...)</p>
-            <div class="form-group row">
-                <label class="col-sm-2 col-form-label"
-                       for="discreteInputFile">
+            <div class="pure-control-group">
+                <label for="discreteInputFile">
                        {{ form.discrete_input_file.label }}
                 </label>
-                <div class="col-sm-10">
                 <input type="file" class="form-control-file"
                        id="discreteInputFile"
                        name="discrete_input_file">
-                </div>
             </div>
-            <div>
                 {{ form.submit }}
                 {% if job_m.running | length >= config["FLASK_MAX_JOBS"] %}
-                <small class="form-text text-muted">
+                <span class="pure-form-message-inline">
                 Max number of jobs reached. Please wait.
-                </small>
+                </span>
                 {% endif %}
-            </div>
         </fieldset>
     </form>
 

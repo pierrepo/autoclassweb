@@ -10,15 +10,49 @@ body {
   flex-direction: column;
 }
 
-body > .container {
-    padding-top: 50px;
+body > .content {
+    padding-top: 20px;
     flex: 1 0 auto;
 }
 
-.navbar {
-    padding-top: 3px;
-    padding-bottom: 3px;
-    border-bottom: 1px solid #B3B3B3;
+/*
+ * -- MENU STYLES --
+ * I want to customize how my .pure-menu looks at the top of the page
+ */
+
+.home-menu {
+    padding: 0.5em;
+    text-align: left;
+    box-shadow: 0 1px 1px rgba(0,0,0, 0.10);
+}
+.home-menu {
+    background: #2d3e50;
+}
+.pure-menu.pure-menu-fixed {
+    /* Fixed menus normally have a border at the bottom. */
+    border-bottom: none;
+    /* I need a higher z-index here because of the scroll-over effect. */
+    z-index: 4;
+}
+
+.home-menu .pure-menu-heading {
+    color: white;
+    font-weight: 400;
+    font-size: 120%;
+}
+
+.home-menu .pure-menu-selected a {
+    color: white;
+}
+
+.home-menu a {
+    color: #6FBEF3;
+}
+.home-menu li a:hover,
+.home-menu li a:focus {
+    background: none;
+    border: none;
+    color: #AECFE5;
 }
 
 h1 {
@@ -77,12 +111,13 @@ pre.log {
      font-family: monospace;
  }
 
-footer {
-    margin-top: 10px;
-    border-top: 1px solid #B3B3B3;
-    flex-shrink: 0;
-    text-align: center;
-}
+ /* This is the class used for the footer */
+ .footer {
+     background: #111;
+     position: fixed;
+     bottom: 0;
+     width: 100%;
+ }
 
 footer a:link, a:visited {
     text-decoration: none;

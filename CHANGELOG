@@ -3,3 +3,5 @@
 - Do not send results if job failed
 - Mount Docker volumes in the current directory
 - Display version in help
+- Increase to 20 Gb max size for file upload
+

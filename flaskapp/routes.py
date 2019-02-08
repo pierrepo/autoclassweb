@@ -24,7 +24,7 @@ def show_me_config():
         "FLASK_JOB_TIMEOUT": app.config["FLASK_JOB_TIMEOUT"],
         "AutoClass C path": wrapper.search_autoclass_in_path(),
         "AutoClass C version": wrapper.get_autoclass_version(),
-        "autoclasswrapper version": wrapper.__version__,
+        "AutoClassWrapper version": wrapper.__version__,
         "autoclassweb version": app.config["VERSION"]
     })
 

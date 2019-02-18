@@ -2,9 +2,12 @@ import os
 import sys
 import io
 import logging
+from pathlib import Path
 import psutil
 import shutil
+import time
 import datetime
+
 from flask import Flask, jsonify, render_template, url_for, redirect, request, flash, session, send_from_directory
 from werkzeug import secure_filename
 
@@ -13,6 +16,8 @@ from flaskapp import forms
 from flaskapp import model
 
 import autoclasswrapper as wrapper
+
+FILE_FOR_FAILURE = "autoclass_run_failure"
 
 @app.route('/config', methods=['GET'])
 def show_me_config():
@@ -207,8 +212,22 @@ def start():
         if app.config["FLASK_RESULTS_BY_EMAIL"]:
             script_file.write("python3 send_results.py {}\n"
                               .format(session["mail_address"]))
-    # run autoclass
+    # run AutoClass C
     run.run(job_name)
+    # wait that the job starts
+    time.sleep(1)
+    if Path(Path.cwd(), FILE_FOR_FAILURE).exists():
+        log_file = Path(Path.cwd(), "autoclass-search.log")
+        if log_file.exists():
+            session["log"] = log_file.read_text()
+        session["status"] = "failed"
+        job.write_summary("status: failed\nrunning-time: 0")
+        # remove "job_name" from session
+        # to avoid running twice the same job upon refresh
+        session.pop("job_name")
+        return render_template("start.html",
+                               job_name=job_name)
+
     # remove "job_name" from session
     # to avoid running twice the same job upon refresh
     session.pop("job_name")

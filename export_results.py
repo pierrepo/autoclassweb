@@ -9,12 +9,13 @@ import zipfile
 import autoclasswrapper as wrapper
 
 
-FILE_FOR_SUCCESS = "autoclass_run_success"
+FILE_FOR_SUCCESS = "autoclass-run-success"
 
 def wrap_output_files():
     """Wrap output files in a zip archive."""
     DIR_NAME = Path.cwd().parts[-1]
-    OUTPUT_FILES = ["autoclass_out.tsv",
+    OUTPUT_FILES = ["autoclass_in.log",
+                    "autoclass_out.tsv",
                     "autoclass_out.cdt",
                     "autoclass_out_withproba.cdt",
                     "autoclass_out_stats.tsv",
@@ -41,8 +42,12 @@ def get_running_time():
 
     Format is HH:MM:SS
     """
-    time_older, file_older = min((f.stat().st_mtime, f) for f in Path.cwd().iterdir())
-    time_last, file_last = max((f.stat().st_mtime, f) for f in Path.cwd().iterdir())
+    time_older, file_older = min((f.stat().st_mtime, f)
+                                 for f in Path.cwd().iterdir()
+                                 )
+    time_last, file_last = max((f.stat().st_mtime, f)
+                                for f in Path.cwd().iterdir()
+                                )
     logger.info("Older file is {}".format(file_older.name))
     logger.info("Most recent file is {}".format(file_last.name))
     elapsed_time = int(time_last - time_older)

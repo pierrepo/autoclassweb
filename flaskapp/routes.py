@@ -140,7 +140,7 @@ def start():
     logger = logging.getLogger("autoclasswrapper")
     logger.setLevel(logging.DEBUG)
     # create a file handler
-    handler = logging.FileHandler("input.log")
+    handler = logging.FileHandler("autoclass_in.log")
     handler.setLevel(logging.INFO)
     # create a stream handler
     log_capture_string = io.StringIO()

@@ -12,7 +12,7 @@ from email.utils import formatdate
 from email import encoders
 
 
-FILE_FOR_SUCCESS = "autoclass_run_success"
+FILE_FOR_SUCCESS = "autoclass-run-success"
 
 
 def get_email():

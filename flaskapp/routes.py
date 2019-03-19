@@ -17,7 +17,7 @@ from flaskapp import model
 
 import autoclasswrapper as wrapper
 
-FILE_FOR_FAILURE = "autoclass_run_failure"
+FILE_FOR_FAILURE = "autoclass-run-failure"
 
 @app.route('/config', methods=['GET'])
 def show_me_config():
@@ -215,11 +215,15 @@ def start():
     # run AutoClass C
     run.run(job_name)
     # wait that the job starts
-    time.sleep(1)
+    time.sleep(2)
     if Path(Path.cwd(), FILE_FOR_FAILURE).exists():
         log_file = Path(Path.cwd(), "autoclass-search.log")
         if log_file.exists():
             session["log"] = log_file.read_text()
+        log_file_2 = Path(Path.cwd(), "autoclass.log")
+        if log_file_2.exists():
+            session["log"] += "\n" + "=" * 80 + "\n"
+            session["log"] += log_file_2.read_text()
         session["status"] = "failed"
         job.write_summary("status: failed\nrunning-time: 0")
         # remove "job_name" from session

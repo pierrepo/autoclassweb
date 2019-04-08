@@ -1,4 +1,5 @@
 **Dev**
+- Use pathlib in `export_results.py`
 
 **0.1.3**
 - Fix bug for discrete date type

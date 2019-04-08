@@ -1,6 +1,5 @@
 import io
 import logging
-import os
 from pathlib import Path
 import shutil
 import sys
@@ -20,19 +19,18 @@ def wrap_output_files():
                     "autoclass_out_withproba.cdt",
                     "autoclass_out_stats.tsv",
                     "autoclass_out_dendrogram.png"]
-    OUTPUT_FILES_RENAMED = \
-    [name.replace("autoclass",
-                  "{}_autoclass".format(DIR_NAME))
-     for name in OUTPUT_FILES]
-    # rename files
-    for name_in, name_out in zip(OUTPUT_FILES,
-                                 OUTPUT_FILES_RENAMED):
-        os.rename(name_in, name_out)
-    # create archive
+    OUTPUT_FILES_RENAMED = []
+    for name in OUTPUT_FILES:
+        output_file = Path(name)
+        if output_file.exists():
+            new_name = name.replace("autoclass", f"{DIR_NAME}_autoclass")
+            output_file.rename(new_name)
+            OUTPUT_FILES_RENAMED.append(new_name)
+    # Create archive.
     zipname = "{}_autoclass.zip".format(DIR_NAME)
     with zipfile.ZipFile(zipname, "w") as outputzip:
         for filename in OUTPUT_FILES_RENAMED:
-            if os.path.exists(filename):
+            if Path(filename).exists():
                 outputzip.write(filename)
     logger.info("Results exported!")
 

@@ -1,4 +1,6 @@
 **Dev**
+
+**0.1.3**
 - Fix bug for discrete date type
 
 **0.1.2**

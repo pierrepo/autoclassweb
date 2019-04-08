@@ -13,4 +13,4 @@ autoclasswrapper = "*"
 gunicorn = "*"
 
 [dev-packages]
-
+bumpversion = "*"

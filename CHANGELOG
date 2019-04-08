@@ -1,4 +1,5 @@
 **Dev**
+- Fix bug for discrete date type
 
 **0.1.2**
 - Fix name on autoclass failure

@@ -174,7 +174,7 @@ def start():
     discrete = session['discrete']
     if discrete['file']:
         clust.add_input_data(discrete['file'],
-                             "real discrete")
+                             "discrete")
     # prepare input files
     clust.merge_dataframes()
     clust.create_db2_file()

@@ -26,6 +26,8 @@ def wrap_output_files():
             new_name = name.replace("autoclass", f"{DIR_NAME}_autoclass")
             output_file.rename(new_name)
             OUTPUT_FILES_RENAMED.append(new_name)
+        else:
+            logger.warning(f"Cannot find {name}")
     # Create archive.
     zipname = "{}_autoclass.zip".format(DIR_NAME)
     with zipfile.ZipFile(zipname, "w") as outputzip:
@@ -106,7 +108,10 @@ if __name__ == "__main__":
     results.write_cdt()
     results.write_cdt(with_proba=True)
     results.write_class_stats()
-    results.write_dendrogram()
+    if Path("autoclass_out_stats.tsv").exists():
+        results.write_dendrogram()
+    else:
+        logger.warning("No stats -> no dendrogram.")
     log_content = log_capture_string.getvalue()
     # write final status
     if "ERROR" in log_content:

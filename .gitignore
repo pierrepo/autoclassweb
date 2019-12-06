@@ -15,5 +15,9 @@ results/
 # data sample for tests
 test-data/
 
+# Python module compilation
 __pycache__/
+
+# Visual Studio code local directory
+.vscode/
 

@@ -176,7 +176,7 @@ def start():
         clust.add_input_data(discrete['file'],
                              "discrete")
     # prepare input files
-    clust.merge_dataframes()
+    clust.prepare_input_data()
     clust.create_db2_file()
     clust.create_hd2_file()
     clust.create_model_file()

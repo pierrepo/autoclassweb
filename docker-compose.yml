@@ -22,7 +22,7 @@ services:
         env_file: .env
         environment:
             FLASK_DEBUG: 1
-        command: "pipenv run gunicorn --config gunicorn.conf flaskapp:app"
+        command: "gunicorn --config gunicorn.conf flaskapp:app"
 
 volumes:
     flaskapp-static:

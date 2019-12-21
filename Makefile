@@ -1,7 +1,8 @@
-.PHONY: run run-gunicorn
-
 run:
-	pipenv run flask run
+	flask run
+.PHONY: run
 
 run-gunicorn:
-	pipenv run gunicorn --config gunicorn.conf flaskapp:app
+	@test "${CONDA_DEFAULT_ENV}" = "autoclassweb" && echo "Conda env ${CONDA_DEFAULT_ENV} found" || { echo "not OK"; exit 1; }
+	gunicorn --config gunicorn.conf flaskapp:app
+.PHONY: run-gunicorn

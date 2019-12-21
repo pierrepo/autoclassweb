@@ -1,4 +1,4 @@
-name: autoclassweb-dev
+name: autoclassweb
 dependencies:
   - python>=3.7
   - pip

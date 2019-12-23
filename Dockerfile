@@ -49,10 +49,19 @@ RUN wget --quiet https://ti.arc.nasa.gov/m/project/autoclass/autoclass-c-3-3-6.t
 ENV PATH "/app/autoclass-c/:${PATH}"
 
 # Install app files
-COPY . /app/
+COPY flaskapp /app/
+COPY config.py /app/
+COPY export_results.py /app/
+COPY send_results.py /app/
+COPY gunicorn.conf /app/
+
+# Create shared directories
+RUN mkdir -p /app/{config,logs,results}
 
 # Expose volume and port
-VOLUME /app
+VOLUME /app/config
+VOLUME /app/logs
+VOLUME /app/results
 EXPOSE 5000
 
 CMD ["gunicorn", "--config", "gunicorn.conf", "flaskapp:app"]

@@ -12,7 +12,7 @@ $ git push origin --tags
 ```
 
 
-### Add new release on GitHub
+## Add new release on GitHub
 
 On [GitHub release page](https://github.com/pierrepo/autoclassweb/releases) :
 
@@ -23,8 +23,30 @@ On [GitHub release page](https://github.com/pierrepo/autoclassweb/releases) :
 - Hit the *Publish Release* button.
 
 
-### Zenodo integration
+## Zenodo integration
 
 For Zenodo integration, see [Making Your Code Citable](https://guides.github.com/activities/citable-code/).
 
 After the creation  of the new release in GitHub, check the archive has been creating on [Zenodo](https://zenodo.org/deposit).
+
+
+## Publish docker image 
+
+### First time login 
+
+Create a token here: https://hub.docker.com/settings/security
+
+Connect with this token:
+```
+$ docker login --username pierrepo
+```
+
+### Build image 
+```
+$ docker build . -t pierrepo/autoclassweb:latest -t pierrepo/autoclassweb:<version>
+```
+
+### Push image
+```
+$ docker push pierrepo/autoclassweb
+```

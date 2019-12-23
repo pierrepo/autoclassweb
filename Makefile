@@ -12,5 +12,5 @@ run-gunicorn:
 
 
 docker-build:
-	docker build . -t autoclassweb
+	docker build . -t pierrepo/autoclassweb:latest
 .PHONY: docker-build

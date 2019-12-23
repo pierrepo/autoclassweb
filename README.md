@@ -7,3 +7,16 @@ It utilizes [AutoClassWrapper](https://github.com/pierrepo/autoclasswrapper), a 
 ## Installation
 
 Documentation is available [here](https://pierrepo.github.io/autoclassweb/).
+
+
+## Docker 
+
+Build:
+```
+$ docker build . -t autoclassweb
+```
+
+Run:
+```
+$ docker run -p 5000:5000 -v $(pwd)/config:/app/config -v $(pwd)/logs:/app/logs -v $(pwd)/results:/app/results autoclassweb:latest
+```

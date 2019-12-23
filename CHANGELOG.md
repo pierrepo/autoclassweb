@@ -1,5 +1,7 @@
 **Dev**
-
+- Minor updates
+- Documentation of default configuration 
+  
 **1.0.0**
 - Use pathlib in `export_results.py`
 - Use conda env instead of pipenv

@@ -1,5 +1,7 @@
 import datetime
 import glob
+import io
+import logging
 import os
 from pathlib import Path
 import random
@@ -8,10 +10,29 @@ import shutil
 
 
 def create_random_string(length):
-    """Create random string from a character set."""
+    """Create random string from a character set.
+    
+    Parameters
+    ----------
+    length : int
+        Size of the expected string.
+        
+    Returns
+    -------
+    str
+        Random string.
+
+    Notes
+    -----
+    String is created from unambiguous letters.
+    
+    """
     return ''.join(random.choice("ACDEFGHJKMNPQRTWXYZ")
                      for _ in range(length)
                     )
+
+
+logger = logging.getLogger("flaskapp")
 
 
 class Job():
@@ -19,7 +40,7 @@ class Job():
     """
     def __init__(self):
         """
-        Constructor
+        Constructor.
         """
         self.path = None
         self.folder = None
@@ -115,7 +136,6 @@ class Job():
                             return line[:-1]
         return None
 
-
     def get_file_modification_time(self, filename):
         """Get time when file was last modified."""
         mtime = None
@@ -123,12 +143,25 @@ class Job():
             mtime = datetime.datetime.fromtimestamp(os.path.getmtime(filename))
         return mtime
 
-
+    def destroy(self):
+        """Destroy itself by removing directory."""
+        if Path(self.path).exists():
+            logger.info(f"Trying to destroy old job {self.name}")
+            try:
+                shutil.rmtree(self.path)
+            except PermissionError:
+                logger.error(f"Cannot destroy job {self.name}!")
+                logger.error("Permission error.")
+            except:
+                logger.error(f"Cannot destroy job {self.name}!")
+                logger.error("Unknown error.")
+            else:
+                logger.info(f"Destroyed job {self.name}")
+    
     def __repr__(self):
         """Job representation."""
         return "{} in {} created: {}  status: {}".format(
                 self.name, self.folder, self.ctime,  self.status)
-
 
     @staticmethod
     def verify_folder_name(folder):
@@ -149,9 +182,10 @@ class Job():
 class JobManager():
     """Manager for autoclass jobs."""
 
-    def __init__(self, path):
+    def __init__(self, path, job_duration=30):
         """Constructor."""
         self.path = path
+        self.job_duration = job_duration
         self.running = []
         self.stopped = []
 
@@ -166,7 +200,12 @@ class JobManager():
             if Job.verify_folder_name(job_folder):
                 job = Job()
                 job.create_from_path(job_folder)
-                jobs[job.ctime.strftime("%Y-%m-%d %H:%M:%S")] = job
+                now = datetime.datetime.now()
+                age = now - job.ctime
+                if age.days > self.job_duration:
+                    job.destroy()
+                else:
+                    jobs[job.ctime.strftime("%Y-%m-%d %H:%M:%S")] = job
         # store jobs against creation time and status
         for creation_time in sorted(jobs, reverse=True):
             job = jobs[creation_time]

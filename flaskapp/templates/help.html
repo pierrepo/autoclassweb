@@ -4,11 +4,11 @@
 <article>
 
 <p>
-autoclass@web (v{{ config.VERSION }}) is a web interface to <a href="https://ti.arc.nasa.gov/tech/rse/synthesis-projects-applications/autoclass/autoclass-c/" target="_blank">AutoClass C</a>, an unsupervised Bayesian classification system developped by the NASA.
+AutoClassWeb (v{{ config.VERSION }}) is a web interface to <a href="https://ti.arc.nasa.gov/tech/rse/synthesis-projects-applications/autoclass/autoclass-c/" target="_blank">AutoClass C</a>, an unsupervised Bayesian classification system developped by the NASA.
 </p>
 <p>
 It utilizes <a href="https://github.com/pierrepo/autoclasswrapper" target="_blank">AutoClassWrapper</a>
-(v{{ config.WRAPPER_VERSION }}), a Python wrapper for AutoClass C.
+(v{{ config.AUTOCLASSWRAPPER_VERSION }}), a Python wrapper for AutoClass C.
 </p>
 <hr />
 
@@ -91,10 +91,11 @@ mutliple datasets with homogeneous data type.
 Classification jobs are listed in the <a href="/status">status</a> page.
 </p>
 <p>
-The maximum running time for a job is {{ config.FLASK_JOB_TIMEOUT }} hours.
+The maximum running time for a job is {{ config.FLASK_JOB_TIMEOUT }} hours. 
+Results older than {{ config.FLASK_RESULTS_DURATION }} days are automatically deleted. 
 </p>
 <p>
-    Depending on how autoclass@web has been configured, you might receive
+    Depending on how AutoClassWeb has been configured, you might receive
     by e-mail a link to download results and/or have the ability to download
     results directly from the <a href="/status">status</a> page.
 </p>

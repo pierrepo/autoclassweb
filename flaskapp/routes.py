@@ -19,18 +19,22 @@ import autoclasswrapper as wrapper
 
 FILE_FOR_FAILURE = "autoclass-run-failure"
 
+# Get Flask app logger.
+logger = logging.getLogger("flaskapp")
+
 @app.route('/config', methods=['GET'])
 def show_me_config():
-    print(app.config)
+    logger.info("Printing app config.")
     return jsonify({
         "FLASK_RESULTS_ARE_PUBLIC": app.config["FLASK_RESULTS_ARE_PUBLIC"],
         "FLASK_RESULTS_BY_EMAIL": app.config["FLASK_RESULTS_BY_EMAIL"],
         "FLASK_MAX_JOBS": app.config["FLASK_MAX_JOBS"],
         "FLASK_JOB_TIMEOUT": app.config["FLASK_JOB_TIMEOUT"],
-        "AutoClass C path": wrapper.search_autoclass_in_path(),
-        "AutoClass C version": wrapper.get_autoclass_version(),
-        "AutoClassWrapper version": wrapper.__version__,
-        "autoclassweb version": app.config["VERSION"]
+        "FLASK_RESULTS_DURATION": app.config["FLASK_RESULTS_DURATION"],
+        "AutoClass C path": app.config["AUTOCLASSC_PATH"],
+        "AutoClass C version": app.config["AUTOCLASSC_VERSION"],
+        "AutoClassWrapper version": app.config["AUTOCLASSWRAPPER_VERSION"],
+        "AutoClassWeb version": app.config["VERSION"]
     })
 
 
@@ -42,12 +46,13 @@ def index():
 
     # change directory
     os.chdir(os.environ['FLASK_HOME'])
-    print("We are in: {}".format(os.getcwd()))
+    logger.debug("We are in: {}".format(os.getcwd()))
 
     # create form
     input_form = forms.InputDataUpload()
     # list current jobs (running and completed)
-    job_manager = model.JobManager(app.config["RESULTS_FOLDER"])
+    job_manager = model.JobManager(app.config["RESULTS_FOLDER"],
+                                   job_duration=app.config["FLASK_RESULTS_DURATION"])
     job_manager.autodiscover()
 
     # handle form data after POST request
@@ -79,7 +84,7 @@ def index():
     # create job directory
     job = model.Job()
     job.create_new(app.config["RESULTS_FOLDER"], app.config['JOB_NAME_LENGTH'])
-    print(job.path, job.name)
+    logger.debug(job.path, job.name)
     # get e-mail address
     if input_form.mail_address.data:
         mail_address = input_form.mail_address.data
@@ -123,7 +128,7 @@ def start():
             return redirect(url_for('index'))
     # "job_name" is in session,
     # so we prepare input data and run job
-    print(session)
+    logger.debug(session)
     # keep value of job_name for further use
     job_name = session["job_name"]
     os.chdir(session["job_path"])
@@ -136,9 +141,9 @@ def start():
         .format(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
         )
     job.write_summary("email: {}".format(session["mail_address"]))
-    # create logger
-    logger = logging.getLogger("autoclasswrapper")
-    logger.setLevel(logging.DEBUG)
+    # Create specific logger for autoclasswrapper.
+    wrapper_logger = logging.getLogger("autoclasswrapper")
+    wrapper_logger.setLevel(logging.DEBUG)
     # create a file handler
     handler = logging.FileHandler("autoclass_in.log")
     handler.setLevel(logging.INFO)
@@ -153,9 +158,9 @@ def start():
                                    ), datefmt="%Y-%m-%d %H:%M:%S")
     handler.setFormatter(formatter)
     handler_stream.setFormatter(formatter)
-    # add the handlers to the logger
-    logger.addHandler(handler)
-    logger.addHandler(handler_stream)
+    # add handlers to the logger
+    wrapper_logger.addHandler(handler)
+    wrapper_logger.addHandler(handler_stream)
     # initiate autoclass wrapper input
     clust = wrapper.Input()
     # load scalar data if any
@@ -189,21 +194,21 @@ def start():
     if "ERROR" in log_content:
         session["status"] = "failed"
         job.write_summary("status: failed\nrunning-time: 0")
-        # remove "job_name" from session
-        # to avoid running twice the same job upon refresh
+        # Remove "job_name" from session
+        # to avoid running twice the same job upon refresh.
         session.pop("job_name")
         return render_template("start.html",
                                job_name=job_name)
-    # no ERROR, then keep going
+    # No ERROR, then keep going.
     session["status"] = "running"
     nb_line, nb_col = clust.full_dataset.df.shape
     job.write_summary("data-size: {} lines x {} columns"
                       .format(nb_line, nb_col+1))
-    # initiate autoclass wrapper run
+    # Initiate autoclass wrapper run.
     run = wrapper.Run()
-    # prepare master script to run autoclass
+    # prepare master script to run autoclass.
     run.create_run_file()
-    # add scripts to export and send results
+    # Add scripts to export and send results.
     shutil.copy("../../export_results.py", "./")
     shutil.copy("../../send_results.py", "./")
     with open(run.root_name + ".sh", "a") as script_file:
@@ -212,9 +217,9 @@ def start():
         if app.config["FLASK_RESULTS_BY_EMAIL"]:
             script_file.write("python3 send_results.py {}\n"
                               .format(session["mail_address"]))
-    # run AutoClass C
+    # Run AutoClass C.
     run.run(job_name)
-    # wait that the job starts
+    # Wait that the job starts.
     time.sleep(2)
     if Path(Path.cwd(), FILE_FOR_FAILURE).exists():
         log_file = Path(Path.cwd(), "autoclass-search.log")
@@ -226,14 +231,14 @@ def start():
             session["log"] += log_file_2.read_text()
         session["status"] = "failed"
         job.write_summary("status: failed\nrunning-time: 0")
-        # remove "job_name" from session
-        # to avoid running twice the same job upon refresh
+        # Remove "job_name" from session
+        # to avoid running twice the same job upon refresh.
         session.pop("job_name")
         return render_template("start.html",
                                job_name=job_name)
 
-    # remove "job_name" from session
-    # to avoid running twice the same job upon refresh
+    # Remove "job_name" from session
+    # to avoid running twice the same job upon refresh.
     session.pop("job_name")
     return render_template("start.html",
                            job_name=job_name)
@@ -242,7 +247,8 @@ def start():
 @app.route('/status', methods=['GET', 'POST'])
 def status():
     os.chdir(os.environ['FLASK_HOME'])
-    job_manager = model.JobManager(app.config["RESULTS_FOLDER"])
+    job_manager = model.JobManager(app.config["RESULTS_FOLDER"],
+                                   job_duration=app.config["FLASK_RESULTS_DURATION"])
     job_manager.autodiscover()
     return render_template('status.html', job_m=job_manager)
 
@@ -255,7 +261,8 @@ def download(job_name=None):
         return redirect(url_for('status'))
 
     # retrieve all jobs
-    job_manager = model.JobManager(app.config["RESULTS_FOLDER"])
+    job_manager = model.JobManager(app.config["RESULTS_FOLDER"],
+                                              job_duration=app.config["FLASK_RESULTS_DURATION"])
     job_manager.autodiscover()
     # find wanted job
     job_selected = None

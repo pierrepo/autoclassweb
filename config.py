@@ -85,6 +85,13 @@ class CreateConfig():
         FLASK_JOB_TIMEOUT = int(os.environ["FLASK_JOB_TIMEOUT"])
     logger.info(f"FLASK_JOB_TIMEOUT: {FLASK_JOB_TIMEOUT}")
 
+    # FLASK_RESULTS_DURATION
+    if ("FLASK_RESULTS_DURATION" not in os.environ) \
+      or (not os.environ["FLASK_RESULTS_DURATION"].isdigit()):
+        FLASK_RESULTS_DURATION = 30
+    else:
+        FLASK_RESULTS_DURATION = int(os.environ["FLASK_RESULTS_DURATION"])
+    logger.info(f"FLASK_RESULTS_DURATION: {FLASK_RESULTS_DURATION}")
 
     # Search AutoClass C executable
     AUTOCLASSC_VERSION = wrapper.get_autoclass_version()

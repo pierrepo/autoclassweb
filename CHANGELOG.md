@@ -3,6 +3,7 @@
 - Use conda env instead of pipenv
 - Move config file to the config/ directory
 - Use logging for messages
+- Results are destroyed automatically after some time
 
 **0.1.3**
 - Fix bug for discrete date type

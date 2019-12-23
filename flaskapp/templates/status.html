@@ -7,7 +7,7 @@
 {% block body %}
 <article>
     <div class="text-muted helper status">
-    Page will refresh every 5 minutes.
+    Page will refresh every 5 minutes. Results older than {{ config.FLASK_RESULTS_DURATION }} days are automatically deleted.
     </div>
     <table class="table table-hover">
         <thead>

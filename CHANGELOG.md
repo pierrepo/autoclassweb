@@ -1,4 +1,6 @@
 **Dev**
+
+**1.1.0**
 - Minor updates
 - Documentation of default configuration 
   

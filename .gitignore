@@ -1,23 +1,20 @@
-# Python virtual environment
-venv
-
 # miscellaneous
 misc/
 
-# logs and results
+# Logs and results.
 logs/
 results/
 
-# ignore .env* config files but keep template file
-.env*
-!.env-template
+# Config files but keep template file.
+config/*.cfg
+!config/autoclassweb-template.cfg
 
-# data sample for tests
+# Data sample for tests.
 test-data/
 
-# Python module compilation
+# Python module compilation.
 __pycache__/
 
-# Visual Studio code local directory
+# Visual Studio code local directory.
 .vscode/
 

@@ -1,5 +1,7 @@
 **Dev**
 - Use pathlib in `export_results.py`
+- Use conda env instead of pipenv
+- Move config file to the config/ directory
 
 **0.1.3**
 - Fix bug for discrete date type

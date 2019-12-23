@@ -84,7 +84,7 @@ def index():
     # create job directory
     job = model.Job()
     job.create_new(app.config["RESULTS_FOLDER"], app.config['JOB_NAME_LENGTH'])
-    logger.debug(job.path, job.name)
+    logger.debug(f"New job name: {job.name}")
     # get e-mail address
     if input_form.mail_address.data:
         mail_address = input_form.mail_address.data

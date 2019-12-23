@@ -1,3 +1,4 @@
+run: export FLASK_APP = flaskapp
 run:
 	flask run
 .PHONY: run

@@ -1,4 +1,6 @@
 **Dev**
+
+**1.0.0**
 - Use pathlib in `export_results.py`
 - Use conda env instead of pipenv
 - Move config file to the config/ directory

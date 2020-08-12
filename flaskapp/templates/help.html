@@ -42,6 +42,18 @@ prot3		7.723	9345.34
 Your data must belong to one of the following categories:
 </p>
 
+<h2>Real Location</h2>
+<p>
+Negative and positive real values (e.g: microarray log ratio, elevation, position). <br />
+Example:
+<pre>
+name	exp4	exp5	exp6
+prot1	-18.3	1.723	-5.6151
+prot2	14.7	-0.006	-2.7779
+prot3	-22.5	0.023	9.3441
+</pre>
+</p>
+
 <h2>Real Scalar</h2>
 <p>
 Singly bounded real values, typically bounded below at zero
@@ -52,18 +64,6 @@ name	exp1	exp2	exp3
 prot1	0.123	1.723	550.61
 prot2	0.003	4.966	27.77
 prot3	1.812	7.723	9345.34
-</pre>
-</p>
-
-<h2>Real Location</h2>
-<p>
-Other real values that can be both negative or positive (e.g: microarray log ratio, elevation, position). <br />
-Example:
-<pre>
-name	exp4	exp5	exp6
-prot1	-18.3	1.723	-5.6151
-prot2	14.7	-0.006	-2.7779
-prot3	-22.5	0.023	9.3441
 </pre>
 </p>
 
@@ -81,7 +81,7 @@ prot3	muscle	shadow
 
 <p>
 <strong>Note:</strong> if your dataset contains several types of data
-(real scalar, real location, discrete), then split your dataset into
+(real scalar, real location, discrete), split your dataset into
 mutliple datasets with homogeneous data type.
 </p>
 
@@ -96,7 +96,7 @@ Results older than {{ config.FLASK_RESULTS_DURATION }} days are automatically de
 </p>
 <p>
     Depending on how AutoClassWeb has been configured, you might receive
-    by e-mail a link to download results and/or have the ability to download
+    by e-mail a link to download results and have the ability to download
     results directly from the <a href="/status">status</a> page.
 </p>
 

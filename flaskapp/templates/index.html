@@ -34,6 +34,32 @@
         {% else %}
         <fieldset disabled>
         {% endif %}
+            <legend>Real Location</legend>
+            <p>Negative and positive real values
+                (e.g: microarray log ratio, elevation, position)
+            </p>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label" for="locationInputFile">{{form.location_input_file.label}}</label>
+                <div class="col-sm-10">
+                    <input type="file" class="form-control-file"
+                        id="locationInputFile"
+                        name="location_input_file">
+                </div>
+                <label class="col-sm-2 col-form-label"
+                    for="locationInputError">
+                    {{ form.location_error.label }}
+                </label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control"
+                        id="locationInputError"
+                        name="location_error"
+                        value={{ form.location_error.default }}>
+                    <small class="form-text text-muted">
+                        Absolute error on data. Optional.
+                        Default = 0.01 i.e. value ± 0.01.
+                    </small>
+                </div>
+            </div>
             <legend>Real Scalar</legend>
             <p>Singly bounded real values, typically bounded below at zero
                 (e.g: length)
@@ -61,32 +87,6 @@
                     <small class="form-text text-muted">
                         Relative error on data. Optional.
                         Default = 0.01 i.e. 1% of value.
-                    </small>
-                </div>
-            </div>
-            <legend>Real Location</legend>
-            <p>Other real values
-                (e.g: microarray log ratio, elevation, position)
-            </p>
-            <div class="form-group row">
-                <label class="col-sm-2 col-form-label" for="locationInputFile">{{form.location_input_file.label}}</label>
-                <div class="col-sm-10">
-                    <input type="file" class="form-control-file"
-                           id="locationInputFile"
-                           name="location_input_file">
-                </div>
-                <label class="col-sm-2 col-form-label"
-                       for="locationInputError">
-                       {{ form.location_error.label }}
-                </label>
-                <div class="col-sm-10">
-                    <input type="text" class="form-control"
-                           id="locationInputError"
-                           name="location_error"
-                           value={{ form.location_error.default }}>
-                    <small class="form-text text-muted">
-                        Absolute error on data. Optional.
-                        Default = 0.01 i.e. value ± 0.01.
                     </small>
                 </div>
             </div>

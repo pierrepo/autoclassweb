@@ -33,7 +33,7 @@ app.logger.addHandler(file_handler)
 
 #  set Flask base directory
 os.environ["FLASK_HOME"] = os.getcwd()
-app.logger.info("FLASK_HOME is {}".format(os.environ["FLASK_HOME"]))
+app.logger.info(f"FLASK_HOME is {os.environ['FLASK_HOME']}")
 
 # Set app configuration.
 # First: try to find user config file.

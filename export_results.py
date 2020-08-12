@@ -29,7 +29,7 @@ def wrap_output_files():
         else:
             logger.warning(f"Cannot find {name}")
     # Create archive.
-    zipname = "{}_autoclass.zip".format(DIR_NAME)
+    zipname = f"{DIR_NAME}_autoclass.zip"
     with zipfile.ZipFile(zipname, "w") as outputzip:
         for filename in OUTPUT_FILES_RENAMED:
             if Path(filename).exists():
@@ -48,15 +48,12 @@ def get_running_time():
     time_last, file_last = max((f.stat().st_mtime, f)
                                 for f in Path.cwd().iterdir()
                                 )
-    logger.info("Older file is {}".format(file_older.name))
-    logger.info("Most recent file is {}".format(file_last.name))
+    logger.info(f"Older file is {file_older.name}")
+    logger.info(f"Most recent file is {file_last.name}")
     elapsed_time = int(time_last - time_older)
     hours, remainder = divmod(elapsed_time, 3600)
     minutes, seconds = divmod(remainder, 60)
-    running_time = "{:02}:{:02}:{:02}".format(int(hours),
-                                              int(minutes),
-                                              int(seconds))
-    return running_time
+    return f"{int(hours):02}:{int(minutes):02}:{int(seconds):02}"
 
 
 def write_summary(text):
@@ -68,41 +65,42 @@ def write_summary(text):
     if summary_found:
         summary = summary_found[0]
         with open(summary, "a") as summary_file:
-            summary_file.write("{}\n".format(text))
+            summary_file.write(f"{text}\n")
         shutil.copyfile(summary, summary.parent.parent / summary.name)
     else:
         logger.error("Cannot find summary file.")
 
 
 if __name__ == "__main__":
+    # Call logger from autoclasswrapper.
     logger = logging.getLogger("autoclasswrapper")
     logger.setLevel(logging.DEBUG)
-    # create a file handler
+    # Create a file handler.
     handler = logging.FileHandler("output.log")
     handler.setLevel(logging.INFO)
-    # create a stream handler
+    # Create a stream handler.
     log_capture_string = io.StringIO()
     handler_stream = logging.StreamHandler(log_capture_string)
     handler_stream.setLevel(logging.INFO)
-    # create a logging format
+    # Create logging format.
     formatter = logging.Formatter("%(asctime)s :: %(levelname)-8s :: %(message)s",
                                   datefmt="%Y-%m-%d %H:%M:%S")
     handler.setFormatter(formatter)
     handler_stream.setFormatter(formatter)
-    # add the handlers to the logger
+    # Add handlers to the logger.
     logger.addHandler(handler)
     logger.addHandler(handler_stream)
 
-    # check AutoClass C worked without error
+    # Check AutoClass C worked without error.
     if not Path(Path.cwd(), FILE_FOR_SUCCESS).exists():
         write_summary("status: failed")
-        write_summary("running-time: {}".format(get_running_time()))
-        logger.critical("Cannot find file {} in {}".format(FILE_FOR_SUCCESS, str(Path.cwd())))
+        write_summary(f"running-time: {get_running_time()}")
+        logger.critical(f"Cannot find file {FILE_FOR_SUCCESS} in {str(Path.cwd())}")
         sys.exit(1)
 
-    # prepare results
+    # Prepare results.
     results = wrapper.Output()
-    logger.info("autoclasswrapper {}".format(wrapper.__version__))
+    logger.info(f"autoclasswrapper {wrapper.__version__}")
     results.extract_results()
     results.aggregate_input_data()
     results.write_cdt()
@@ -113,15 +111,15 @@ if __name__ == "__main__":
     else:
         logger.warning("No stats -> no dendrogram.")
     log_content = log_capture_string.getvalue()
-    # write final status
+    # Write final status.
     if "ERROR" in log_content:
         write_summary("status: failed")
     else:
         write_summary("status: completed")
     #log_capture_string.close()
 
-    # write running time
-    write_summary("running-time: {}".format(get_running_time()))
+    # Write running time.
+    write_summary(f"running-time: {get_running_time()}")
 
-    # wrap files
+    # Wrap files.
     wrap_output_files()

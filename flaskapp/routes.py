@@ -45,7 +45,7 @@ def index():
 
     # change directory
     os.chdir(os.environ['FLASK_HOME'])
-    logger.debug("We are in: {}".format(os.getcwd()))
+    logger.debug(f"We are in: {os.getcwd()}")
 
     # create form
     input_form = forms.InputDataUpload()
@@ -134,12 +134,12 @@ def start():
     # re-create job and update summary file
     job = model.Job()
     job.create_from_path(session["job_path"])
-    job.write_summary("reference: {}".format(job_name))
+    job.write_summary(f"reference: {job_name}")
     job.write_summary(
-        "date-start: {}"
-        .format(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+         "date-start: "
+        f"{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
         )
-    job.write_summary("email: {}".format(session["mail_address"]))
+    job.write_summary(f"email: {session['mail_address']}")
     # Call logger from autoclasswrapper.
     wrapper_logger = logging.getLogger("autoclasswrapper")
     wrapper_logger.setLevel(logging.DEBUG)
@@ -203,8 +203,7 @@ def start():
     # No ERROR, then keep going.
     session["status"] = "running"
     nb_line, nb_col = clust.full_dataset.df.shape
-    job.write_summary("data-size: {} lines x {} columns"
-                      .format(nb_line, nb_col+1))
+    job.write_summary(f"data-size: {nb_line} lines x {nb_col+1} columns")
     # Initiate autoclass wrapper run.
     run = wrapper.Run()
     # prepare master script to run autoclass.
@@ -216,8 +215,9 @@ def start():
         script_file.write("# added by autoclassweb\n")
         script_file.write("python3 export_results.py\n")
         if app.config["FLASK_RESULTS_BY_EMAIL"]:
-            script_file.write("python3 send_results.py {}\n"
-                              .format(session["mail_address"]))
+            script_file.write(
+                "python3 send_results.py "
+                f"{session['mail_address']}\n")
     # Run AutoClass C.
     run.run(job_name)
     # Wait that the job starts.
@@ -272,8 +272,8 @@ def download(job_name=None):
             job_selected = job
 
     if job_selected is None:
-        msg = ("Job '{}' not found, failed or not completed yet. "
-               "Cannot get results.").format(job_name)
+        msg = (f"Job '{job_name}' not found, failed or not completed yet. "
+                "Cannot get results.")
         flash(msg, "error")
         return redirect(url_for('status'))
     fullpath = os.path.join(os.environ['FLASK_HOME'], job_selected.path)

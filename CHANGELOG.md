@@ -1,6 +1,8 @@
 **Dev**
 - Fix multiple contents in input log file.
 - Results are public
+- Use local css and js files for Bootstrap and jQuery
+
 
 **1.1.0**
 - Minor updates

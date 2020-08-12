@@ -9,7 +9,7 @@ import time
 import datetime
 
 from flask import Flask, jsonify, render_template, url_for, redirect, request, flash, session, send_from_directory
-from werkzeug import secure_filename
+from werkzeug.utils import secure_filename
 
 from flaskapp import app
 from flaskapp import forms
@@ -141,11 +141,13 @@ def start():
         .format(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
         )
     job.write_summary("email: {}".format(session["mail_address"]))
-    # Create specific logger for autoclasswrapper.
+    # Call logger from autoclasswrapper.
     wrapper_logger = logging.getLogger("autoclasswrapper")
     wrapper_logger.setLevel(logging.DEBUG)
-    # create a file handler
-    handler = logging.FileHandler("autoclass_in.log")
+    # Create a file handler.
+    # delay=True only opens file at first writing
+    # https://docs.python.org/3/library/logging.handlers.html
+    handler = logging.FileHandler("autoclass_in.log", delay=True)
     handler.setLevel(logging.INFO)
     # create a stream handler
     log_capture_string = io.StringIO()

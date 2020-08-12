@@ -26,7 +26,6 @@ logger = logging.getLogger("flaskapp")
 def show_me_config():
     logger.info("Printing app config.")
     return jsonify({
-        "FLASK_RESULTS_ARE_PUBLIC": app.config["FLASK_RESULTS_ARE_PUBLIC"],
         "FLASK_RESULTS_BY_EMAIL": app.config["FLASK_RESULTS_BY_EMAIL"],
         "FLASK_MAX_JOBS": app.config["FLASK_MAX_JOBS"],
         "FLASK_JOB_TIMEOUT": app.config["FLASK_JOB_TIMEOUT"],

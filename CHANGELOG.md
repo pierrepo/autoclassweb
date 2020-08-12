@@ -1,5 +1,6 @@
 **Dev**
 - Fix multiple contents in input log file.
+- Results are public
 
 **1.1.0**
 - Minor updates

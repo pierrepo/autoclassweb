@@ -33,21 +33,10 @@ class CreateConfig():
     # default is 'production'
     os.environ["FLASK_ENV"] = os.environ.get("FLASK_ENV", "production")
 
-    # FLASK_RESULTS_ARE_PUBLIC
-    FLASK_RESULTS_ARE_PUBLIC = format_true_false("FLASK_RESULTS_ARE_PUBLIC",
-                                                 "True")
-    logger.info(f"FLASK_RESULTS_ARE_PUBLIC: {FLASK_RESULTS_ARE_PUBLIC}")
-
     # FLASK_RESULTS_BY_EMAIL
     FLASK_RESULTS_BY_EMAIL = format_true_false("FLASK_RESULTS_BY_EMAIL",
                                                "False")
     logger.info(f"FLASK_RESULTS_BY_EMAIL: {FLASK_RESULTS_BY_EMAIL}")
-
-    if FLASK_RESULTS_ARE_PUBLIC == False \
-      and FLASK_RESULTS_BY_EMAIL == False:
-        FLASK_INIT_ERROR = ("FLASK_RESULTS_ARE_PUBLIC "
-                            "and FLASK_RESULTS_BY_EMAIL "
-                            "cannot be undefined or False simultaneously")
 
     # if FLASK_RESULTS_BY_EMAIL is True,
     # at least MAIL_SERVER_URL and MAIL_PORT should be defined

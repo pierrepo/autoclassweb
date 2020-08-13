@@ -1,4 +1,4 @@
-FROM ubuntu:18.04
+FROM ubuntu:20.04
 LABEL maintainer="Pierre Poulain <pierre.poulain@cupnet.net>"
 
 # Change default shell
@@ -11,49 +11,42 @@ RUN apt update && \
     apt -y upgrade && \
     apt install -y wget && \
     apt install -y libc6-i386 && \
-    apt purge && \
+    apt autoremove -y && \
     apt clean && \
-    rm -rf /var/lib/apt/lists/*
+    rm -rf /var/lib/apt/lists/* /var/log/dpkg.log
 
 # Create app directory
 WORKDIR /app
 
-# Install app dependencies
-COPY . /app/
+# Install app files
+COPY environment.yml ./
+COPY flaskapp ./flaskapp
+COPY config.py ./
+COPY export_results.py ./
+COPY send_results.py ./
+COPY gunicorn.conf ./
 
+# Install conda
+# See https://hub.docker.com/r/conda/miniconda3/dockerfile
 ENV PATH /opt/miniconda3/bin:$PATH
-
-# See https://hub.docker.com/r/continuumio/miniconda3/dockerfile
-RUN wget --quiet https://repo.continuum.io/miniconda/Miniconda3-4.7.12.1-Linux-x86_64.sh -O /tmp/miniconda.sh && \
+RUN wget --quiet https://repo.anaconda.com/miniconda/Miniconda3-py38_4.8.3-Linux-x86_64.sh -O /tmp/miniconda.sh && \
     /bin/bash /tmp/miniconda.sh -b -p /opt/miniconda3 && \
     rm -f /tmp/miniconda.sh && \
-    conda init 
+    conda update conda
 
+
+# Install conda env
 ARG conda_env=autoclassweb
-
 RUN conda env create -f environment.yml && \
     conda clean -afy
-
-RUN echo "conda activate ${conda_env}" >> ~/.bashrc
 ENV PATH /opt/miniconda3/envs/${conda_env}/bin:$PATH
-
-# Create app directory
-WORKDIR /app
 
 # Install autoclass-c binary
 # https://ti.arc.nasa.gov/tech/rse/synthesis-projects-applications/autoclass/autoclass-c/
 RUN wget --quiet https://ti.arc.nasa.gov/m/project/autoclass/autoclass-c-3-3-6.tar.gz && \
     tar zxvf autoclass-c-3-3-6.tar.gz && \
     rm -f autoclass-c-3-3-6.tar.gz
-
 ENV PATH "/app/autoclass-c/:${PATH}"
-
-# Install app files
-COPY flaskapp /app/
-COPY config.py /app/
-COPY export_results.py /app/
-COPY send_results.py /app/
-COPY gunicorn.conf /app/
 
 # Create shared directories
 RUN mkdir -p /app/{config,logs,results}

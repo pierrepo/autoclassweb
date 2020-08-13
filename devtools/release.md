@@ -1,5 +1,11 @@
 # How to release
 
+## Fix dependencies (if needed)
+
+```
+$ conda env export -n autoclassweb --no-builds  | grep -v "^prefix:" > environment-lock.yml
+$ g ciam "Update dependencies"
+```
 
 ## Update version number
 

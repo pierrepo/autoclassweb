@@ -19,7 +19,7 @@ RUN apt update && \
 WORKDIR /app
 
 # Install app files
-COPY environment.yml ./
+COPY environment-lock.yml ./
 COPY flaskapp ./flaskapp
 COPY config.py ./
 COPY gunicorn.py ./
@@ -38,7 +38,7 @@ RUN wget --quiet https://repo.anaconda.com/miniconda/Miniconda3-py38_4.8.3-Linux
 
 # Install conda env
 ARG conda_env=autoclassweb
-RUN conda env create -f environment.yml && \
+RUN conda env create -f environment-lock.yml && \
     conda clean -afy
 ENV PATH /opt/miniconda3/envs/${conda_env}/bin:$PATH
 

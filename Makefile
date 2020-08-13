@@ -23,5 +23,5 @@ build-docker:
 # Flask + gunicorn in Docker
 # Available on port 5000
 run-docker:
-	docker run -p 5000:5000 -v $(pwd)/config:/app/config -v $(pwd)/logs:/app/logs -v $(pwd)/results:/app/results autoclassweb:latest
+	docker run -p 5000:5000 -v ${PWD}/config:/app/config -v ${PWD}/logs:/app/logs -v ${PWD}/results:/app/results autoclassweb:latest
 .PHONY: run-docker

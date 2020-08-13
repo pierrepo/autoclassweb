@@ -4,7 +4,7 @@
 
 ```
 $ conda env export -n autoclassweb --no-builds  | grep -v "^prefix:" > environment-lock.yml
-$ g ciam "Update dependencies"
+$ g ciam "Update conda dependencies"
 ```
 
 ## Update version number

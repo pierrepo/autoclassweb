@@ -15,13 +15,13 @@ run-gunicorn:
 .PHONY: run-gunicorn
 
 
-docker-build:
+build-docker:
 	docker build . -t autoclassweb
-.PHONY: docker-build
+.PHONY: build-docker
 
 
 # Flask + gunicorn in Docker
 # Available on port 5000
-docker-build:
+run-docker:
 	docker run -p 5000:5000 -v $(pwd)/config:/app/config -v $(pwd)/logs:/app/logs -v $(pwd)/results:/app/results autoclassweb:latest
-.PHONY: docker-run
+.PHONY: run-docker

@@ -50,3 +50,5 @@ $ docker build . -t pierrepo/autoclassweb:latest -t pierrepo/autoclassweb:<versi
 ```
 $ docker push pierrepo/autoclassweb
 ```
+
+Verify the new release has been pushed: https://hub.docker.com/r/pierrepo/autoclassweb

@@ -2,7 +2,7 @@
 - Fix multiple contents in input log file.
 - Results are public
 - Use local css and js files for Bootstrap and jQuery
-
+- Update ubuntu and conda version in Docker image
 
 **1.1.0**
 - Minor updates

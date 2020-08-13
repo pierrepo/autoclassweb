@@ -22,9 +22,10 @@ WORKDIR /app
 COPY environment.yml ./
 COPY flaskapp ./flaskapp
 COPY config.py ./
+COPY gunicorn.py ./
 COPY export_results.py ./
 COPY send_results.py ./
-COPY gunicorn.conf ./
+
 
 # Install conda
 # See https://hub.docker.com/r/conda/miniconda3/dockerfile
@@ -57,5 +58,5 @@ VOLUME /app/logs
 VOLUME /app/results
 EXPOSE 5000
 
-CMD ["gunicorn", "--config", "gunicorn.conf", "flaskapp:app"]
+CMD ["gunicorn", "--config", "gunicorn.py", "flaskapp:app"]
 

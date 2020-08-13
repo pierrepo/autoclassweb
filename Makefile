@@ -11,10 +11,10 @@ run:
 # Available on port 5000
 run-gunicorn:
 	@test "${CONDA_DEFAULT_ENV}" = "autoclassweb" && echo "Conda env ${CONDA_DEFAULT_ENV} found" || { echo "not OK"; exit 1; }
-	gunicorn --config gunicorn.conf flaskapp:app
+	gunicorn --config gunicorn.py flaskapp:app
 .PHONY: run-gunicorn
 
 
 docker-build:
-	docker build . -t pierrepo/autoclassweb:latest
+	docker build . -t autoclassweb
 .PHONY: docker-build

@@ -27,7 +27,7 @@ $ rm -f autoclass-c-3-3-6.tar.gz
 $ export PATH=$PATH:$(pwd)/autoclass-c
 ```
 If you use a 64-bit operating system, install the standard 32-bit C libraries:
-```
+```bash
 $ sudo apt-get install -y libc6-i386
 ```
 

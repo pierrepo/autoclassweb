@@ -38,23 +38,13 @@ After the creation  of the new release in GitHub, check the archive has been cre
 
 ## Publish docker image 
 
-### First time login 
+Docker images of autoclassweb are hosted in the [Biocontainers](https://biocontainers.pro/) docker repo:
 
-Create a token here: https://hub.docker.com/settings/security
+<https://hub.docker.com/r/biocontainers/autoclassweb>
 
-Connect with this token:
-```
-$ docker login --username pierrepo
-```
+To push new images:
 
-### Build image 
-```
-$ docker build . -t pierrepo/autoclassweb:latest -t pierrepo/autoclassweb:<version>
-```
+-  Clone <https://github.com/BioContainers/containers>
+-  Add the Dockerfile for the new release in the `autoclassweb` subdirectory
+-  Make a pull request for merging.
 
-### Push image
-```
-$ docker push pierrepo/autoclassweb
-```
-
-Verify the new release has been pushed: https://hub.docker.com/r/pierrepo/autoclassweb

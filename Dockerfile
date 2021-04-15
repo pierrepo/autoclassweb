@@ -58,5 +58,5 @@ VOLUME /app/logs
 VOLUME /app/results
 EXPOSE 5000
 
-CMD ["gunicorn", "--config", "gunicorn.py", "flaskapp:app"]
+# CMD ["gunicorn", "--config", "gunicorn.py", "flaskapp:app"]
 

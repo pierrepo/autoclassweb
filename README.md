@@ -24,7 +24,7 @@ Install [AutoClass C](https://ti.arc.nasa.gov/tech/rse/synthesis-projects-applic
 $ wget https://ti.arc.nasa.gov/m/project/autoclass/autoclass-c-3-3-6.tar.gz
 $ tar zxvf autoclass-c-3-3-6.tar.gz
 $ rm -f autoclass-c-3-3-6.tar.gz
-export PATH=$PATH:$(pwd)/autoclass-c
+$ export PATH=$PATH:$(pwd)/autoclass-c
 ```
 If you use a 64-bit operating system, install the standard 32-bit C libraries:
 ```
@@ -52,12 +52,12 @@ Autoclassweb is then available at <http://127.0.0.1:5000>
 
 Install Docker with the following [instructions](https://docs.docker.com/install/linux/docker-ce/ubuntu/).
 
-Build:
+Build image:
 ```bash
 $ make docker-build
 ```
 
-Run:
+Run container:
 ```bash
 $ make docker-run
 ```

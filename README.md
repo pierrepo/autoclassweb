@@ -12,7 +12,7 @@ $ git clone https://github.com/pierrepo/autoclassweb.git
 $ cd autoclassweb
 ```
 
-Create and activate conda env:
+Create and activate a conda environment:
 ```bash
 $ conda env create -f environment.yml
 $ conda activate autoclassweb
@@ -31,7 +31,7 @@ If you use a 64-bit operating system, install the standard 32-bit C libraries:
 $ sudo apt-get install -y libc6-i386
 ```
 
-Copy config template and update `config/autoclassweb.cfg` accordingly:
+Copy config template and update config file `config/autoclassweb.cfg` accordingly:
 ```bash
 $ cp config/autoclassweb-template.cfg config/autoclassweb.cfg
 ```

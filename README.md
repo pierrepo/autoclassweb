@@ -4,6 +4,16 @@ AutoClassWeb is a web interface to [AutoClass C](https://ti.arc.nasa.gov/tech/rs
 
 It utilizes [AutoClassWrapper](https://github.com/pierrepo/autoclasswrapper), a Python wrapper for AutoClass C. 
 
+## Installation for use on a local machine
+
+See step-by-step instructions: <https://github.com/pierrepo/autoclassweb-app/>
+
+
+## Installation for use on web serveur
+
+See step-by-step instructions: <https://github.com/pierrepo/autoclassweb-server>
+
+
 ## Installation for development
 
 Clone the project:

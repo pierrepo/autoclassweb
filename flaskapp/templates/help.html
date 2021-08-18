@@ -40,12 +40,12 @@ prot3		7.723	9345.34
 </pre>
 </p>
 <p>
-Your data must belong to one of the following categories:
+Your data must belong to one of the three following categories:
 </p>
 
 <h2>Real Location</h2>
 <p>
-Negative and positive real values (e.g: microarray log ratio, elevation, position). <br />
+Negative and positive real values (e.g.: microarray log ratio, elevation, position). <br />
 Example:
 <pre>
 name	exp4	exp5	exp6
@@ -58,7 +58,7 @@ prot3	-22.5	0.023	9.3441
 <h2>Real Scalar</h2>
 <p>
 Singly bounded real values, typically bounded below at zero
-(e.g: length, weight, age).<br />
+(e.g.: length, weight, age).<br />
 Example:
 <pre>
 name	exp1	exp2	exp3
@@ -70,7 +70,7 @@ prot3	1.812	7.723	9345.34
 
 <h2>Discrete</h2>
 <p>
-Qualitative data (e.g. color, phenotype, name...). <br />
+Qualitative data (e.g.: color, phenotype, name...). <br />
 Example:
 <pre>
 name	tissu	condition
@@ -83,7 +83,7 @@ prot3	muscle	shadow
 <p>
 <strong>Note:</strong> if your dataset contains several types of data
 (real scalar, real location, discrete), split your dataset into
-mutliple datasets with homogeneous data type.
+multiple datasets with homogeneous data type.
 </p>
 
 <h1>Classification job</h1>
@@ -115,10 +115,11 @@ Results are bundled in a zip archive with the following files:
     of numeric columns (<it>real scalar</it> and <it>real location</it>) for each class.
 </li>
 <li>
-    <code>something_out_dendrogram.png</code> is a dendrogram representing the distance between all classes.
+    <code>something_out_dendrogram.png</code> is a dendrogram plot representing the distance between all classes.
 </li>
 <li>
-    <code>something_out.tsv</code> contains all the data with the class assignement and membership probabilities for all classes. This file is in the <a href="https://en.wikipedia.org/wiki/Tab-separated_values"
+    <code>something_out.tsv</code> contains all the data with the class assignement and membership probabilities for all classes. 
+    This file is in the <a href="https://en.wikipedia.org/wiki/Tab-separated_values"
     target="_blank">Tab-separated values</a> format and can then easily be parsed with Excel, R, Python...
 </li>
 </ul>

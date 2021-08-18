@@ -1,5 +1,6 @@
 **Dev**
 - Fix style in help/documentation
+- Update documentation
 
 **2.0.0**
 - Remove e-mail support

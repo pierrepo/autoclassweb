@@ -1,6 +1,6 @@
 # AutoClassWeb
 
-AutoClassWeb is a web interface to [AutoClass C](https://ti.arc.nasa.gov/tech/rse/synthesis-projects-applications/autoclass/autoclass-c/), an unsupervised Bayesian classification system developped by the NASA.
+AutoClassWeb is a web interface to [AutoClass C](https://ti.arc.nasa.gov/tech/rse/synthesis-projects-applications/autoclass/autoclass-c/), an unsupervised Bayesian classification system developed by the NASA.
 
 It utilizes [AutoClassWrapper](https://github.com/pierrepo/autoclasswrapper), a Python wrapper for AutoClass C. 
 
@@ -9,7 +9,7 @@ It utilizes [AutoClassWrapper](https://github.com/pierrepo/autoclasswrapper), a 
 See step-by-step instructions: <https://github.com/pierrepo/autoclassweb-app/>
 
 
-## Installation for use on a web serveur
+## Installation for use on a web server
 
 See step-by-step instructions: <https://github.com/pierrepo/autoclassweb-server>
 
@@ -46,7 +46,7 @@ Copy config template and update config file `config/autoclassweb.cfg` accordingl
 $ cp config/autoclassweb-template.cfg config/autoclassweb.cfg
 ```
 
-Run autoclassweb alone:
+Run AutoClassWeb alone:
 ```bash
 $ make run
 ```
@@ -56,7 +56,7 @@ or with gunicorn:
 $ make run-gunicorn
 ```
 
-Autoclassweb is then available at <http://127.0.0.1:5000>
+AutoClassWeb is then available at <http://127.0.0.1:5000>
 
 ## Docker 
 
@@ -72,13 +72,13 @@ Run container:
 $ make docker-run
 ```
 
-Autoclassweb is then available at <http://127.0.0.1:5000>
+AutoClassWeb is then available at <http://127.0.0.1:5000>
 
 Clean unused images:
 ```bash
 $ make docker-clean
 ```
 
-A Docker image of [autoclassweb](https://hub.docker.com/r/biocontainers/autoclassweb) is also available in the [Biocontainers](https://biocontainers.pro/) docker repo.
+A Docker image of [AutoClassWeb](https://hub.docker.com/r/biocontainers/autoclassweb) is also available in the [Biocontainers](https://biocontainers.pro/) docker repository.
 
 

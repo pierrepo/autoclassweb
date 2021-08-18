@@ -1,4 +1,6 @@
 **Dev**
+
+**2.1.1**
 - Update Dockerfile with Biocontainers template
 
 **2.1.0**

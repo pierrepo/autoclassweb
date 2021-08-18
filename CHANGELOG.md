@@ -1,6 +1,7 @@
 **Dev**
 - Fix style in help/documentation
 - Update documentation
+- Set default max run time to 48 hours
 
 **2.0.0**
 - Remove e-mail support

@@ -44,7 +44,7 @@ class CreateConfig():
     # FLASK_JOB_TIMEOUT
     if ("FLASK_JOB_TIMEOUT" not in os.environ) \
       or (not os.environ["FLASK_JOB_TIMEOUT"].isdigit()):
-        FLASK_JOB_TIMEOUT = 24
+        FLASK_JOB_TIMEOUT = 48
     else:
         FLASK_JOB_TIMEOUT = int(os.environ["FLASK_JOB_TIMEOUT"])
     logger.info(f"FLASK_JOB_TIMEOUT: {FLASK_JOB_TIMEOUT}")

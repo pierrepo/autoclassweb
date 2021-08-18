@@ -2,13 +2,12 @@ import logging
 from logging.handlers import RotatingFileHandler
 import os
 from pathlib import Path
-import sys
 
 from dotenv import load_dotenv
 from flask import Flask
 
+# Create Flask app.
 app = Flask(__name__)
-
 # Redefine logger.
 from flask.logging import default_handler
 # Clean default Flask logger.

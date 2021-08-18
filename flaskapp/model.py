@@ -1,6 +1,5 @@
 import datetime
 import glob
-import io
 import logging
 import os
 from pathlib import Path
@@ -216,7 +215,6 @@ class JobManager():
 
 
 if __name__ == '__main__':
-
     job_manager = JobManager("results")
     job_manager.autodiscover()
     for job in job_manager.jobs:

@@ -1,4 +1,5 @@
 **Dev**
+- Remove e-mail support
 
 **1.2.0**
 - Fix multiple contents in input log file.

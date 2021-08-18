@@ -4,23 +4,17 @@
 <article>
     {% if session["status"] == "running" %}
     <p>
-    Congratulation. Your autoclass@web job is now running.
+    Congratulation. Your AutoClassWeb job is now running.
     Let's hope your data will classify nicely!
 	</p>
     <div class="form-group row">
         <label for="jobid" class="col-sm-2 col-form-label">Job name:</label>
         <input type="text" readonly class="form-control col-sm-10" id="jobid" value="{{ job_name }}">
     </div>
-    {% if session["mail_address"] %}
-        <p>An e-mail will be send to {{ session["mail_address"] }}
-            upon completion of your autoclass@web job.</p>
-        <p>You can also check your job <a href="/status">status</a>.</p>
-    {% else %}
-    	<p>Check regularly your job <a href="/status">status</a>.</p>
-        {% endif %}
+   	<p>Check regularly your job <a href="/status">status</a>.</p>
     {% else %}
     <div class='error'>
-    Something went wrong with your autoclass@web job initialization. Check your input files and parameters.
+    Something went wrong with your AutoClassWeb job initialization. Check your input files and parameters.
     </div>
     {% endif %}
 

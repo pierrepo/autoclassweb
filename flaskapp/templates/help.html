@@ -95,9 +95,7 @@ The maximum running time for a job is {{ config.FLASK_JOB_TIMEOUT }} hours.
 Results older than {{ config.FLASK_RESULTS_DURATION }} days are automatically deleted. 
 </p>
 <p>
-    Depending on how AutoClassWeb has been configured, you might receive
-    by e-mail a link to download results and have the ability to download
-    results directly from the <a href="/status">status</a> page.
+    Upon successful classification, results are available through a download link in the <a href="/status">status</a> page.
 </p>
 
 <h1>Results</h1>
@@ -119,7 +117,7 @@ Results are bundled in a zip archive with the following files:
     <tt>something_out_dendrogram.png</tt> is a dendrogram representing the distance between all classes.
 </li>
 <li>
-    <tt>something_out.tsv</tt> contains all the data with the class assignement and membership probabilities for all classes. This files is in the <a href="https://en.wikipedia.org/wiki/Tab-separated_values"
+    <tt>something_out.tsv</tt> contains all the data with the class assignement and membership probabilities for all classes. This file is in the <a href="https://en.wikipedia.org/wiki/Tab-separated_values"
     target="_blank">Tab-separated values</a> format and can then easily be parsed with Excel, R, Python...
 </li>
 </ul>

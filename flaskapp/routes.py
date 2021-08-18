@@ -3,12 +3,11 @@ import sys
 import io
 import logging
 from pathlib import Path
-import psutil
 import shutil
 import time
 import datetime
 
-from flask import Flask, jsonify, render_template, url_for, redirect, request, flash, session, send_from_directory
+from flask import jsonify, render_template, url_for, redirect, flash, session, send_from_directory
 from werkzeug.utils import secure_filename
 
 from flaskapp import app
@@ -26,7 +25,6 @@ logger = logging.getLogger("flaskapp")
 def show_me_config():
     logger.info("Printing app config.")
     return jsonify({
-        "FLASK_RESULTS_BY_EMAIL": app.config["FLASK_RESULTS_BY_EMAIL"],
         "FLASK_MAX_JOBS": app.config["FLASK_MAX_JOBS"],
         "FLASK_JOB_TIMEOUT": app.config["FLASK_JOB_TIMEOUT"],
         "FLASK_RESULTS_DURATION": app.config["FLASK_RESULTS_DURATION"],
@@ -71,24 +69,11 @@ def index():
                                form=input_form,
                                job_m=job_manager)
 
-    # go back to form if not email is provided (but required)
-    if app.config["FLASK_RESULTS_BY_EMAIL"] \
-    and not input_form.mail_address.data:
-        flash("Missing e-mail address!", "error")
-        return render_template("index.html",
-                               form=input_form,
-                               job_m=job_manager)
-
     # eventually create job and process form data
     # create job directory
     job = model.Job()
     job.create_new(app.config["RESULTS_FOLDER"], app.config['JOB_NAME_LENGTH'])
     logger.debug(f"New job name: {job.name}")
-    # get e-mail address
-    if input_form.mail_address.data:
-        mail_address = input_form.mail_address.data
-    else:
-        mail_address = ""
     # get 'real scalar' input data
     scalar = {"file": None, "error": None}
     if input_form.scalar_input_file.data:
@@ -113,7 +98,6 @@ def index():
     # prepare data to be stored in session
     session["job_name"] = job.name
     session["job_path"] = job.path
-    session["mail_address"] = mail_address
     session["scalar"] = scalar
     session["location"] = location
     session["discrete"] = discrete
@@ -139,7 +123,6 @@ def start():
          "date-start: "
         f"{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
         )
-    job.write_summary(f"email: {session['mail_address']}")
     # Call logger from autoclasswrapper.
     wrapper_logger = logging.getLogger("autoclasswrapper")
     wrapper_logger.setLevel(logging.DEBUG)
@@ -210,14 +193,9 @@ def start():
     run.create_run_file()
     # Add scripts to export and send results.
     shutil.copy("../../export_results.py", "./")
-    shutil.copy("../../send_results.py", "./")
     with open(run.root_name + ".sh", "a") as script_file:
         script_file.write("# added by autoclassweb\n")
         script_file.write("python3 export_results.py\n")
-        if app.config["FLASK_RESULTS_BY_EMAIL"]:
-            script_file.write(
-                "python3 send_results.py "
-                f"{session['mail_address']}\n")
     # Run AutoClass C.
     run.run(job_name)
     # Wait that the job starts.

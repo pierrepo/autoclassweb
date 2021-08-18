@@ -20,7 +20,8 @@ target="_blank">Tab-separated values</a> format.
 </p>
 <p>
 The first line must be a header with column names.
-Avoid accentuated or special characters (<tt>$&!/β</tt>) or space. These characters will be automatically replaced by <tt>_</tt>. Avoid lengthy column names.
+Avoid accentuated or special characters (e.g.: <code>$</code>, <code>&</code>, <code>!</code>, <code>/</code>, <code>β</code>) or space.
+These characters will be automatically replaced by <code>_</code>. Also avoid lengthy column names.
 Column names must be unique.
 </p>
 <p>
@@ -28,9 +29,9 @@ The first column must be gene/protein/object names.
 </p>
 <p>
 Missing data are allowed and must be encoded with an empty value, i.e. nothing,
-(don't use <tt>NA</tt>, <tt>?</tt>, <tt>None</tt> or <tt>' '</tt>). <br />
-Example (missing value for <tt>prot1</tt> in <tt>exp2</tt>
-and <tt>prot3</tt> in <tt>exp1</tt>):
+(don't use <code>NA</code>, <code>?</code>, <code>None</code> or <code>' '</code>). <br />
+Example (missing value for <code>prot1</code> in <code>exp2</code>
+and <code>prot3</code> in <code>exp1</code>):
 <pre>
 name	exp1	exp2	exp3
 prot1	0.123		550.61
@@ -104,20 +105,20 @@ Results are bundled in a zip archive with the following files:
 </p>
 <ul>
 <li>
-    <tt>something_out.cdt</tt> and <tt>something_out_withproba.cdt</tt> can be open with
+    <code>something_out.cdt</code> and <code>something_out_withproba.cdt</code> can be open with
     <a href="http://jtreeview.sourceforge.net/">Java TreeView</a>.
-    The file <tt>something_out_withproba.cdt</tt> exhibits the probability for each gene/protein/object
+    The file <code>something_out_withproba.cdt</code> exhibits the probability for each gene/protein/object
     to belong to each class.
 </li>
 <li>
-    <tt>something_out_stats.tsv</tt> contain means and standard deviations
+    <code>something_out_stats.tsv</code> contain means and standard deviations
     of numeric columns (<it>real scalar</it> and <it>real location</it>) for each class.
 </li>
 <li>
-    <tt>something_out_dendrogram.png</tt> is a dendrogram representing the distance between all classes.
+    <code>something_out_dendrogram.png</code> is a dendrogram representing the distance between all classes.
 </li>
 <li>
-    <tt>something_out.tsv</tt> contains all the data with the class assignement and membership probabilities for all classes. This file is in the <a href="https://en.wikipedia.org/wiki/Tab-separated_values"
+    <code>something_out.tsv</code> contains all the data with the class assignement and membership probabilities for all classes. This file is in the <a href="https://en.wikipedia.org/wiki/Tab-separated_values"
     target="_blank">Tab-separated values</a> format and can then easily be parsed with Excel, R, Python...
 </li>
 </ul>
@@ -136,7 +137,7 @@ It offers multiple advantages:
 </p>
 
 For more information, see the NASA documentation on <a href="https://ti.arc.nasa.gov/tech/rse/synthesis-projects-applications/autoclass/autoclass-c/"
-target="_blank">AutoClass</a>.
+target="_blank">AutoClass C</a>.
 
 </article>
 {% endblock %}

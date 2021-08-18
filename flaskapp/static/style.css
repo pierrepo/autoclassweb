@@ -92,3 +92,9 @@ footer a:link, a:visited {
 footer a:hover {
     text-decoration: underline;
 }
+
+code {
+    color: #1c1c1c;
+    background-color: #f0f0f0;
+    font-size: 100%;
+}

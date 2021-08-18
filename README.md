@@ -9,7 +9,7 @@ It utilizes [AutoClassWrapper](https://github.com/pierrepo/autoclasswrapper), a 
 
 ## Installation for use on a local machine
 
-See step-by-step instructions: <https://github.com/pierrepo/autoclassweb-app/>
+See step-by-step instructions: <https://github.com/pierrepo/autoclassweb-app>
 
 
 ## Installation for use on a web server

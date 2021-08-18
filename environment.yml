@@ -10,4 +10,4 @@ dependencies:
     - flask-wtf
     - gunicorn
     - autoclasswrapper
-    - bumpversion
+    - bump2version

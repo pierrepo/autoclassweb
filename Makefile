@@ -1,7 +1,7 @@
 default: help
 
 
-run: export FLASK_APP = flaskapp ## Run autoclassweb (flask app) on port 5000
+run: export FLASK_APP = flaskapp:app ## Run autoclassweb (flask app) on port 5000
 run: export FLASK_DEBUG = 1
 run:
 	flask run

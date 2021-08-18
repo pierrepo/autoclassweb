@@ -56,16 +56,16 @@ $ git push origin --tags
 
 On [GitHub release page](https://github.com/pierrepo/autoclassweb/releases) :
 
-- Click the *Draft a release* button.
+- Click the *Draft a new release* button.
 - Select the latest version as *tag version*.
 - Add release version as *Release title* (e.g.: v1.3.7).
 - Copy and paste the content of the `CHANGELOG.md` in the *Describe this release* field.
-- Hit the *Publish Release* button :rocket:.
+- Hit the *Publish release* button :rocket:.
 
 
 ## Zenodo integration
 
-After the creation of the new release in GitHub, check the archive has been creating on [Zenodo](https://zenodo.org/deposit).
+After the creation of the new release in GitHub, check the archive has been creating on [Zenodo](https://doi.org/10.5281/zenodo.5215902).
 
 
 ## Publish docker image 

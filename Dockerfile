@@ -24,13 +24,12 @@ COPY flaskapp ./flaskapp
 COPY config.py ./
 COPY gunicorn.py ./
 COPY export_results.py ./
-COPY send_results.py ./
 
 
 # Install conda
 # See https://hub.docker.com/r/conda/miniconda3/dockerfile
 ENV PATH /opt/miniconda3/bin:$PATH
-RUN wget --quiet https://repo.anaconda.com/miniconda/Miniconda3-py38_4.8.3-Linux-x86_64.sh -O /tmp/miniconda.sh && \
+RUN wget --quiet https://repo.anaconda.com/miniconda/Miniconda3-py38_4.9.2-Linux-x86_64.sh -O /tmp/miniconda.sh && \
     /bin/bash /tmp/miniconda.sh -b -p /opt/miniconda3 && \
     rm -f /tmp/miniconda.sh && \
     conda update conda

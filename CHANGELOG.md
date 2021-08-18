@@ -2,6 +2,8 @@
 - Fix style in help/documentation
 - Update documentation
 - Set default max run time to 48 hours
+- Update conda version in Dockerfile
+- Update conda dependencies
 
 **2.0.0**
 - Remove e-mail support

@@ -3,49 +3,49 @@ channels:
   - defaults
 dependencies:
   - _libgcc_mutex=0.1
-  - ca-certificates=2020.6.24
-  - certifi=2020.6.20
-  - chardet=3.0.4
-  - ld_impl_linux-64=2.33.1
-  - libedit=3.1.20191231
+  - _openmp_mutex=4.5
+  - ca-certificates=2021.7.5
+  - certifi=2021.5.30
+  - chardet=4.0.0
+  - ld_impl_linux-64=2.35.1
   - libffi=3.3
-  - libgcc-ng=9.1.0
-  - libstdcxx-ng=9.1.0
+  - libgcc-ng=9.3.0
+  - libgomp=9.3.0
+  - libstdcxx-ng=9.3.0
   - ncurses=6.2
-  - openssl=1.1.1g
-  - pip=20.2.1
-  - psutil=5.7.0
-  - python=3.8.5
-  - readline=8.0
-  - setuptools=49.2.1
-  - sqlite=3.32.3
+  - openssl=1.1.1k
+  - pip=21.2.4
+  - psutil=5.8.0
+  - python=3.9.6
+  - readline=8.1
+  - setuptools=52.0.0
+  - sqlite=3.36.0
   - tk=8.6.10
-  - wheel=0.34.2
+  - tzdata=2021a
+  - wheel=0.37.0
   - xz=5.2.5
   - zlib=1.2.11
   - pip:
     - autoclasswrapper==1.5.1
-    - bump2version==1.0.0
-    - bumpversion==0.6.0
-    - click==7.1.2
+    - bump2version==1.0.1
+    - click==8.0.1
     - cycler==0.10.0
-    - flask==1.1.2
-    - flask-wtf==0.14.3
-    - gunicorn==20.0.4
-    - itsdangerous==1.1.0
-    - jinja2==2.11.2
-    - kiwisolver==1.2.0
-    - markupsafe==1.1.1
-    - matplotlib==3.3.0
-    - numpy==1.19.1
-    - pandas==1.1.0
-    - pillow==7.2.0
+    - flask==2.0.1
+    - flask-wtf==0.15.1
+    - gunicorn==20.1.0
+    - itsdangerous==2.0.1
+    - jinja2==3.0.1
+    - kiwisolver==1.3.1
+    - markupsafe==2.0.1
+    - matplotlib==3.4.3
+    - numpy==1.21.2
+    - pandas==1.3.2
+    - pillow==8.3.1
     - pyparsing==2.4.7
-    - python-dateutil==2.8.1
-    - python-dotenv==0.14.0
-    - pytz==2020.1
-    - scipy==1.5.2
-    - six==1.15.0
-    - werkzeug==1.0.1
+    - python-dateutil==2.8.2
+    - python-dotenv==0.19.0
+    - pytz==2021.1
+    - scipy==1.7.1
+    - six==1.16.0
+    - werkzeug==2.0.1
     - wtforms==2.3.3
-

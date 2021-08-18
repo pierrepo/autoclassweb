@@ -1,0 +1,23 @@
+{
+    "title": "AutoClassWeb (v1.2.0): a web app to run AutoClass C Bayesian clustering",
+    "creators": [{
+         "name": "Poulain, Pierre",
+        "orcid": "0000-0003-4177-3619"
+    },
+    {
+        "name": "Camadro, Jean-Michel",
+        "orcid": "0000-0002-8549-2707"
+    }],
+    "description": "This repository contains the archived release for the software AutoClassWeb",
+    "access_right": "open",
+    "license": "bsd-3-clause",
+    "keywords": [
+        "Omics",
+        "Proteomics",
+        "Genomics",
+        "Clustering",
+        "Classification",
+        "Python"
+    ],
+    "upload_type": "software"
+}

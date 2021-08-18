@@ -70,7 +70,7 @@ After the creation of the new release in GitHub, check the archive has been crea
 
 ## Publish docker image 
 
-Docker images of autoclassweb are hosted in the [Biocontainers](https://biocontainers.pro/) docker repo:
+Docker images of AutoClassWeb are hosted in the [Biocontainers](https://biocontainers.pro/) docker repository:
 
 <https://hub.docker.com/r/biocontainers/autoclassweb>
 

@@ -1,4 +1,20 @@
+################## BASE IMAGE ######################
 FROM ubuntu:20.04
+
+################### METADATA #######################
+LABEL base_image="ubuntu:20.04"
+LABEL version="4"
+LABEL software="autoclassweb"
+LABEL software.version="2.1.0"
+LABEL about.summary="A web app to run AutoClass C Bayesian clustering"
+LABEL about.home="https://github.com/pierrepo/autoclassweb"
+LABEL about.documentation="https://github.com/pierrepo/autoclassweb"
+LABEL about.license_file="https://github.com/pierrepo/autoclassweb/blob/master/LICENSE.txt"
+LABEL about.license="SPDX:BSD-3-Clause"
+LABEL extra.identifiers.biotools="autoclassweb"
+LABEL about.tags="Genomics Proteomics Omics Clustering Classification"
+
+################## MAINTAINER ######################
 LABEL maintainer="Pierre Poulain <pierre.poulain@cupnet.net>"
 
 # Change default shell
@@ -9,6 +25,7 @@ ENV LANG C.UTF-8
 
 RUN apt update && \
     apt -y upgrade && \
+    apt install -y git && \
     apt install -y wget && \
     apt install -y libc6-i386 && \
     apt autoremove -y && \
@@ -18,13 +35,8 @@ RUN apt update && \
 # Create app directory
 WORKDIR /app
 
-# Install app files
-COPY environment-lock.yml ./
-COPY flaskapp ./flaskapp
-COPY config.py ./
-COPY gunicorn.py ./
-COPY export_results.py ./
-
+# Download source code
+RUN git clone --depth 1 https://github.com/pierrepo/autoclassweb.git /app
 
 # Install conda
 # See https://hub.docker.com/r/conda/miniconda3/dockerfile
@@ -33,7 +45,6 @@ RUN wget --quiet https://repo.anaconda.com/miniconda/Miniconda3-py38_4.9.2-Linux
     /bin/bash /tmp/miniconda.sh -b -p /opt/miniconda3 && \
     rm -f /tmp/miniconda.sh && \
     conda update conda
-
 
 # Install conda env
 ARG conda_env=autoclassweb
@@ -57,5 +68,5 @@ VOLUME /app/logs
 VOLUME /app/results
 EXPOSE 5000
 
-# CMD ["gunicorn", "--config", "gunicorn.py", "flaskapp:app"]
-
+# Run the web app
+#CMD ["gunicorn", "--config", "gunicorn.py", "flaskapp:app"]

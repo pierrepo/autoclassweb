@@ -1,4 +1,5 @@
 **Dev**
+- Update Dockerfile with Biocontainers template
 
 **2.1.0**
 - Fix style in help/documentation

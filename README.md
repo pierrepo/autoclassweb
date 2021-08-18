@@ -2,6 +2,7 @@
 
 [![License: BSD](https://img.shields.io/badge/License-BSD-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5215902.svg)](https://doi.org/10.5281/zenodo.5215902)
+[![SWH](https://archive.softwareheritage.org/badge/origin/https://github.com/pierrepo/autoclassweb/)](https://archive.softwareheritage.org/browse/origin/?origin_url=https://github.com/pierrepo/autoclassweb)
 
 AutoClassWeb is a web interface to [AutoClass C](https://ti.arc.nasa.gov/tech/rse/synthesis-projects-applications/autoclass/autoclass-c/), an unsupervised Bayesian classification system developed by the NASA.
 

@@ -1,4 +1,6 @@
 **Dev**
+
+**2.0.0**
 - Remove e-mail support
 
 **1.2.0**

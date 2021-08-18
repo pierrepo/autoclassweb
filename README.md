@@ -38,7 +38,7 @@ $ export PATH=$PATH:$(pwd)/autoclass-c
 ```
 If you use a 64-bit operating system, install the standard 32-bit C libraries:
 ```bash
-$ sudo apt-get install -y libc6-i386
+$ sudo apt install -y libc6-i386
 ```
 
 Copy config template and update config file `config/autoclassweb.cfg` accordingly:

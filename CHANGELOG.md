@@ -1,4 +1,6 @@
 **Dev**
+
+**2.1.0**
 - Fix style in help/documentation
 - Update documentation
 - Set default max run time to 48 hours

@@ -76,7 +76,7 @@ Docker images of AutoClassWeb are hosted in the [Biocontainers](https://bioconta
 
 To push new images:
 
--  Clone <https://github.com/BioContainers/containers>
+-  Clone <https://github.com/BioContainers/containers> to <https://github.com/pierrepo/containers>
 -  Add the Dockerfile for the new release in the `autoclassweb` subdirectory
--  Make a pull request for merging.
+-  Make a [pull request](https://github.com/BioContainers/containers/compare/master...pierrepo:master) for merging.
 

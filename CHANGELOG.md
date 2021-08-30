@@ -1,4 +1,5 @@
 **Dev**
+- Remove base URL
 
 **2.1.1**
 - Update Dockerfile with Biocontainers template

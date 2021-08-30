@@ -1,4 +1,6 @@
 **Dev**
+
+**2.2.1**
 - Update app title
 
 **2.2.0**

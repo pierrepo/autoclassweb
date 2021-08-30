@@ -5,7 +5,7 @@ FROM ubuntu:20.04
 LABEL base_image="ubuntu:20.04"
 LABEL version="1"
 LABEL software="autoclassweb"
-LABEL software.version="2.2.0"
+LABEL software.version="2.2.1"
 LABEL about.summary="AutoClassWeb: a simple web interface for Bayesian clustering"
 LABEL about.home="https://github.com/pierrepo/autoclassweb"
 LABEL about.documentation="https://github.com/pierrepo/autoclassweb"

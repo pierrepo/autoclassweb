@@ -48,7 +48,7 @@ else:
 # config module must be loaded after user config file
 import config
 app.config.from_object(config.CreateConfig)
-app.config["VERSION"] = "2.2.0"
+app.config["VERSION"] = "2.2.1"
 app.logger.info(f"AutoClassWeb version: {app.config['VERSION']}")
 
 

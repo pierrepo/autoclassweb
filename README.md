@@ -83,6 +83,8 @@ Clean unused images:
 make docker-clean
 ```
 
-A Docker image of [AutoClassWeb](https://hub.docker.com/r/biocontainers/autoclassweb) is also available in the [Biocontainers](https://biocontainers.pro/) docker repository.
+Official Docker images of AutoClassWeb are available in the [Biocontainers](https://biocontainers.pro/) docker repository: 
+
+<https://hub.docker.com/r/biocontainers/autoclassweb>
 
 

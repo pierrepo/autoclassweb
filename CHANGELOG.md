@@ -1,4 +1,5 @@
 **Dev**
+- Update app title
 
 **2.2.0**
 - Remove base URL

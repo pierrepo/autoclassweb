@@ -25,7 +25,7 @@ docker-run:  ## Run autoclassweb + gunicorn with Docker container (port 5000)
 
 
 docker-clean:  ## Clean Docker images
-	docker image prune -a
+	docker image prune --all --force
 .PHONY: docker-clean
 
 

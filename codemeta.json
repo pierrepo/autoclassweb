@@ -1,0 +1,50 @@
+{
+    "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
+    "@type": "SoftwareSourceCode",
+    "license": "https://spdx.org/licenses/BSD-3-Clause",
+    "codeRepository": "https://github.com/pierrepo/autoclassweb",
+    "dateCreated": "2017-07-05",
+    "datePublished": "2019-04-08",
+    "dateModified": "2021-08-30",
+    "downloadUrl": "https://github.com/pierrepo/autoclassweb/archive/refs/tags/v2.2.1.zip",
+    "issueTracker": "https://github.com/pierrepo/autoclassweb/issues",
+    "name": "AutoClassWeb",
+    "version": "2.2.1",
+    "description": "a simple web interface for Bayesian clustering of omics data",
+    "applicationCategory": "Bioinformatics",
+    "referencePublication": "https://doi.org/10.1186/s13104-022-06129-6",
+    "funder": {
+        "@type": "Organization",
+        "name": "Université Paris Cité"
+    },
+    "keywords": [
+        "python",
+        "clustering",
+        "classification",
+        "autoclass",
+        "omics data"
+    ],
+    "programmingLanguage": [
+        "Python"
+    ],
+    "operatingSystem": [
+        "Linux"
+    ],
+    "softwareRequirements": [
+        "Python>=3.7",
+        "autoclasswrapper"
+    ],
+    "author": [
+        {
+            "@type": "Person",
+            "@id": "http://orcid.org/0000-0003-4177-3619",
+            "givenName": "Pierre",
+            "familyName": "Poulain",
+            "email": "pierre.poulain@cupnet.net",
+            "affiliation": {
+                "@type": "Organization",
+                "name": "Université Paris Cité"
+            }
+        }
+    ]
+}

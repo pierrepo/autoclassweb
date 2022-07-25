@@ -45,6 +45,17 @@
                 "@type": "Organization",
                 "name": "Université Paris Cité"
             }
+        },
+        {
+            "@type": "Person",
+            "@id": "http://orcid.org/0000-0002-8549-2707",
+            "givenName": "Jean-Michel",
+            "familyName": "Camadro",
+            "email": "jean-michel.camadro@ijm.fr",
+            "affiliation": {
+                "@type": "Organization",
+                "name": "CNRS"
+            }
         }
     ]
 }
